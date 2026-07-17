@@ -1,0 +1,58 @@
+{
+  "netherite": {
+    "name": "ネザライトインゴット",
+    "emoji": "🖤",
+    "initial_value": 500,
+    "liquidity": 10,
+    "volatility": 0.08
+  },
+  "diamond": {
+    "name": "ダイヤモンド",
+    "emoji": "💎",
+    "initial_value": 100,
+    "liquidity": 50,
+    "volatility": 0.05
+  },
+  "emerald": {
+    "name": "エメラルド",
+    "emoji": "💚",
+    "initial_value": 60,
+    "liquidity": 100,
+    "volatility": 0.05
+  },
+  "gold": {
+    "name": "金インゴット",
+    "emoji": "🟡",
+    "initial_value": 20,
+    "liquidity": 300,
+    "volatility": 0.04
+  },
+  "iron": {
+    "name": "鉄インゴット",
+    "emoji": "⚙️",
+    "initial_value": 10,
+    "liquidity": 500,
+    "volatility": 0.02
+  },
+  "lapis": {
+    "name": "ラピスラズリ",
+    "emoji": "🔷",
+    "initial_value": 5,
+    "liquidity": 800,
+    "volatility": 0.03
+  },
+  "redstone": {
+    "name": "レッドストーン",
+    "emoji": "🔺",
+    "initial_value": 3,
+    "liquidity": 1000,
+    "volatility": 0.03
+  },
+  "coal": {
+    "name": "石炭",
+    "emoji": "⬛",
+    "initial_value": 1,
+    "liquidity": 2000,
+    "volatility": 0.02
+  }
+}

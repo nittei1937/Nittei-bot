@@ -1,0 +1,17 @@
+{
+  "name": "military-database-bot",
+  "version": "1.0.0",
+  "description": "艦艇・戦車・航空機のスペックを検索できるDiscord Bot",
+  "main": "index.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node index.js",
+    "deploy": "node deploy-commands.js",
+    "bot": "npm run deploy && nodemon main.mjs",
+    "dev": "nodemon main.mjs"
+  },
+  "dependencies": {
+    "discord.js": "^14.15.3",
+    "dotenv": "^16.4.5"
+  }
+}
