@@ -7,12 +7,13 @@
   "scripts": {
     "start": "node index.js",
     "deploy": "node deploy-commands.js",
-    "bot": "npm run deploy && nodemon main.mjs",
-    "dev": "nodemon main.mjs"
+    "bot": "npm run deploy && nodemon index.mjs",
+    "dev": "nodemon index.mjs"
   },
   "dependencies": {
     "discord.js": "^14.15.3",
     "dotenv": "^16.4.5",
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "nodemon": "^3.1.14"
   }
 }

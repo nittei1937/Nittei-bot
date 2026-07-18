@@ -1,3 +1,5 @@
+console.log("Bot起動開始");
+
 require("dotenv").config();
 const express = require("express");
 const fs = require("fs");
@@ -96,5 +98,11 @@ app.get("/", (req, res) => {
 app.listen(PORT, () => {
     console.log(`Web Server : Port ${PORT}`);
 });
-
-client.login(DISCORD_TOKEN);
+console.log("Discordへログインします");
+client.login(DISCORD_TOKEN)
+    .then(() => {
+        console.log("client.login() 完了");
+    })
+    .catch(err => {
+        console.error(err);
+    });
