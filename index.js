@@ -1,4 +1,5 @@
 require("dotenv").config();
+const express = require("express");
 const fs = require("fs");
 const path = require("path");
 const { Client, Collection, GatewayIntentBits, Events, MessageFlags } = require("discord.js");
@@ -78,6 +79,22 @@ client.on(Events.InteractionCreate, async (interaction) => {
             await interaction.reply(errorReply);
         }
     }
+});
+
+// -------------------------
+// Render Keep Alive
+// -------------------------
+
+const app = express();
+
+const PORT = process.env.PORT || 3000;
+
+app.get("/", (req, res) => {
+    res.send("NitteiBot is running!");
+});
+
+app.listen(PORT, () => {
+    console.log(`Web Server : Port ${PORT}`);
 });
 
 client.login(DISCORD_TOKEN);
