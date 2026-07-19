@@ -1,12 +1,6 @@
 const { SlashCommandBuilder } = require("discord.js");
 const ships = require("../data/ships.json");
-const {
-    filterByType,
-    searchEntries,
-    getEntryById,
-    buildInfoEmbed,
-    buildListEmbed,
-} = require("../utils/military.js");
+const { filterByType, getEntryById, buildInfoEmbed, buildListEmbed } = require("../utils/military.js");
 
 const CATEGORY = "ships";
 const CATEGORY_LABEL = "艦艇";
@@ -37,25 +31,14 @@ module.exports = {
         )
         .addSubcommand((sub) =>
             sub
-                .setName("info")
+                .setName("show")
                 .setDescription("艦艇1隻の詳細情報を表示")
                 .addStringOption((option) =>
                     option
                         .setName("ship")
-                        .setDescription("艦名のID（例: yamato）")
+                        .setDescription("艦名のID（入力補完から選択可）")
                         .setRequired(true)
                         .setAutocomplete(true)
-                )
-        )
-        .addSubcommand((sub) =>
-            sub
-                .setName("search")
-                .setDescription("名前・艦級・愛称でキーワード検索")
-                .addStringOption((option) =>
-                    option
-                        .setName("keyword")
-                        .setDescription("検索キーワード")
-                        .setRequired(true)
                 )
         ),
 
@@ -64,8 +47,7 @@ module.exports = {
         const choices = Object.entries(ships)
             .filter(
                 ([id, ship]) =>
-                    id.toLowerCase().includes(focused) ||
-                    ship.name.toLowerCase().includes(focused)
+                    id.toLowerCase().includes(focused) || ship.name.toLowerCase().includes(focused)
             )
             .slice(0, 25)
             .map(([id, ship]) => ({ name: `${ship.name}（${id}）`, value: id }));
@@ -88,7 +70,7 @@ module.exports = {
             return interaction.reply({ embeds: [embed] });
         }
 
-        if (subcommand === "info") {
+        if (subcommand === "show") {
             const id = interaction.options.getString("ship");
             const entry = getEntryById(ships, id);
 
@@ -100,18 +82,6 @@ module.exports = {
             }
 
             return interaction.reply({ embeds: [buildInfoEmbed(entry, CATEGORY)] });
-        }
-
-        if (subcommand === "search") {
-            const keyword = interaction.options.getString("keyword");
-            const entries = searchEntries(ships, keyword);
-            const embed = buildListEmbed({
-                title: `${CATEGORY_LABEL}検索結果：「${keyword}」`,
-                category: CATEGORY,
-                entries,
-                emptyMessage: "該当する艦艇は見つかりませんでした。",
-            });
-            return interaction.reply({ embeds: [embed] });
         }
     },
 };

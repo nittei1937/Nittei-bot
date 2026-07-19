@@ -2,7 +2,6 @@ require("dotenv").config();
 const fs = require("fs");
 const path = require("path");
 const { Client, Collection, GatewayIntentBits, Events, MessageFlags } = require("discord.js");
-const { startHealthCheckServer } = require("./server.js");
 
 const { DISCORD_TOKEN } = process.env;
 
@@ -10,9 +9,6 @@ if (!DISCORD_TOKEN) {
     console.error("エラー: .envにDISCORD_TOKENを設定してください。");
     process.exit(1);
 }
-
-// Discordへのログインとは独立して、Render等がポートの生存確認をできるようにしておく
-startHealthCheckServer();
 
 const client = new Client({
     intents: [GatewayIntentBits.Guilds],

@@ -124,7 +124,7 @@ function buildInfoEmbed(entry, category) {
 }
 
 /**
- * /list, /search 用の一覧Embedを作成する（最大25件まで表示）
+ * list 用の一覧Embedを作成する（最大25件まで表示）
  */
 function buildListEmbed({ title, category, entries, emptyMessage }) {
     const config = CATEGORY_CONFIGS[category];

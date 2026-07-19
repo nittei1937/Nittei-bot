@@ -1,19 +1,13 @@
 const { SlashCommandBuilder } = require("discord.js");
-const aircraft = require("../data/aircraft.json");
-const {
-    filterByType,
-    searchEntries,
-    getEntryById,
-    buildInfoEmbed,
-    buildListEmbed,
-} = require("../utils/military.js");
+const airplanes = require("../data/airplanes.json");
+const { filterByType, getEntryById, buildInfoEmbed, buildListEmbed } = require("../utils/military.js");
 
-const CATEGORY = "aircraft";
+const CATEGORY = "airplanes";
 const CATEGORY_LABEL = "航空機";
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName("aircraft")
+        .setName("airplanes")
         .setDescription("航空機のデータベースを検索")
         .addSubcommand((sub) =>
             sub
@@ -35,35 +29,23 @@ module.exports = {
         )
         .addSubcommand((sub) =>
             sub
-                .setName("info")
+                .setName("show")
                 .setDescription("機体1機の詳細情報を表示")
                 .addStringOption((option) =>
                     option
                         .setName("plane")
-                        .setDescription("機体のID（例: zero）")
+                        .setDescription("機体のID（入力補完から選択可）")
                         .setRequired(true)
                         .setAutocomplete(true)
-                )
-        )
-        .addSubcommand((sub) =>
-            sub
-                .setName("search")
-                .setDescription("名前・型式・愛称でキーワード検索")
-                .addStringOption((option) =>
-                    option
-                        .setName("keyword")
-                        .setDescription("検索キーワード")
-                        .setRequired(true)
                 )
         ),
 
     async autocomplete(interaction) {
         const focused = interaction.options.getFocused().toLowerCase();
-        const choices = Object.entries(aircraft)
+        const choices = Object.entries(airplanes)
             .filter(
                 ([id, plane]) =>
-                    id.toLowerCase().includes(focused) ||
-                    plane.name.toLowerCase().includes(focused)
+                    id.toLowerCase().includes(focused) || plane.name.toLowerCase().includes(focused)
             )
             .slice(0, 25)
             .map(([id, plane]) => ({ name: `${plane.name}（${id}）`, value: id }));
@@ -76,7 +58,7 @@ module.exports = {
 
         if (subcommand === "list") {
             const type = interaction.options.getString("type");
-            const entries = filterByType(aircraft, type);
+            const entries = filterByType(airplanes, type);
             const embed = buildListEmbed({
                 title: `${CATEGORY_LABEL}一覧：${type}`,
                 category: CATEGORY,
@@ -86,9 +68,9 @@ module.exports = {
             return interaction.reply({ embeds: [embed] });
         }
 
-        if (subcommand === "info") {
+        if (subcommand === "show") {
             const id = interaction.options.getString("plane");
-            const entry = getEntryById(aircraft, id);
+            const entry = getEntryById(airplanes, id);
 
             if (!entry) {
                 return interaction.reply({
@@ -98,18 +80,6 @@ module.exports = {
             }
 
             return interaction.reply({ embeds: [buildInfoEmbed(entry, CATEGORY)] });
-        }
-
-        if (subcommand === "search") {
-            const keyword = interaction.options.getString("keyword");
-            const entries = searchEntries(aircraft, keyword);
-            const embed = buildListEmbed({
-                title: `${CATEGORY_LABEL}検索結果：「${keyword}」`,
-                category: CATEGORY,
-                entries,
-                emptyMessage: "該当する航空機は見つかりませんでした。",
-            });
-            return interaction.reply({ embeds: [embed] });
         }
     },
 };
