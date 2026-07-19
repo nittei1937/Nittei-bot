@@ -1,0 +1,13 @@
+{
+  "sample_line": {
+    "name": "サンプル本線",
+    "type": "MAIN",
+    "type_name": "本線",
+    "company": "sample_company",
+    "opened": "1985年",
+    "status": "運行中",
+    "length_km": "17.4 km",
+    "stations_count": "10駅",
+    "notes": "これはサンプル(テンプレート)です。実際の路線データに書き換えるか、このキーごと削除してください。"
+  }
+}

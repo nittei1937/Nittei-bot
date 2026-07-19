@@ -2,6 +2,7 @@ require("dotenv").config();
 const fs = require("fs");
 const path = require("path");
 const { Client, Collection, GatewayIntentBits, Events, MessageFlags } = require("discord.js");
+const { startHealthCheckServer } = require("./server.js");
 
 const { DISCORD_TOKEN } = process.env;
 
@@ -9,6 +10,9 @@ if (!DISCORD_TOKEN) {
     console.error("エラー: .envにDISCORD_TOKENを設定してください。");
     process.exit(1);
 }
+
+// Discordへのログインとは独立して、Render等がポートの生存確認をできるようにしておく
+startHealthCheckServer();
 
 const client = new Client({
     intents: [GatewayIntentBits.Guilds],
@@ -22,13 +26,20 @@ const commandFiles = fs.readdirSync(commandsPath).filter((file) => file.endsWith
 
 for (const file of commandFiles) {
     const filePath = path.join(commandsPath, file);
-    const command = require(filePath);
 
-    if ("data" in command && "execute" in command) {
-        client.commands.set(command.data.name, command);
-        console.log(`コマンドを読み込みました: /${command.data.name}`);
-    } else {
-        console.warn(`警告: ${filePath} に data または execute プロパティがありません。`);
+    try {
+        const command = require(filePath);
+
+        if ("data" in command && "execute" in command) {
+            client.commands.set(command.data.name, command);
+            console.log(`コマンドを読み込みました: /${command.data.name}`);
+        } else {
+            console.warn(`警告: ${filePath} に data または execute プロパティがありません。スキップします。`);
+        }
+    } catch (error) {
+        // 1つのコマンドファイルが壊れていてもBot全体を落とさず、そのファイルだけスキップする
+        console.error(`エラー: ${filePath} の読み込みに失敗しました。このファイルはスキップされます。`);
+        console.error(error.message);
     }
 }
 

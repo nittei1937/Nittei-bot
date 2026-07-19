@@ -126,6 +126,31 @@ npm run deploy
 npm start
 ```
 
+ローカルでコードを編集しながら動かす場合は、ファイル保存のたびに自動再起動する
+
+```bash
+npm run dev
+```
+
+も使えます（`npm run deploy`も一緒に実行してからdevモードで起動したい場合は `npm run bot`）。
+
+## Renderへのデプロイ
+
+RenderのようなPaaSでは、多くのプラン（特に無料のWeb Service）が「ポートを開けて待ち受けているか」でサービスの生死を判定します。Discord Botはそれ自体はポートを開けないので、`server.js`で最低限のHTTPサーバー（`express`）を立てて、Discordへのログインとは別にポートを待ち受けさせています。
+
+### 手順
+
+1. Renderで「New Web Service」を作成し、このリポジトリ（またはzipから作ったリポジトリ）を接続する
+2. Build Command: `npm install`
+3. Start Command: `npm start`
+4. 環境変数（Environment タブ）に `DISCORD_TOKEN` / `CLIENT_ID` / `GUILD_ID` を設定する（`.env`ファイルはRenderには反映されないので、必ずダッシュボード側で設定してください）
+5. `PORT`はRenderが自動的に環境変数として渡すので、こちらで設定する必要はありません（`server.js`が`process.env.PORT`を自動的に使います）
+6. デプロイ後、一度だけ`npm run deploy`（コマンド登録）をローカルまたはRenderのShellから実行する
+
+### 無料プランのスリープ対策（任意）
+
+Renderの無料Web Serviceは一定時間アクセスがないとスリープします。[UptimeRobot](https://uptimerobot.com/)などの外形監視サービスに、デプロイ後のURL（例: `https://your-app.onrender.com/`）を5〜10分間隔で監視させておくと、スリープを防げます。`/health`にアクセスすると稼働時間（秒）を含むJSONが返ります。
+
 ## 軍事装備データ（/military）の追加・編集方法
 
 `data/ships.json`、`data/tanks.json`、`data/airplanes.json` を編集するだけで、Bot再起動後に反映されます。各エントリは以下の形式です。
@@ -258,6 +283,7 @@ npm start
 ```
 military-bot/
 ├── index.js              # Bot本体（起動・イベント処理）
+├── server.js              # Render等向けのヘルスチェック用HTTPサーバー（express）
 ├── deploy-commands.js     # スラッシュコマンド登録スクリプト
 ├── package.json
 ├── .env.example

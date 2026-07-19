@@ -1,0 +1,11 @@
+{
+  "sample_company": {
+    "name": "サンプル電鉄",
+    "type": "PRIVATE",
+    "type_name": "民鉄",
+    "founded": "1920年",
+    "headquarters": "サンプル駅",
+    "lines_operated": ["sample_line"],
+    "notes": "これはサンプル(テンプレート)です。実際の鉄道会社データに書き換えるか、このキーごと削除してください。"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "sample_car": {
+    "name": "サンプル1000系",
+    "type": "COMMUTER",
+    "type_name": "通勤形",
+    "operator": "sample_company",
+    "introduced": "1990年",
+    "status": "運用中",
+    "max_speed": "120 km/h",
+    "capacity": "140名/両",
+    "notes": "これはサンプル(テンプレート)です。実際の車両データに書き換えるか、このキーごと削除してください。"
+  }
+}
