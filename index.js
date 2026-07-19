@@ -1,11 +1,7 @@
-console.log("Bot起動開始");
-
 require("dotenv").config();
-const express = require("express");
 const fs = require("fs");
 const path = require("path");
 const { Client, Collection, GatewayIntentBits, Events, MessageFlags } = require("discord.js");
-const { startMarketScheduler } = require("./scheduler.js");
 
 const { DISCORD_TOKEN } = process.env;
 
@@ -38,7 +34,6 @@ for (const file of commandFiles) {
 
 client.once(Events.ClientReady, (readyClient) => {
     console.log(`準備完了: ${readyClient.user.tag} としてログインしました。`);
-    startMarketScheduler(readyClient);
 });
 
 client.on(Events.InteractionCreate, async (interaction) => {
@@ -83,26 +78,4 @@ client.on(Events.InteractionCreate, async (interaction) => {
     }
 });
 
-// -------------------------
-// Render Keep Alive
-// -------------------------
-
-const app = express();
-
-const PORT = process.env.PORT || 3000;
-
-app.get("/", (req, res) => {
-    res.send("NitteiBot is running!");
-});
-
-app.listen(PORT, () => {
-    console.log(`Web Server : Port ${PORT}`);
-});
-console.log("Discordへログインします");
-client.login(DISCORD_TOKEN)
-    .then(() => {
-        console.log("client.login() 完了");
-    })
-    .catch(err => {
-        console.error(err);
-    });
+client.login(DISCORD_TOKEN);

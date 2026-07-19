@@ -1,20 +1,32 @@
-# 兵器データベース Discord Bot
+# 空想世界データベース Discord Bot
 
-艦艇・戦車・航空機のスペックをスラッシュコマンドで検索できるDiscord Bot（discord.js v14）です。
+軍事装備・鉄道・空想国家・鉱石為替をスラッシュコマンドで検索できるDiscord Bot（discord.js v14）です。
 
 ## コマンド一覧
 
-- `/ships list type:<艦種>` … 艦種ごとの艦艇一覧を表示（簡易情報）
-- `/ships info ship:<ID>` … 艦艇1隻の詳細を整形テキストで表示（入力補完あり）
-- `/ships search keyword:<キーワード>` … 名前・艦級・愛称で検索
+Discordのスラッシュコマンドは「コマンド → サブコマンドグループ → サブコマンド」の3階層までしか対応していないため、`military`・`railway`はドメインごとにトップレベルコマンドを分け、その配下にカテゴリ（グループ）→ 操作（list/show）という構成にしています。
 
-- `/tanks list type:<車種>` … 車種ごとの戦車一覧を表示（簡易情報）
-- `/tanks info tank:<ID>` … 車両1機の詳細を整形テキストで表示（入力補完あり）
-- `/tanks search keyword:<キーワード>` … 名前・型式・愛称で検索
+### `/military`（軍事装備）
 
-- `/aircraft list type:<機種>` … 機種ごとの航空機一覧を表示（簡易情報）
-- `/aircraft info plane:<ID>` … 機体1機の詳細を整形テキストで表示（入力補完あり）
-- `/aircraft search keyword:<キーワード>` … 名前・型式・愛称で検索
+- `/military ships list type:<艦種>` … 艦種ごとの艦艇一覧を表示
+- `/military ships show ship:<ID>` … 艦艇1隻の詳細を表示（入力補完あり）
+- `/military tanks list type:<車種>` … 車種ごとの戦車一覧を表示
+- `/military tanks show tank:<ID>` … 車両1両の詳細を表示（入力補完あり）
+- `/military airplanes list type:<機種>` … 機種ごとの航空機一覧を表示
+- `/military airplanes show plane:<ID>` … 機体1機の詳細を表示（入力補完あり）
+
+### `/railway`（鉄道）
+
+- `/railway lines list type:<種別>` … 種別ごとの路線一覧を表示
+- `/railway lines show line:<ID>` … 路線1件の詳細を表示（入力補完あり）
+- `/railway cars list type:<種別>` … 種別ごとの車両一覧を表示
+- `/railway cars show car:<ID>` … 車両1件の詳細を表示（入力補完あり）
+- `/railway companies list type:<種別>` … 種別ごとの鉄道会社一覧を表示
+- `/railway companies show company:<ID>` … 鉄道会社1件の詳細を表示（入力補完あり）
+
+現在は構造のみで、データは書き換え用のサンプル1件ずつが入っています（詳細は後述）。
+
+### `/nation`（空想国家）
 
 - `/nation info nation:<ID>` … 空想国家1カ国の総合力をダッシュボード形式で表示（入力補完あり）
 - `/nation list` … 登録されている国家の一覧を表示
@@ -22,14 +34,18 @@
 - `/nation compare nation1:<ID> nation2:<ID>` … 2カ国の国力を比較表示（入力補完あり）
 - `/nation rank stat:<指標>` … 人口・GDP・国防費・兵力・保有戦車/艦艇/航空機のいずれかで国家をランキング表示
 
-- `/help [command:<コマンド名>]` … 利用できる全コマンドの一覧を自動生成して表示。`command`を指定すると、そのコマンドのサブコマンド・パラメータの詳細（型・必須/任意・選択肢・入力補完の有無など）を表示（コマンド追加時もこのファイルの編集は不要）
+### `/rate`（鉱石為替）
 
 - `/rate set ore:<鉱石> value:<数値>` … 【要サーバー管理権限】相場を手動で設定
 - `/rate trade ore:<鉱石> amount:<数量> action:<買い/売り>` … 取引を記録し、需給に応じて相場を動かす（全員に公開表示）
 - `/rate show list` … 金インゴット1個を基準とした、全鉱石の為替レート一覧を表示
 - `/rate show history ore:<鉱石> [points:<件数>]` … 鉱石の相場推移をグラフ画像で表示
 
-### `info` の表示例
+### `/help`
+
+- `/help [command:<コマンド名>]` … 利用できる全コマンドの一覧を自動生成して表示。`command`を指定すると、そのコマンドのサブコマンド・パラメータの詳細（型・必須/任意・選択肢・入力補完の有無など）を表示（コマンド追加時もこのファイルの編集は不要）
+
+### `military ships show` の表示例
 
 ```
 ━━━━━━━━━━━━━━━━━━
@@ -110,15 +126,15 @@ npm run deploy
 npm start
 ```
 
-## データの追加・編集方法
+## 軍事装備データ（/military）の追加・編集方法
 
-`data/ships.json`、`data/tanks.json`、`data/aircraft.json` を編集するだけで、Bot再起動後に反映されます。各エントリは以下の形式です。
+`data/ships.json`、`data/tanks.json`、`data/airplanes.json` を編集するだけで、Bot再起動後に反映されます。各エントリは以下の形式です。
 
 ```jsonc
 {
   "yamato": {
     "name": "大和",
-    "type": "BB",              // /list の絞り込みに使う内部コード（各commands/*.jsのaddChoicesと一致させる）
+    "type": "BB",              // list の絞り込みに使う内部コード（commands/military.jsのtypeChoicesと一致させる）
     "type_name": "戦艦",        // 艦種/車種/機種の日本語表示名
     "class": "大和型",           // 艦級・車級・機級
     "country_built": "日本",     // 建造国・製造国
@@ -144,9 +160,66 @@ npm start
 }
 ```
 
-- キー（例: `yamato`）が `/ships info` などで使うIDになります。半角英数字推奨です。
-- `type` は各コマンドファイル（`commands/ships.js` など）の `addChoices` で定義されている値と一致させてください。新しい種別を増やす場合は `addChoices` にも追加してください。
+- キー（例: `yamato`）が `/military ships show` などで使うIDになります。半角英数字推奨です。
+- `type` は `commands/military.js` の `GROUPS.ships.typeChoices`（tanks/airplanesも同様）で定義されている値と一致させてください。新しい種別を増やす場合はそこにも追加してください（種別の選択肢を増やす変更なので `npm run deploy` が必要です）。
 - `armament` は配列なので、兵装の数だけ自由に増減できます。
+
+## 鉄道データ（/railway）の追加・編集方法
+
+`data/lines.json`（路線）、`data/cars.json`（車両）、`data/companies.json`（鉄道会社）を編集します。それぞれサンプルとして `sample_line` / `sample_car` / `sample_company` が1件ずつ入っているので、書き換えるか削除して使ってください。
+
+```jsonc
+// data/companies.json
+{
+  "sample_company": {
+    "name": "サンプル電鉄",
+    "type": "PRIVATE",              // list の絞り込みに使う内部コード
+    "type_name": "民鉄",             // 種別の日本語表示名
+    "founded": "1920年",            // 設立
+    "headquarters": "サンプル駅",     // 本社
+    "lines_operated": ["sample_line"], // 運営路線のID配列（lines.jsonのキーを指定すると路線名で自動表示）
+    "notes": "備考"
+  }
+}
+```
+
+```jsonc
+// data/lines.json
+{
+  "sample_line": {
+    "name": "サンプル本線",
+    "type": "MAIN",
+    "type_name": "本線",
+    "company": "sample_company",     // companies.jsonのキーを指定すると会社名で自動表示
+    "opened": "1985年",
+    "status": "運行中",
+    "length_km": "17.4 km",
+    "stations_count": "10駅",
+    "notes": "備考"
+  }
+}
+```
+
+```jsonc
+// data/cars.json
+{
+  "sample_car": {
+    "name": "サンプル1000系",
+    "type": "COMMUTER",
+    "type_name": "通勤形",
+    "operator": "sample_company",    // companies.jsonのキーを指定すると会社名で自動表示
+    "introduced": "1990年",
+    "status": "運用中",
+    "max_speed": "120 km/h",
+    "capacity": "140名/両",
+    "notes": "備考"
+  }
+}
+```
+
+- `company` / `operator` / `lines_operated` に他ファイルのキーを入れておくと、詳細表示のときに自動的に名前へ変換されます（`/nation`の`allies`と同じ仕組みです）。
+- `type`の選択肢を増やす場合は `commands/railway.js` の `GROUPS.<lines|cars|companies>.typeChoices` に追加し、`npm run deploy` を実行してください。
+- フィールド構成（表示される項目）自体を変えたい場合は `utils/railway.js` の `CATEGORY_CONFIGS` を編集してください。
 
 ## 空想国家データ（/nation）の追加・編集方法
 
@@ -186,39 +259,47 @@ npm start
 military-bot/
 ├── index.js              # Bot本体（起動・イベント処理）
 ├── deploy-commands.js     # スラッシュコマンド登録スクリプト
-├── scheduler.js           # 鉱石市場の定期変動スケジューラー
 ├── package.json
 ├── .env.example
 ├── commands/
-│   ├── ships.js
-│   ├── tanks.js
-│   ├── aircraft.js
-│   ├── nation.js           # /nation コマンド（空想国家ダッシュボード）
-│   ├── help.js             # /help コマンド
-│   └── rate.js               # /rate コマンド（鉱石市場・為替）
+│   ├── military.js         # /military コマンド（ships/tanks/airplanesグループ）
+│   ├── railway.js           # /railway コマンド（lines/cars/companiesグループ）
+│   ├── nation.js             # /nation コマンド（空想国家ダッシュボード）
+│   ├── help.js               # /help コマンド
+│   └── rate.js                 # /rate コマンド（鉱石市場・為替）
 ├── data/
 │   ├── ships.json
 │   ├── tanks.json
-│   ├── aircraft.json
-│   ├── nations.json         # 空想国家データ
-│   ├── ores.json             # 鉱石の設定（表示名・初期値・流動性・変動幅）
-│   └── market-state.json     # 実行時に自動生成される現在の相場・履歴（編集不要）
+│   ├── airplanes.json
+│   ├── lines.json             # 路線データ（サンプル1件）
+│   ├── cars.json              # 車両データ（サンプル1件）
+│   ├── companies.json         # 鉄道会社データ（サンプル1件）
+│   ├── nations.json           # 空想国家データ
+│   ├── ores.json               # 鉱石の設定（表示名・初期値・流動性・変動幅）
+│   └── market-state.json       # 実行時に自動生成される現在の相場・履歴（編集不要）
 └── utils/
-    ├── military.js        # ships/tanks/aircraft 共通のロジック・Embed生成
-    ├── nations.js         # nation 用のロジック・Embed生成
-    ├── market.js           # 鉱石市場のデータ管理ロジック
-    └── marketDisplay.js    # 鉱石市場のEmbed・グラフURL生成
+    ├── military.js        # ships/tanks/airplanes 共通のロジック・Embed生成
+    ├── railway.js          # lines/cars/companies 共通のロジック・Embed生成
+    ├── nations.js          # nation 用のロジック・Embed生成
+    ├── market.js            # 鉱石市場のデータ管理ロジック
+    └── marketDisplay.js     # 鉱石市場のEmbed・グラフURL生成
 ```
+
+## コマンドの階層構造について
+
+Discordのスラッシュコマンドは技術的に「コマンド → サブコマンドグループ → サブコマンド」の3階層が上限です（グループの中にさらにグループを作ることはできません）。そのため、ドメイン（military/railway）をトップレベルコマンドとし、その中のカテゴリ（ships/tanks/airplanesなど）をサブコマンドグループ、操作（list/show）をサブコマンドとする構成にしています。
+
+新しいドメインを追加する場合（例: `/economy`）は、`commands/military.js` や `commands/railway.js` と同じパターン（`GROUPS`オブジェクトでカテゴリを定義し、`addSubcommandGroup`でlist/showを組み立てる）をコピーして作るのが簡単です。
 
 ## 新しいコマンドを追加した後の注意
 
-`/nation` はコマンドの「構造」自体が新規追加なので、Botを再起動するだけでなく
+コマンドの「構造」（新しいコマンド・サブコマンド・オプション）を追加・変更した場合は、Botを再起動するだけでなく
 
 ```bash
 npm run deploy
 ```
 
-を一度実行してDiscordにコマンドを登録する必要があります（データ(`nations.json`)の中身を編集するだけなら`deploy`は不要です）。
+を一度実行してDiscordにコマンドを登録し直す必要があります。データ（`*.json`の中身）を編集するだけなら`deploy`は不要です。
 
 ## 鉱石市場（/rate）の仕組み
 
@@ -232,11 +313,12 @@ npm run deploy
 
 ）。鉱石の組み合わせごとにレートを個別管理する必要はなく、新しい鉱石を1つ追加するだけで金との交換レートが自動的に使えるようになります。
 
-### 価格が動く3つの要因
+### 価格が動く2つの要因
 
-1. **定期的なランダム変動**：`.env`の`FLUCTUATION_INTERVAL_MINUTES`で指定した間隔（デフォルト60分）で、各鉱石が`ores.json`の`volatility`（変動幅）の範囲内でランダムに動きます。放置しているだけで相場が変わります。
-2. **`/rate trade`による需給変動**：取引量が多いほど、また`ores.json`の`liquidity`（流動性）が小さい鉱石ほど、価格が大きく動きます。1回の取引での変動幅は±20%が上限です。
-3. **`/rate set`による手動設定**：サーバー管理権限を持つ人が直接値を上書きできます。イベントやマイクラ内の大量取引が実際に発生したときの帳尻合わせなどに使えます。
+1. **`/rate trade`による需給変動**：取引量が多いほど、また`ores.json`の`liquidity`（流動性）が小さい鉱石ほど、価格が大きく動きます。1回の取引での変動幅は±20%が上限です。
+2. **`/rate set`による手動設定**：サーバー管理権限を持つ人が直接値を上書きできます。イベントやマイクラ内の大量取引が実際に発生したときの帳尻合わせなどに使えます。
+
+（以前あった「放置しているだけで定期的にランダム変動する」機能は廃止しました。相場は`/rate trade`または`/rate set`を実行したときだけ動きます。）
 
 ### データの追加・編集方法
 
@@ -248,8 +330,7 @@ npm run deploy
     "name": "ダイヤモンド",       // 表示名
     "emoji": "💎",               // 表示に使う絵文字
     "initial_value": 100,        // 初回起動時の初期値(pt)
-    "liquidity": 50,             // 流動性。小さいほど同じ取引量での値動きが大きくなる
-    "volatility": 0.05           // 定期変動の最大振れ幅（0.05 = ±5%）
+    "liquidity": 50              // 流動性。小さいほど同じ取引量での値動きが大きくなる
   }
 }
 ```
@@ -257,10 +338,6 @@ npm run deploy
 - キー（例: `diamond`）がコマンドで使うIDになります。
 - 新しい鉱石を追加したら、Bot再起動時に自動的に初期値で相場が作成されます（`npm run deploy`は不要）。
 - `data/market-state.json` は**現在の相場・履歴を保存する実行時データ**です。手動で編集する想定のファイルではなく、初回起動時に自動生成されます。相場をリセットしたい場合はこのファイルを削除して再起動してください。
-
-### 通知チャンネルの設定（任意）
-
-`.env`の`MARKET_ANNOUNCE_CHANNEL_ID`にチャンネルIDを設定すると、定期変動で3%以上動いた鉱石があったときに自動でそのチャンネルに通知します。設定しなければ通知は行われず、コマンドで照会したときだけ最新の相場が見られます。
 
 ### 今の実装でできないこと（拡張したい場合）
 
@@ -271,7 +348,7 @@ npm run deploy
 
 ## 今後の拡張アイデア
 
-- `/ships compare ship1:<ID> ship2:<ID>` … 2隻のスペック比較コマンド
-- `/ships random type:<艦種>` … ランダム表示コマンド
+- `/railway`のデータを実際の路線・車両・鉄道会社で埋める
+- 装備同士の比較コマンド（例: `/military ships compare ship1:<ID> ship2:<ID>`）
 - データベース（SQLite等）への移行で、ユーザーからの登録・編集コマンドに対応
 - 画像URLをdataに追加し、Embedにサムネイルを表示

@@ -133,38 +133,6 @@ function applyTrade(oreId, amount, action) {
 }
 
 /**
- * 全鉱石にランダムな時価変動を適用する（定期実行用）
- * @returns {Array<object>} 各鉱石の変動結果
- */
-function applyRandomFluctuation() {
-    const ores = loadOres();
-    const state = loadState();
-    const changes = [];
-
-    Object.entries(ores).forEach(([id, ore]) => {
-        const currentValue = state.rates[id];
-        const volatility = typeof ore.volatility === "number" ? ore.volatility : 0.03;
-        const randomPercent = (Math.random() * 2 - 1) * volatility; // -volatility 〜 +volatility
-        const newValue = round(Math.max(0.01, currentValue * (1 + randomPercent)));
-
-        state.rates[id] = newValue;
-        recordHistory(state, id, newValue);
-
-        changes.push({
-            id,
-            name: ore.name,
-            emoji: ore.emoji,
-            previousValue: currentValue,
-            newValue,
-            percent: randomPercent * 100,
-        });
-    });
-
-    saveState(state);
-    return changes;
-}
-
-/**
  * 指定した鉱石の履歴を直近limit件取得する
  */
 function getHistory(oreId, limit = 50) {
@@ -204,7 +172,6 @@ module.exports = {
     computeExchangeRate,
     setRate,
     applyTrade,
-    applyRandomFluctuation,
     getHistory,
     findValueNear,
     round,

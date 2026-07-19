@@ -20,7 +20,7 @@ const CATEGORY_CONFIGS = {
         weightLabel: "重量",
         color: 0x744210,
     },
-    aircraft: {
+    airplanes: {
         label: "航空機",
         classLabel: "機級",
         typeLabel: "機種",
@@ -49,21 +49,6 @@ function filterByType(data, type) {
 }
 
 /**
- * 名前・級名・IDにキーワードが部分一致するものを検索する
- */
-function searchEntries(data, keyword) {
-    const lower = keyword.toLowerCase();
-    return toEntryArray(data).filter((entry) => {
-        return (
-            entry.id.toLowerCase().includes(lower) ||
-            entry.name.toLowerCase().includes(lower) ||
-            (entry.class && entry.class.toLowerCase().includes(lower)) ||
-            (entry.nickname && entry.nickname.toLowerCase().includes(lower))
-        );
-    });
-}
-
-/**
  * IDから単一のエントリを取得する
  */
 function getEntryById(data, id) {
@@ -84,7 +69,7 @@ function padLabel(label) {
  * /info 用の整形済みテキストを組み立てる（Embedのdescriptionに使う本文部分）
  * タイトル(艦名)・上下の罫線はEmbed側のtitle/カード枠が担うため、本文には含めない。
  * @param {object} entry - getEntryByIdで取得したエントリ
- * @param {"ships"|"tanks"|"aircraft"} category
+ * @param {"ships"|"tanks"|"airplanes"} category
  */
 function buildInfoBody(entry, category) {
     const config = CATEGORY_CONFIGS[category];
@@ -127,7 +112,7 @@ function buildInfoBody(entry, category) {
  * /info 用のEmbedを組み立てる。
  * タイトル部分に艦名＋ID、左の色帯はカテゴリごとの色、本文はbuildInfoBody()のテキストをそのまま使う。
  * @param {object} entry - getEntryByIdで取得したエントリ
- * @param {"ships"|"tanks"|"aircraft"} category
+ * @param {"ships"|"tanks"|"airplanes"} category
  */
 function buildInfoEmbed(entry, category) {
     const config = CATEGORY_CONFIGS[category];
@@ -175,7 +160,6 @@ module.exports = {
     CATEGORY_CONFIGS,
     toEntryArray,
     filterByType,
-    searchEntries,
     getEntryById,
     buildInfoBody,
     buildInfoEmbed,
