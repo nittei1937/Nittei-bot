@@ -19,7 +19,7 @@ const VALUE_TYPE_LABELS = {
 /**
  * SlashCommandBuilderのtoJSON()出力から、サブコマンドグループも含めて
  * 「表示用コマンド名 / 説明 / パラメータ」のフラットなリストを作る。
- * 例: show グループの中の list サブコマンド -> name: "show list"
+ * 例: info グループの中の list サブコマンド -> name: "info list"
  */
 function flattenSubcommands(json) {
     const result = [];

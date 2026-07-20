@@ -48,7 +48,7 @@ module.exports = {
         )
         .addSubcommandGroup((group) =>
             group
-                .setName("show")
+                .setName("info")
                 .setDescription("相場を表示")
                 .addSubcommand((sub) =>
                     sub.setName("list").setDescription("金インゴット1個を基準にした、全鉱石の交換レート一覧を表示")
@@ -84,8 +84,8 @@ module.exports = {
         const group = interaction.options.getSubcommandGroup(false);
         const subcommand = interaction.options.getSubcommand();
 
-        // /rate show list, /rate show history
-        if (group === "show") {
+        // /rate info list, /rate info history
+        if (group === "info") {
             if (subcommand === "list") {
                 return interaction.reply({ embeds: [buildGoldRateListEmbed()] });
             }

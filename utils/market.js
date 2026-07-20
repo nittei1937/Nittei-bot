@@ -6,7 +6,7 @@ const STATE_PATH = path.join(__dirname, "..", "data", "market-state.json");
 
 const HISTORY_LIMIT = 500; // 1鉱石あたり保持する履歴の最大件数
 const MAX_TRADE_IMPACT = 0.2; // 1回の取引で動かせる価格変動の上限（±20%）
-const DEFAULT_BASE_ORE = "gold"; // /rate show list で基準にする鉱石
+const DEFAULT_BASE_ORE = "gold"; // /rate info list で基準にする鉱石
 
 /**
  * data/ores.json（鉱石の設定・静的データ）を読み込む

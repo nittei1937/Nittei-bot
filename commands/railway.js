@@ -64,7 +64,7 @@ function makeSubcommandGroup(builderGroup, groupKey) {
 
     builderGroup.addSubcommand((sub) =>
         sub
-            .setName("show")
+            .setName("info")
             .setDescription(`${group.label}1件の詳細情報を表示`)
             .addStringOption((option) =>
                 option
@@ -124,7 +124,7 @@ module.exports = {
             return interaction.reply({ embeds: [embed] });
         }
 
-        if (subcommand === "show") {
+        if (subcommand === "info") {
             const id = interaction.options.getString(group.idOption);
             const entry = getEntryById(group.data, id);
 

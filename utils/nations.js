@@ -87,8 +87,8 @@ function buildNationListEmbed(entries) {
         return embed;
     }
 
-    const shown = entries.slice(0, 25);
-    shown.forEach((nation) => {
+    const infon = entries.slice(0, 25);
+    infon.forEach((nation) => {
         embed.addFields({
             name: `${nation.name}（${nation.id}）`,
             value: [
@@ -185,8 +185,8 @@ function buildNationRankEmbed(entries, statKey, statLabel) {
         (a, b) => parseMagnitude(b[statKey]) - parseMagnitude(a[statKey])
     );
 
-    const shown = sorted.slice(0, 25);
-    const lines = shown.map((nation, index) => {
+    const infon = sorted.slice(0, 25);
+    const lines = infon.map((nation, index) => {
         const medal = index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : `${index + 1}.`;
         return `${medal} **${nation.name}**（${nation.id}） — ${nation[statKey]}`;
     });

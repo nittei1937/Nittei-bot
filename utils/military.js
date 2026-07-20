@@ -136,8 +136,13 @@ function buildListEmbed({ title, category, entries, emptyMessage }) {
     }
 
     const shown = entries.slice(0, 25);
+
     shown.forEach((entry) => {
-        const nicknamePart = entry.nickname && entry.nickname !== "特になし" ? `（${entry.nickname}）` : "";
+        const nicknamePart =
+            entry.nickname && entry.nickname !== "特になし"
+                ? `（${entry.nickname}）`
+                : "";
+
         embed.addFields({
             name: `${entry.name}${nicknamePart}`,
             value: [
@@ -150,12 +155,13 @@ function buildListEmbed({ title, category, entries, emptyMessage }) {
     });
 
     if (entries.length > 25) {
-        embed.setFooter({ text: `他 ${entries.length - 25} 件は表示しきれませんでした。検索条件を絞ってください。` });
+        embed.setFooter({
+            text: `他 ${entries.length - 25} 件は表示しきれませんでした。検索条件を絞ってください。`,
+        });
     }
 
     return embed;
 }
-
 module.exports = {
     CATEGORY_CONFIGS,
     toEntryArray,

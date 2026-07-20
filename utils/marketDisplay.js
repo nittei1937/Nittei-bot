@@ -3,7 +3,7 @@ const { loadOres, loadState, findValueNear } = require("./market.js");
 
 const COLOR = 0xd69e2e;
 const DAY_MS = 24 * 60 * 60 * 1000;
-const BASE_ORE_ID = "gold"; // /rate show list の基準にする鉱石
+const BASE_ORE_ID = "gold"; // /rate info list の基準にする鉱石
 
 /**
  * 24時間前と比較した変化率(%)を計算する。履歴が足りない場合はnullを返す。
@@ -28,7 +28,7 @@ function formatChangeText(percent) {
 }
 
 /**
- * /rate show list 用のEmbedを作成する。
+ * /rate info list 用のEmbedを作成する。
  * 金インゴット1個を基準に、それが他の各鉱石何個分に相当するかを一覧表示する。
  */
 function buildGoldRateListEmbed() {
@@ -103,7 +103,7 @@ function buildTradeResultEmbed({ user, oreInfo, amount, action, result }) {
 }
 
 /**
- * /rate show history 用のQuickChart画像URLを生成する
+ * /rate info history 用のQuickChart画像URLを生成する
  */
 function buildHistoryChartUrl(oreInfo, points) {
     const labels = points.map((p) =>
@@ -136,7 +136,7 @@ function buildHistoryChartUrl(oreInfo, points) {
 }
 
 /**
- * /rate show history 用のEmbedを作成する
+ * /rate info history 用のEmbedを作成する
  */
 function buildHistoryEmbed(oreInfo, points) {
     const embed = new EmbedBuilder()

@@ -67,7 +67,7 @@ function resolveRefName(refData, id) {
 }
 
 /**
- * /railway <group> show 用のEmbedを作成する
+ * /railway <group> info 用のEmbedを作成する
  * @param {object} entry - getEntryByIdで取得したエントリ
  * @param {"lines"|"cars"|"companies"} category
  * @param {object} allData - { lines, cars, companies } 他カテゴリ参照解決用
@@ -116,8 +116,8 @@ function buildListEmbed({ title, category, entries, emptyMessage }) {
         return embed;
     }
 
-    const shown = entries.slice(0, 25);
-    shown.forEach((entry) => {
+    const infon = entries.slice(0, 25);
+    infon.forEach((entry) => {
         embed.addFields({
             name: `${entry.name}（${entry.id}）`,
             value: `種別：${entry.type_name}(${entry.type})${entry.status ? ` ／ 状態：${entry.status}` : ""}`,

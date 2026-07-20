@@ -1,0 +1,23 @@
+{
+    "Japan": {
+        "name": "日本國",
+        "capital": "東京都",
+        "government": "立憲君主制・議院内閣制",
+        "head_of_state": "徳仁天皇",
+        "head_of_government": "高市早苗",
+        "founded": "紀元前660年2月11日",
+        "population": "123,000,000人",
+        "area": "377,973 km²",
+        "gdp": "$4,127,102,180,000",
+        "military_budget": "$60,600,000,000",
+        "active_personnel": "217,701人名",
+        "reserve_personnel": "36,000人名",
+        "tanks_count": "300両",
+        "ships_count": "130隻",
+        "aircraft_count": "1000機",
+        "has_nuclear": false,
+        "allies": ["米国"],
+        "rivals": [],
+        "notes": "主に北海道、本州、四国、九州、沖縄で構成される東アジアに位置する島国。紀元前660年に成立したとされ現存する世界最古の国家としてギネス世界記録にも認定されている。世界で唯一Emperorと呼ばれる天皇を省庁とする立憲君主制国家であり第二次世界大戦での敗戦を受け、平和主義や戦力不保持などを憲法に定める珍しい国である。"
+    }
+}
