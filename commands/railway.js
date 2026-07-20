@@ -1,7 +1,7 @@
 const { SlashCommandBuilder } = require("discord.js");
-const lines = require("../data/lines.json");
-const cars = require("../data/cars.json");
-const companies = require("../data/companies.json");
+const lines = require("../data/railway/lines.json");
+const cars = require("../data/railway/cars.json");
+const companies = require("../data/railway/companies.json");
 const { filterByType, getEntryById, buildInfoEmbed, buildListEmbed } = require("../utils/railway.js");
 
 const ALL_DATA = { lines, cars, companies };
