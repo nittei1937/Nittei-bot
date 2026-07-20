@@ -2,7 +2,6 @@ const fs = require("fs");
 const path = require("path");
 
 const ORES_PATH = path.join(__dirname, "..", "data", "ores.json");
-const STATE_PATH = path.join(__dirname, "..", "data", "market-state.json");
 
 const HISTORY_LIMIT = 500; // 1鉱石あたり保持する履歴の最大件数
 const DEFAULT_BASE_ORE = "gold"; // /rate info list で基準にする鉱石
@@ -14,39 +13,7 @@ function loadOres() {
     return JSON.parse(fs.readFileSync(ORES_PATH, "utf8"));
 }
 
-/**
- * data/market-state.json（現在の相場・履歴。実行時に自動生成/更新される）を読み込む。
- * ores.jsonに新しい鉱石が追加されていれば、初期値で自動的に補完する。
- */
-function loadState() {
-    const ores = loadOres();
-    let state;
-
-    if (fs.existsSync(STATE_PATH)) {
-        state = JSON.parse(fs.readFileSync(STATE_PATH, "utf8"));
-    } else {
-        state = { rates: {}, history: {} };
-    }
-
-    let changed = false;
-    Object.entries(ores).forEach(([id, ore]) => {
-        if (!(id in state.rates)) {
-            state.rates[id] = ore.value;
-            state.history[id] = [{ t: Date.now(), v: ore.value }];
-            changed = true;
-        }
-    });
-
-    if (changed) saveState(state);
-
-    return state;
-}
-
-function saveState(state) {
-    fs.writeFileSync(STATE_PATH, JSON.stringify(state, null, 2), "utf8");
-}
-
-function recordHistory(state, oreId, value) {
+function recordHistory(oreId, value) {
     if (!state.history[oreId]) state.history[oreId] = [];
     state.history[oreId].push({ t: Date.now(), v: value });
     if (state.history[oreId].length > HISTORY_LIMIT) {
@@ -87,13 +54,21 @@ function computeExchangeRate(oreIdA, oreIdB) {
  * 管理者によるレートの手動設定
  */
 function setRate(oreId, value) {
-    const state = loadState();
-    if (!(oreId in state.rates)) return null;
+    const ores = loadOres();
+
+    if (!ores[oreId]) return null;
 
     const newValue = round(Math.max(0.01, value));
-    state.rates[oreId] = newValue;
-    recordHistory(state, oreId, newValue);
-    saveState(state);
+
+    ores[oreId].gold_rate = newValue;
+
+    fs.writeFileSync(
+        ORES_PATH,
+        JSON.stringify(ores, null, 2),
+        "utf8"
+    );
+
+    recordHistory(oreId, newValue);
 
     return newValue;
 }
@@ -128,10 +103,7 @@ function findValueNear(history, targetTime) {
 }
 
 module.exports = {
-    DEFAULT_BASE_ORE,
     loadOres,
-    loadState,
-    saveState,
     getAllOreIds,
     getOreInfo,
     getRate,

@@ -72,28 +72,28 @@ module.exports = {
                 return interaction.reply({ embeds: [buildGoldRateListEmbed()] });
             }
 
-            if (subcommand === "history") {
-                const id = interaction.options.getString("ore");
-                const points = interaction.options.getInteger("points") || 30;
+            // if (subcommand === "history") {
+            //     const id = interaction.options.getString("ore");
+            //     const points = interaction.options.getInteger("points") || 30;
 
-                const oreInfo = getOreInfo(id);
-                if (!oreInfo) {
-                    return interaction.reply({
-                        content: `ID「${id}」に該当する鉱石は見つかりませんでした。`,
-                        ephemeral: true,
-                    });
-                }
+            //     const oreInfo = getOreInfo(id);
+            //     if (!oreInfo) {
+            //         return interaction.reply({
+            //             content: `ID「${id}」に該当する鉱石は見つかりませんでした。`,
+            //             ephemeral: true,
+            //         });
+            //     }
 
-                const history = getHistory(id, points);
-                if (history.length < 2) {
-                    return interaction.reply({
-                        content: `「${oreInfo.name}」はまだ十分な履歴がありません。相場が数回変動してからお試しください。`,
-                        ephemeral: true,
-                    });
-                }
+            //     const history = getHistory(id, points);
+            //     if (history.length < 2) {
+            //         return interaction.reply({
+            //             content: `「${oreInfo.name}」はまだ十分な履歴がありません。相場が数回変動してからお試しください。`,
+            //             ephemeral: true,
+            //         });
+            //     }
 
-                return interaction.reply({ embeds: [buildHistoryEmbed({ id, ...oreInfo }, history)] });
-            }
+            //     return interaction.reply({ embeds: [buildHistoryEmbed({ id, ...oreInfo }, history)] });
+            // }
             return;
         }
 

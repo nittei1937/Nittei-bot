@@ -1,13 +1,109 @@
 {
-  "sample_car": {
-    "name": "サンプル1000系",
+  "series_207": {
+    "name": "207系電車",
     "type": "COMMUTER",
     "type_name": "通勤形",
-    "operator": "sample_company",
-    "introduced": "1990年",
+    "operator": "jr_west",
+    "introduced": "1991年",
     "status": "運用中",
     "max_speed": "120 km/h",
-    "capacity": "140名/両",
-    "notes": "これはサンプル(テンプレート)です。実際の車両データに書き換えるか、このキーごと削除してください。"
+    "capacity": "",
+    "notes": "JR西日本初のVVVFインバータ制御通勤形電車。JR東西線対応車として開発され、現在も京阪神緩行線で運用されている。"
+  },
+
+  "series_221": {
+    "name": "221系電車",
+    "type": "SUBURBAN",
+    "type_name": "近郊形",
+    "operator": "jr_west",
+    "introduced": "1989年",
+    "status": "運用中",
+    "max_speed": "120 km/h",
+    "capacity": "",
+    "notes": "JR西日本初の本格的な近郊形電車。新快速・快速を中心に現在も幅広く運用されている。"
+  },
+
+  "series_223": {
+    "name": "223系電車",
+    "type": "SUBURBAN",
+    "type_name": "近郊形",
+    "operator": "jr_west",
+    "introduced": "1994年",
+    "status": "運用中",
+    "max_speed": "130 km/h",
+    "capacity": "",
+    "notes": "JR西日本の主力近郊形電車。多数の番台区分が存在し、新快速・快速・普通列車まで幅広く使用されている。"
+  },
+
+  "series_225": {
+    "name": "225系電車",
+    "type": "SUBURBAN",
+    "type_name": "近郊形",
+    "operator": "jr_west",
+    "introduced": "2010年",
+    "status": "運用中",
+    "max_speed": "130 km/h",
+    "capacity": "",
+    "notes": "223系を発展させたJR西日本の近郊形電車。京阪神地区の新快速・快速の主力車両。"
+  },
+
+  "series_321": {
+    "name": "321系電車",
+    "type": "COMMUTER",
+    "type_name": "通勤形",
+    "operator": "jr_west",
+    "introduced": "2005年",
+    "status": "運用中",
+    "max_speed": "120 km/h",
+    "capacity": "",
+    "notes": "207系の後継として開発された通勤形電車。JR福知山線脱線事故後の代替車としても増備された。"
+  },
+
+  "series_323": {
+    "name": "323系電車",
+    "type": "COMMUTER",
+    "type_name": "通勤形",
+    "operator": "jr_west",
+    "introduced": "2016年",
+    "status": "運用中",
+    "max_speed": "120 km/h",
+    "capacity": "",
+    "notes": "大阪環状線・JRゆめ咲線専用として投入された通勤形電車。103系・201系を置き換えた。"
+  },
+
+  "series_e233": {
+    "name": "E233系電車",
+    "type": "COMMUTER",
+    "type_name": "一般形",
+    "operator": "jr_east",
+    "introduced": "2006年",
+    "status": "運用中",
+    "max_speed": "130 km/h",
+    "capacity": "",
+    "notes": "JR東日本の主力一般形電車。故障に強い車両をコンセプトに開発され、首都圏22路線で3,000両以上が活躍するJRグループ最大の系列。"
+  },
+
+  "series_e235": {
+    "name": "E235系電車",
+    "type": "COMMUTER",
+    "type_name": "一般形",
+    "operator": "jr_east",
+    "introduced": "2015年",
+    "status": "運用中",
+    "max_speed": "120 km/h",
+    "capacity": "",
+    "notes": "E233系の後継として開発されたJR東日本の次世代一般形電車。INTEROSを初採用し、山手線・横須賀線・総武快速線で運用されている。"
+  },
+
+  "series_e531": {
+    "name": "E531系電車",
+    "type": "SUBURBAN",
+    "type_name": "近郊形",
+    "operator": "jr_east",
+    "introduced": "2005年",
+    "status": "運用中",
+    "max_speed": "130 km/h",
+    "capacity": "",
+    "notes": "JR東日本の交直流近郊形電車。常磐線・水戸線を中心に運用され、普通列車用として初めて130km/h運転を実現した。"
   }
 }
