@@ -71,16 +71,17 @@ for (const file of commandFiles) {
 // Bot起動完了
 // =========================
 
-client.once(Events.ClientReady, readyClient => {
-
-    console.log("");
+client.once(Events.ClientReady, (readyClient) => {
     console.log("====================================");
     console.log("🎉 NitteiBot 起動完了");
     console.log(`🤖 Bot : ${readyClient.user.tag}`);
     console.log(`📊 サーバー数 : ${readyClient.guilds.cache.size}`);
-    console.log("====================================");
-    console.log("");
 
+    readyClient.guilds.cache.forEach(guild => {
+        console.log(`- ${guild.name} (${guild.id})`);
+    });
+
+    console.log("====================================");
 });
 
 // =========================
