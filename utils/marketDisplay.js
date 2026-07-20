@@ -50,7 +50,7 @@ function buildGoldRateListEmbed() {
             id,
             ...ore,
             value: state.rates[id],
-            rateFromGold: goldValue / state.rates[id], // 金1個 ＝ rateFromGold 個
+            rateFromGold: state.rates[id],
             change: get24hChangePercent(id),
         }))
         .sort((a, b) => b.value - a.value);
@@ -60,44 +60,19 @@ function buildGoldRateListEmbed() {
         .setColor(COLOR)
         .setDescription(
             [
-                `基準：${goldInfo.emoji} **${goldInfo.name}** 1個（現在値 ${goldValue} pt）`,
+                `基準：${goldInfo.emoji} **${goldInfo.name}** 1個`,
                 "金1個と交換できる各鉱石の数量です。",
             ].join("\n")
         );
-
     entries.forEach((entry) => {
         embed.addFields({
             name: `${entry.emoji} ${entry.name}`,
             value: `1金 ＝ **${entry.rateFromGold.toFixed(2)}** 個\n24時間変化：${formatChangeText(entry.change)}`,
-            inline: true,
+            inline: false,
         });
     });
 
-    embed.setFooter({ text: "/rate trade で取引を記録すると、需給に応じてレートが変動します。" });
-
-    return embed;
-}
-
-/**
- * /rate trade 用の結果Embedを作成する
- */
-function buildTradeResultEmbed({ user, oreInfo, amount, action, result }) {
-    const actionLabel = action === "buy" ? "買い" : "売り";
-    const arrow = result.newValue >= result.previousValue ? "📈" : "📉";
-    const sign = result.impactPercent >= 0 ? "+" : "";
-
-    const embed = new EmbedBuilder()
-        .setTitle(`${oreInfo.emoji} ${oreInfo.name} の取引が成立しました`)
-        .setColor(result.newValue >= result.previousValue ? 0x38a169 : 0xe53e3e)
-        .setDescription(
-            [
-                `${user}さんが **${oreInfo.name}を${amount}個 ${actionLabel}** しました。`,
-                `${result.previousValue} pt → **${result.newValue} pt**　${arrow} ${sign}${result.impactPercent.toFixed(1)}%`,
-                result.clamped ? "（取引量が大きすぎたため、変動幅の上限（±20%）で制限されました）" : null,
-            ]
-                .filter(Boolean)
-                .join("\n")
-        );
+    embed.setFooter({ text: "/rate info history で相場推移を確認できます。" });
 
     return embed;
 }
@@ -152,7 +127,6 @@ module.exports = {
     BASE_ORE_ID,
     get24hChangePercent,
     buildGoldRateListEmbed,
-    buildTradeResultEmbed,
     buildHistoryChartUrl,
     buildHistoryEmbed,
 };

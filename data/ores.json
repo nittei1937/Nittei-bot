@@ -2,49 +2,56 @@
   "netherite": {
     "name": "ネザライトインゴット",
     "emoji": "🖤",
-    "initial_value": 500,
-    "liquidity": 10
+    "gold_rate": 0.05
   },
   "diamond": {
     "name": "ダイヤモンド",
     "emoji": "💎",
-    "initial_value": 100,
-    "liquidity": 50
+    "gold_rate": 0.25
   },
   "emerald": {
     "name": "エメラルド",
     "emoji": "💚",
-    "initial_value": 60,
-    "liquidity": 100
+    "gold_rate": 0.5
   },
   "gold": {
     "name": "金インゴット",
     "emoji": "🟡",
-    "initial_value": 20,
-    "liquidity": 300
+    "gold_rate": 1
   },
   "iron": {
     "name": "鉄インゴット",
     "emoji": "⚙️",
-    "initial_value": 10,
-    "liquidity": 500
+    "gold_rate": 2
   },
-  "lapis": {
-    "name": "ラピスラズリ",
-    "emoji": "🔷",
-    "initial_value": 5,
-    "liquidity": 800
+  "copper": {
+    "name": "銅インゴット",
+    "emoji": "🟠",
+    "gold_rate": 6
   },
   "redstone": {
     "name": "レッドストーン",
     "emoji": "🔺",
-    "initial_value": 3,
-    "liquidity": 1000
+    "gold_rate": 5
+  },
+  "lapis": {
+    "name": "ラピスラズリ",
+    "emoji": "🔷",
+    "gold_rate": 4
   },
   "coal": {
     "name": "石炭",
     "emoji": "⬛",
-    "initial_value": 1,
-    "liquidity": 2000
+    "gold_rate": 10
+  },
+  "quartz": {
+    "name": "ネザークォーツ",
+    "emoji": "🤍",
+    "gold_rate": 44
+  },
+  "amethyst": {
+    "name": "アメジストの欠片",
+    "emoji": "🟣",
+    "gold_rate": 10
   }
 }

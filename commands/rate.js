@@ -1,6 +1,6 @@
 const { SlashCommandBuilder, PermissionFlagsBits } = require("discord.js");
-const { getAllOreIds, getOreInfo, setRate, applyTrade, getHistory } = require("../utils/market.js");
-const { buildGoldRateListEmbed, buildTradeResultEmbed, buildHistoryEmbed } = require("../utils/marketDisplay.js");
+const { getAllOreIds, getOreInfo, setRate, getHistory } = require("../utils/market.js");
+const { buildGoldRateListEmbed, buildHistoryEmbed } = require("../utils/marketDisplay.js");
 
 function oreAutocompleteChoices(focused) {
     const lower = focused.toLowerCase();
@@ -25,25 +25,7 @@ module.exports = {
                     option.setName("ore").setDescription("設定する鉱石").setRequired(true).setAutocomplete(true)
                 )
                 .addNumberOption((option) =>
-                    option.setName("value").setDescription("設定する値（pt）").setRequired(true).setMinValue(0.01)
-                )
-        )
-        .addSubcommand((sub) =>
-            sub
-                .setName("trade")
-                .setDescription("取引を記録し、需給に応じて相場を動かす")
-                .addStringOption((option) =>
-                    option.setName("ore").setDescription("取引する鉱石").setRequired(true).setAutocomplete(true)
-                )
-                .addIntegerOption((option) =>
-                    option.setName("amount").setDescription("取引量").setRequired(true).setMinValue(1)
-                )
-                .addStringOption((option) =>
-                    option
-                        .setName("action")
-                        .setDescription("買い・売り")
-                        .setRequired(true)
-                        .addChoices({ name: "買い", value: "buy" }, { name: "売り", value: "sell" })
+                    option.setName("value").setDescription("金1個と交換できる個数").setRequired(true).setMinValue(0.01)
                 )
         )
         .addSubcommandGroup((group) =>
@@ -140,31 +122,6 @@ module.exports = {
             return interaction.reply(
                 `${oreInfo.emoji} **${oreInfo.name}** の相場を **${newValue} pt** に手動設定しました。`
             );
-        }
-
-        // /rate trade
-        if (subcommand === "trade") {
-            const id = interaction.options.getString("ore");
-            const amount = interaction.options.getInteger("amount");
-            const action = interaction.options.getString("action");
-
-            const oreInfo = getOreInfo(id);
-            if (!oreInfo) {
-                return interaction.reply({
-                    content: `ID「${id}」に該当する鉱石は見つかりませんでした。`,
-                    ephemeral: true,
-                });
-            }
-
-            const result = applyTrade(id, amount, action);
-            const embed = buildTradeResultEmbed({
-                user: interaction.user,
-                oreInfo: { id, ...oreInfo },
-                amount,
-                action,
-                result,
-            });
-            return interaction.reply({ embeds: [embed] });
         }
     },
 };
