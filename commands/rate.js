@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, PermissionFlagsBits } = require("discord.js");
+const { SlashCommandBuilder } = require("discord.js");
 const {
     getAllOreIds,
     getOreInfo,
@@ -7,6 +7,8 @@ const {
 const {
     buildGoldRateListEmbed
 } = require("../utils/marketDisplay.js");
+
+const RATE_MANAGER_ROLE_ID = "123456789012345678"; // ←ここを変更
 
 function oreAutocompleteChoices(focused) {
     const lower = focused.toLowerCase();
@@ -80,13 +82,12 @@ module.exports = {
 
         // /rate set
         if (subcommand === "set") {
-            const hasPermission = interaction.memberPermissions?.has(
-                PermissionFlagsBits.ManageGuild
-            );
 
-            if (!hasPermission) {
+            const hasRole = interaction.member.roles.cache.has(RATE_MANAGER_ROLE_ID);
+
+            if (!hasRole) {
                 return interaction.reply({
-                    content: "このコマンドはサーバー管理権限（サーバーの管理）を持つユーザーのみ使用できます。",
+                    content: "このコマンドはレート管理者のみ使用できます。",
                     ephemeral: true
                 });
             }
