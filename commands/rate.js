@@ -8,7 +8,7 @@ const {
     buildGoldRateListEmbed
 } = require("../utils/marketDisplay.js");
 
-const RATE_MANAGER_ROLE_ID = "123456789012345678"; // ←ここを変更
+const RATE_MANAGER_ROLE_ID = "1519700792267772016"; // ←ここを変更
 
 function oreAutocompleteChoices(focused) {
     const lower = focused.toLowerCase();
