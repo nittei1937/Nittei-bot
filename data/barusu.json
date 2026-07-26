@@ -42,5 +42,18 @@
     "Genteiteki_barusu": {
         "name": "限定的バルス",
         "message": "へ限定的バルス"
+    },
+    "Saimin_barusu": {
+        "name": "催眠バルス",
+        "message": "へ催眠バルス！！"
+    },
+    "ZikansaSiki_barusu": {
+        "name": "時間差式バルス",
+        "message": "へ時間差式バルス({time}に発動)",
+        "delay": 1
+    },
+    "kyosiki_barusu": {
+        "name": "虚式 ”バルス”",
+        "message": "へ\n九綱\n偏光\n烏と声明\n表裏の間\n虚式　”バルス”"
     }
 }

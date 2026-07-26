@@ -40,22 +40,17 @@ const commandsPath = path.join(__dirname, "commands");
 const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith(".js"));
 
 for (const file of commandFiles) {
-
     const filePath = path.join(commandsPath, file);
-
     try {
-
         const command = require(filePath);
-
-        if ("data" in command && "execute" in command) {
-
+        if (Array.isArray(command)) {
+            for (const cmd of command) {
+                client.commands.set(cmd.data.name, cmd);
+                console.log(`✅ コマンド読込 : /${cmd.data.name}`);
+            }
+        } else {
             client.commands.set(command.data.name, command);
             console.log(`✅ コマンド読込 : /${command.data.name}`);
-
-        } else {
-
-            console.warn(`⚠ ${file} に data または execute がありません。`);
-
         }
 
     } catch (error) {

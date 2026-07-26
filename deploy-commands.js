@@ -19,10 +19,12 @@ const commandFiles = fs.readdirSync(commandsPath).filter((file) => file.endsWith
 
 for (const file of commandFiles) {
     const command = require(path.join(commandsPath, file));
-    if ("data" in command && "execute" in command) {
-        commands.push(command.data.toJSON());
+    if (Array.isArray(command)) {
+        for (const cmd of command) {
+            commands.push(cmd.data.toJSON());
+        }
     } else {
-        console.warn(`警告: ${file} に data または execute がありません。スキップします。`);
+        commands.push(command.data.toJSON());
     }
 }
 
