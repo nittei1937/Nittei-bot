@@ -1,0 +1,46 @@
+{
+    "barusu": {
+        "name": "バルス",
+        "message": "へバルス！！！"
+    },
+    "supernova_barusu": {
+        "name": "超新星バルス",
+        "message": "へ超新星バルス！！！"
+    },
+    "supernova": {
+        "name": "超新星爆発",
+        "message": "へ超新星爆発！！！"
+    },
+    "vacuum_collapse_supernova_galaxy_barusu": {
+        "name": "必中真空崩壊超新星超銀河団消滅バルス",
+        "message": "へ必中真空崩壊超新星超銀河団消滅バルス！！"
+    },
+    "kiwami": {
+        "name": "極バルス",
+        "message": "へ極バルス！"
+    },
+    "barusu_harusu_parusu": {
+        "name": "バルス・ハルス・パルス",
+        "message": "へバルス！ハルス！パルス！"
+    },
+    "vacuum_collapse": {
+        "name": "真空崩壊バルス",
+        "message": "へ真空崩壊バルス！"
+    },
+    "barubarusu": {
+        "name": "バルバルス",
+        "message": "へバルバルス！"
+    },
+    "barubadosu": {
+        "name": "バルバドス",
+        "message": "へバルバドス！"
+    },
+    "Huiuchi_barusu": {
+        "name": "不意打ちバルス",
+        "message": "へ不意打ちバルス！！"
+    },
+    "Genteiteki_barusu": {
+        "name": "限定的バルス",
+        "message": "へ限定的バルス"
+    }
+}
