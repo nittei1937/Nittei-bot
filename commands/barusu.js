@@ -43,7 +43,6 @@ function createExecute(data) {
 
         let message = info.message;
 
-        // delay対応
         if (info.delay) {
 
             const trigger = new Date(Date.now() + info.delay * 60 * 1000);

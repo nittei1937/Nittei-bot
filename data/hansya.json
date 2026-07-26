@@ -1,6 +1,14 @@
 {
     "reflection": {
         "name": "反射",
-        "message": "の攻撃を反射！！"
+        "message": "へ反射！"
+    },
+    "hansya_barusu": {
+        "name": "反射バルス返し",
+        "message": "へ反射バルス返し！"
+    },
+    "kyoyuu": {
+        "name": "共有",
+        "message": "へ共有！"
     }
 }

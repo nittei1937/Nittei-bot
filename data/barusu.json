@@ -35,19 +35,19 @@
         "name": "バルバドス",
         "message": "へバルバドス！"
     },
-    "Huiuchi_barusu": {
+    "huiuchi_barusu": {
         "name": "不意打ちバルス",
         "message": "へ不意打ちバルス！！"
     },
-    "Genteiteki_barusu": {
+    "genteiteki_barusu": {
         "name": "限定的バルス",
         "message": "へ限定的バルス"
     },
-    "Saimin_barusu": {
+    "saimin_barusu": {
         "name": "催眠バルス",
         "message": "へ催眠バルス！！"
     },
-    "ZikansaSiki_barusu": {
+    "zikansaSiki_barusu": {
         "name": "時間差式バルス",
         "message": "へ時間差式バルス({time}に発動)",
         "delay": 1
@@ -55,5 +55,45 @@
     "kyosiki_barusu": {
         "name": "虚式 ”バルス”",
         "message": "へ\n九綱\n偏光\n烏と声明\n表裏の間\n虚式　”バルス”"
+    },
+    "Namumyohourengekyo_barusu": {
+        "name": "南無妙法蓮華経バルス",
+        "message": "へ南無妙法蓮華経バルス！！"
+    },
+    "huiuchi_tyoshinsei_barusu": {
+        "name": "不意打ち超新星バルス",
+        "message": "へ不意打ち超新星バルス！！"
+    },
+    "huiuchi_hichushinkuhoukai_tyoshinseigingadan_syoumetubarusu": {
+        "name": "不意打ち必中真空崩壊超新星超銀河団消滅バルス",
+        "message": "へ不意打ち必中真空崩壊超新星超銀河団消滅バルス！！！！！"
+    },
+    "hukahi_barusu": {
+        "name": "不可避バルス",
+        "message": "へ不可避バルス！！"
+    },
+    "gensiryoku_barusu": {
+        "name": "原子力バルス",
+        "message": "へ原子力バルス"
+    },
+    "tyotyotyoshinsei_barusu": {
+        "name": "超超超新星バルス",
+        "message": "へ超超超新星バルス！！"
+    },
+    "rainbowphantom_acrobatic_hukahi_tyosinsei_barusu": {
+        "name": "レインボーファントムアクロバティック不可避超新星バルス",
+        "message": "へレインボーファントムアクロバティック不可避超新星バルス！！"
+    },
+    "super_barusu": {
+        "name": "SUPERバルス",
+        "message": "へSUPERバルス！！"
+    },
+    "tokudai_barusu": {
+        "name": "特大バルス",
+        "message": "へ特大バルス！！"
+    },
+    "huiuchi_hichushinkuhokai_tyogingandansyometsu_namumyohourengekyo_kyosikihukahi_saimin_gensiryoku_tyotyotyotyotyosinsei_raibowphantom_acrobatci_super_barusu": {
+        "name": "不意打ち必中真空崩壊超銀河団消滅南無妙法蓮華経虚式不可避催眠原子力超超超超超新星レインボーファントムアクロバティックSUPERバルス",
+        "message": "へ不意打ち必中真空崩壊超銀河団消滅南無妙法蓮華経虚式不可避催眠原子力超超超超超新星レインボーファントムアクロバティックSUPERバルス！！！！！！！！！"
     }
 }
