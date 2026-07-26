@@ -18,10 +18,14 @@ function createAutocomplete(data) {
                     value.name.toLowerCase().includes(focused)
                 )
                 .slice(0, 25)
-                .map(([id, value]) => ({
-                    name: value.name,
-                    value: id
-                }));
+                .map(([id, value]) => {
+                    console.log(value.name.length, value.name);
+
+                    return {
+                        name: value.name,
+                        value: id
+                    };
+                })
 
             await interaction.respond(choices);
 
