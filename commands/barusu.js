@@ -9,20 +9,29 @@ const HANSYA = require("../data/hansya.json");
 
 function createAutocomplete(data) {
     return async (interaction) => {
-        const focused = interaction.options.getFocused().toLowerCase();
+        try {
+            const focused = interaction.options.getFocused().toLowerCase();
 
-        const choices = Object.entries(data)
-            .filter(([id, value]) =>
-                id.toLowerCase().includes(focused) ||
-                value.name.toLowerCase().includes(focused)
-            )
-            .slice(0, 25)
-            .map(([id, value]) => ({
-                name: value.name,
-                value: id
-            }));
+            const choices = Object.entries(data)
+                .filter(([id, value]) =>
+                    id.toLowerCase().includes(focused) ||
+                    value.name.toLowerCase().includes(focused)
+                )
+                .slice(0, 25)
+                .map(([id, value]) => ({
+                    name: value.name,
+                    value: id
+                }));
 
-        await interaction.respond(choices);
+            await interaction.respond(choices);
+
+        } catch (err) {
+            console.error(err);
+
+            if (!interaction.responded) {
+                await interaction.respond([]);
+            }
+        }
     };
 }
 
