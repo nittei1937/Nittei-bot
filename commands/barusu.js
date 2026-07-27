@@ -11,7 +11,6 @@ function createAutocomplete(data) {
     return async (interaction) => {
         try {
             const focused = interaction.options.getFocused().toLowerCase();
-
             const choices = Object.entries(data)
                 .filter(([id, value]) =>
                     id.toLowerCase().includes(focused) ||
@@ -26,7 +25,6 @@ function createAutocomplete(data) {
                         value: id
                     };
                 })
-
             await interaction.respond(choices);
 
         } catch (err) {
@@ -44,7 +42,6 @@ function createExecute(data) {
 
         const type = interaction.options.getString("type");
         const member = interaction.options.getMember("user");
-
         const info = data[type];
 
         if (!info) {
@@ -57,13 +54,13 @@ function createExecute(data) {
         let message = info.message;
 
         if (info.delay) {
-
             const trigger = new Date(Date.now() + info.delay * 60 * 1000);
-
-            const hh = String(trigger.getHours()).padStart(2, "0");
-            const mm = String(trigger.getMinutes()).padStart(2, "0");
-
-            message = message.replace("{time}", `${hh}:${mm}`);
+            const time = trigger.toLocaleTimeString("ja-JP", {
+                timeZone: "Asia/Tokyo",
+                hour: "2-digit",
+                minute: "2-digit"
+            });
+            message = message.replace("{time}", time);
         }
 
         return interaction.reply({
