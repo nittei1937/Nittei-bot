@@ -49,8 +49,7 @@
     },
     "zikansaSiki_barusu": {
         "name": "時間差式バルス",
-        "message": "へ時間差式バルス({time}に発動)",
-        "delay": 1
+        "message": "へ時間差式バルス({time}に発動)"
     },
     "kyosiki_barusu": {
         "name": "虚式 ”バルス”",

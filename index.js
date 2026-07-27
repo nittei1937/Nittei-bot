@@ -12,6 +12,7 @@ const {
     Events,
     MessageFlags,
 } = require("discord.js");
+const { startScheduleRunner } = require("./utils/schedule");
 
 // =========================
 // Discord Client
@@ -77,6 +78,8 @@ client.once(Events.ClientReady, (readyClient) => {
     });
 
     console.log("====================================");
+
+    startScheduleRunner(readyClient);
 });
 
 // =========================
