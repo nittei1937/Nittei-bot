@@ -62,7 +62,7 @@ function createExecute(data) {
                 guildId: interaction.guildId,
                 userId: target.id,
                 userName: targetName,
-                content: `${targetName}へ時間差式バルス！！！`,
+                content: `<@${target.id}>へ時間差式バルス！！！`,
                 executeAt
             });
 
