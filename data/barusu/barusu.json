@@ -1,102 +1,137 @@
 {
-    "barusu": {
-        "name": "バルス",
-        "message": "へバルス！！！"
-    },
-    "supernova_barusu": {
-        "name": "超新星バルス",
-        "message": "へ超新星バルス！！！"
-    },
-    "supernova": {
-        "name": "超新星爆発",
-        "message": "へ超新星爆発！！！"
-    },
-    "vacuum_collapse_supernova_galaxy_barusu": {
-        "name": "必中真空崩壊超新星超銀河団消滅バルス",
-        "message": "へ必中真空崩壊超新星超銀河団消滅バルス！！"
-    },
-    "kiwami": {
-        "name": "極バルス",
-        "message": "へ極バルス！"
-    },
-    "barusu_harusu_parusu": {
-        "name": "バルス・ハルス・パルス",
-        "message": "へバルス！ハルス！パルス！"
-    },
-    "vacuum_collapse": {
-        "name": "真空崩壊バルス",
-        "message": "へ真空崩壊バルス！"
-    },
-    "barubarusu": {
-        "name": "バルバルス",
-        "message": "へバルバルス！"
-    },
-    "barubadosu": {
-        "name": "バルバドス",
-        "message": "へバルバドス！"
-    },
-    "huiuchi_barusu": {
-        "name": "不意打ちバルス",
-        "message": "へ不意打ちバルス！！"
-    },
-    "genteiteki_barusu": {
-        "name": "限定的バルス",
-        "message": "へ限定的バルス"
-    },
-    "saimin_barusu": {
-        "name": "催眠バルス",
-        "message": "へ催眠バルス！！"
-    },
-    "zikansaSiki_barusu": {
-        "name": "時間差式バルス",
-        "message": "へ時間差式バルス({time}に発動)"
-    },
-    "kyosiki_barusu": {
-        "name": "虚式 ”バルス”",
-        "message": "へ\n九綱\n偏光\n烏と声明\n表裏の間\n虚式　”バルス”"
-    },
-    "Namumyohourengekyo_barusu": {
-        "name": "南無妙法蓮華経バルス",
-        "message": "へ南無妙法蓮華経バルス！！"
-    },
-    "huiuchi_tyoshinsei_barusu": {
-        "name": "不意打ち超新星バルス",
-        "message": "へ不意打ち超新星バルス！！"
-    },
-    "huiuchi_hichushinkuhoukai_tyoshinseigingadan_syoumetubarusu": {
-        "name": "不意打ち必中真空崩壊超新星超銀河団消滅バルス",
-        "message": "へ不意打ち必中真空崩壊超新星超銀河団消滅バルス！！！！！"
-    },
-    "hukahi_barusu": {
-        "name": "不可避バルス",
-        "message": "へ不可避バルス！！"
-    },
-    "gensiryoku_barusu": {
-        "name": "原子力バルス",
-        "message": "へ原子力バルス"
-    },
-    "tyotyotyoshinsei_barusu": {
-        "name": "超超超新星バルス",
-        "message": "へ超超超新星バルス！！"
-    },
-    "rainbowphantom_acrobatic_hukahi_tyosinsei_barusu": {
-        "name": "レインボーファントムアクロバティック不可避超新星バルス",
-        "message": "へレインボーファントムアクロバティック不可避超新星バルス！！"
-    },
-    "super_barusu": {
-        "name": "SUPERバルス",
-        "message": "へSUPERバルス！！"
-    },
-    "tokudai_barusu": {
-        "name": "特大バルス",
-        "message": "へ特大バルス！！"
-    },
-    "huiuchi....._super_barusu": {
-        "name": "不意打ち必中真空崩壊超銀河団消滅南無妙法蓮華経虚式不可避催眠原子力超超超超超新星レインボーファントムアクロバティックSUPERバルス",
-        "message": "へ不意打ち必中真空崩壊超銀河団消滅南無妙法蓮華経虚式不可避催眠原子力超超超超超新星レインボーファントムアクロバティックSUPERバルス！！！！！！！！！"
-    },
-    "keiroku_tokkagata_tyosinsei_sinkuhokai_barusu": {
-        "name": "けいろく特化型超新星真空崩壊バルス",
-        "message": "へけいろく特化型超新星真空崩壊バルス"
-    }
+  "barusu": {
+    "name": "バルス",
+    "message": "へバルス！！！",
+    "mode": "normal"
+  },
+  "supernova_barusu": {
+    "name": "超新星バルス",
+    "message": "へ超新星バルス！！！",
+    "mode": "normal"
+  },
+  "supernova": {
+    "name": "超新星爆発",
+    "message": "へ超新星爆発！！！",
+    "mode": "normal"
+  },
+  "vacuum_collapse_supernova_galaxy_barusu": {
+    "name": "必中真空崩壊超新星超銀河団消滅バルス",
+    "message": "へ必中真空崩壊超新星超銀河団消滅バルス！！",
+    "mode": "normal"
+  },
+  "kiwami": {
+    "name": "極バルス",
+    "message": "へ極バルス！",
+    "mode": "normal"
+  },
+  "barusu_harusu_parusu": {
+    "name": "バルス・ハルス・パルス",
+    "message": "へバルス！ハルス！パルス！",
+    "mode": "normal"
+  },
+  "vacuum_collapse": {
+    "name": "真空崩壊バルス",
+    "message": "へ真空崩壊バルス！",
+    "mode": "normal"
+  },
+  "barubarusu": {
+    "name": "バルバルス",
+    "message": "へバルバルス！",
+    "mode": "normal"
+  },
+  "barubadosu": {
+    "name": "バルバドス",
+    "message": "へバルバドス！",
+    "mode": "normal"
+  },
+  "huiuchi_barusu": {
+    "name": "不意打ちバルス",
+    "message": "へ不意打ちバルス！！",
+    "mode": "normal"
+  },
+  "genteiteki_barusu": {
+    "name": "限定的バルス",
+    "message": "へ限定的バルス",
+    "mode": "normal"
+  },
+  "saimin_barusu": {
+    "name": "催眠バルス",
+    "message": "へ催眠バルス！！",
+    "mode": "normal"
+  },
+  "zikansaSiki_barusu": {
+    "name": "時間差式バルス",
+    "message": "へ時間差式バルス！！！",
+    "mode": "delayed"
+  },
+  "choudan_barusu": {
+    "name": "跳弾式バルス",
+    "message": "へ跳弾式バルス！！！",
+    "mode": "ricochet"
+  },
+  "tadan_zikansaSiki_barusu": {
+    "name": "多段時間差式バルス",
+    "message": "へ多段時間差式バルス！！！",
+    "mode": "multi_delayed"
+  },
+  "kyosiki_barusu": {
+    "name": "虚式 ”バルス”",
+    "message": "へ\n九綱\n偏光\n烏と声明\n表裏の間\n虚式　”バルス”",
+    "mode": "normal"
+  },
+  "Namumyohourengekyo_barusu": {
+    "name": "南無妙法蓮華経バルス",
+    "message": "へ南無妙法蓮華経バルス！！",
+    "mode": "normal"
+  },
+  "huiuchi_tyoshinsei_barusu": {
+    "name": "不意打ち超新星バルス",
+    "message": "へ不意打ち超新星バルス！！",
+    "mode": "normal"
+  },
+  "huiuchi_hichushinkuhoukai_tyoshinseigingadan_syoumetubarusu": {
+    "name": "不意打ち必中真空崩壊超新星超銀河団消滅バルス",
+    "message": "へ不意打ち必中真空崩壊超新星超銀河団消滅バルス！！！！！",
+    "mode": "normal"
+  },
+  "hukahi_barusu": {
+    "name": "不可避バルス",
+    "message": "へ不可避バルス！！",
+    "mode": "normal"
+  },
+  "gensiryoku_barusu": {
+    "name": "原子力バルス",
+    "message": "へ原子力バルス",
+    "mode": "normal"
+  },
+  "tyotyotyoshinsei_barusu": {
+    "name": "超超超新星バルス",
+    "message": "へ超超超新星バルス！！",
+    "mode": "normal"
+  },
+  "rainbowphantom_acrobatic_hukahi_tyosinsei_barusu": {
+    "name": "レインボーファントムアクロバティック不可避超新星バルス",
+    "message": "へレインボーファントムアクロバティック不可避超新星バルス！！",
+    "mode": "normal"
+  },
+  "super_barusu": {
+    "name": "SUPERバルス",
+    "message": "へSUPERバルス！！",
+    "mode": "normal"
+  },
+  "tokudai_barusu": {
+    "name": "特大バルス",
+    "message": "へ特大バルス！！",
+    "mode": "normal"
+  },
+  "huiuchi....._super_barusu": {
+    "name": "不意打ち必中真空崩壊超銀河団消滅南無妙法蓮華経虚式不可避催眠原子力超超超超超新星レインボーファントムアクロバティックSUPERバルス",
+    "message": "へ不意打ち必中真空崩壊超銀河団消滅南無妙法蓮華経虚式不可避催眠原子力超超超超超新星レインボーファントムアクロバティックSUPERバルス！！！！！！！！！",
+    "mode": "normal"
+  },
+  "keiroku_tokkagata_tyosinsei_sinkuhokai_barusu": {
+    "name": "けいろく特化型超新星真空崩壊バルス",
+    "message": "へけいろく特化型超新星真空崩壊バルス",
+    "mode": "normal"
+  }
 }
