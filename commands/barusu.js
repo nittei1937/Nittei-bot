@@ -69,7 +69,7 @@ function createExecute(data) {
 
             const secondTarget = getTarget(interaction, "user2");
             return interaction.reply({
-                content: `${target.name}${info.message}\n${secondTarget.name}${info.message}`
+                content: `${target.name}と${secondTarget.name}に跳弾式バルス！`
             });
         }
 
