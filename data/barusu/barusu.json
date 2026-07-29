@@ -133,5 +133,10 @@
     "name": "けいろく特化型超新星真空崩壊バルス",
     "message": "へけいろく特化型超新星真空崩壊バルス",
     "mode": "normal"
+  },
+  "buturiteki_barusu": {
+    "name": "物理的バルス",
+    "message": "へ物理的バルス！",
+    "mode": "physical"
   }
 }

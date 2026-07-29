@@ -61,6 +61,15 @@ function createExecute(data) {
         const target = getTarget(interaction);
         const mode = info.mode ?? "normal";
 
+        if (mode === "physical") {
+            const actorName = interaction.member?.displayName
+                ?? interaction.user.globalName
+                ?? interaction.user.username;
+            return interaction.reply({
+                content: `${target.name}へ物理的バルス！${actorName}も物理的バルス！`
+            });
+        }
+
         if (mode === "ricochet") {
             const secondUser = interaction.options.getUser("user2");
             if (!secondUser) {
