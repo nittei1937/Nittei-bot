@@ -138,5 +138,15 @@
     "name": "物理的バルス",
     "message": "へ物理的バルス！",
     "mode": "physical"
+  },
+  "Dando_Misile": {
+    "name": "弾道ミサイル",
+    "message": "へ弾道ミサイル",
+    "mode": "normal"
+  },
+  "Amanogawa_Barusu": {
+    "name": "天の川バルス",
+    "message": "へ天の川バルス",
+    "mode": "normal"
   }
 }
