@@ -50,6 +50,20 @@ function getTimeOptions(interaction) {
     return { delay, hour, minute };
 }
 
+function hasPermission(userId, permission) {
+    if (!permission) return true;
+
+    if (permission === "admin") {
+        return AUTHO.admins.includes(userId);
+    }
+
+    if (permission === "owner") {
+        return AUTHO.owners.includes(userId);
+    }
+
+    return false;
+}
+
 function createExecute(data) {
     return async interaction => {
         const type = interaction.options.getString("type");
@@ -63,12 +77,9 @@ function createExecute(data) {
         }
 
         // 管理者限定
-        if (
-            info.permission === "admin" &&
-            !AUTHO.users.includes(interaction.user.id)
-        ) {
+        if (!hasPermission(interaction.user.id, info.permission)) {
             return interaction.reply({
-                content: "このバルスは管理者専用です。",
+                content: "このバルスを使用する権限がありません。",
                 ephemeral: true
             });
         }
