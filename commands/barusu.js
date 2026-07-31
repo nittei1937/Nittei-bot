@@ -2,7 +2,7 @@ const { SlashCommandBuilder } = require("discord.js");
 
 const BARUSU = require("../data/barusu/barusu.json");
 const HANSYA = require("../data/barusu/hansya.json");
-const ADMINS = require("../data/barusu/admins.json");
+const AUTHO = require("../data/barusu/authority.json");
 const { addSchedule, formatDiscordTime, getExecuteAt } = require("../utils/schedule");
 
 function createAutocomplete(data) {
@@ -65,7 +65,7 @@ function createExecute(data) {
         // 管理者限定
         if (
             info.permission === "admin" &&
-            !ADMINS.users.includes(interaction.user.id)
+            !AUTHO.users.includes(interaction.user.id)
         ) {
             return interaction.reply({
                 content: "このバルスは管理者専用です。",
