@@ -2,6 +2,7 @@ const { SlashCommandBuilder } = require("discord.js");
 
 const BARUSU = require("../data/barusu/barusu.json");
 const HANSYA = require("../data/barusu/hansya.json");
+const ADMINS = require("../data/barusu/admins.json");
 const { addSchedule, formatDiscordTime, getExecuteAt } = require("../utils/schedule");
 
 function createAutocomplete(data) {
@@ -55,7 +56,21 @@ function createExecute(data) {
         const info = data[type];
 
         if (!info) {
-            return interaction.reply({ content: "その種類は存在しません。", ephemeral: true });
+            return interaction.reply({
+                content: "その種類は存在しません。",
+                ephemeral: true
+            });
+        }
+
+        // 管理者限定
+        if (
+            info.permission === "admin" &&
+            !ADMINS.users.includes(interaction.user.id)
+        ) {
+            return interaction.reply({
+                content: "このバルスは管理者専用です。",
+                ephemeral: true
+            });
         }
 
         const target = getTarget(interaction);

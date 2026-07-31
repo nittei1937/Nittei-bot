@@ -148,5 +148,15 @@
     "name": "天の川バルス",
     "message": "へ天の川バルス",
     "mode": "normal"
+  },
+  "Admin_barusu1": {
+    "name": "超銀河団消滅重力崩壊ビッグバンバルス",
+    "message": "へ超銀河団消滅重力崩壊ビッグバンバルス",
+    "permission": "admin"
+  },
+  "Admin_barusu2": {
+    "name": "戦術核バルス",
+    "message": "へ戦術核バルス",
+    "permission": "admin"
   }
 }
