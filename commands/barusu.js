@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require("discord.js");
+const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 
 const BARUSU = require("../data/barusu/barusu.json");
 const HANSYA = require("../data/barusu/hansya.json");
@@ -91,8 +91,17 @@ function createExecute(data) {
             const actorName = interaction.member?.displayName
                 ?? interaction.user.globalName
                 ?? interaction.user.username;
+            const embed = new EmbedBuilder()
+                .setColor(0x8b0000)
+                .setTitle("💪 物理的バルス")
+                .setDescription(
+            `${target.name}へ物理的バルス！
+
+            ${actorName}も物理的バルス！`
+                );
+
             return interaction.reply({
-                content: `${target.name}へ物理的バルス！${actorName}も物理的バルス！`
+                embeds: [embed]
             });
         }
 
@@ -103,8 +112,15 @@ function createExecute(data) {
             }
 
             const secondTarget = getTarget(interaction, "user2");
+            const embed = new EmbedBuilder()
+                .setColor(0x00bfff)
+                .setTitle("🪞 跳弾式バルス")
+                .setDescription(
+            `${target.name}と${secondTarget.name}に跳弾式バルス！`
+                );
+
             return interaction.reply({
-                content: `${target.name}と${secondTarget.name}に跳弾式バルス！`
+                embeds: [embed]
             });
         }
 
@@ -119,8 +135,15 @@ function createExecute(data) {
 
             const executeAt = getExecuteAt(timeOptions);
             createSchedule(interaction, target, info.message, executeAt);
+            const embed = new EmbedBuilder()
+                .setColor(0xff9900) // オレンジ
+                .setTitle("⏰ 時間差式バルス")
+                .setDescription(
+                    `${target.name}へ時間差式バルス！\n\n発動予定：${formatDiscordTime(executeAt)}`
+                );
+
             return interaction.reply({
-                content: `${target.name}へ時間差式バルス！\n発動予定：${formatDiscordTime(executeAt)}`
+                embeds: [embed]
             });
         }
 
@@ -141,12 +164,43 @@ function createExecute(data) {
                 createSchedule(interaction, target, info.message, executeAt);
             }
 
+            const embed = new EmbedBuilder()
+                .setColor(0xffcc00)
+                .setTitle("💥 多段時間差式バルス")
+                .setDescription(
+            `${target.name}へ多段時間差式バルス！
+
+            発動予定
+            ${executeAts.map(formatDiscordTime).join("\n")}`
+                );
+
             return interaction.reply({
-                content: `${target.name}へ多段時間差式バルス！\n発動予定：\n${executeAts.map(formatDiscordTime).join("\n")}`
+                embeds: [embed]
             });
         }
 
-        return interaction.reply({ content: `${target.name}${info.message}` });
+        // 管理者バルス
+        if (info.permission === "admin") {
+            const embed = new EmbedBuilder()
+                .setColor(0x8B0000) // ダークレッド
+                .setDescription(`${target.name}${info.message}`)
+                .setFooter({
+                    text: `実行者：${interaction.member?.displayName ?? interaction.user.username}`
+                })
+
+            return interaction.reply({
+                embeds: [embed]
+            });
+        }
+
+        // 通常バルス
+        const embed = new EmbedBuilder()
+            .setColor(0xFF0000)
+            .setDescription(`${target.name}${info.message}`);
+
+        return interaction.reply({
+            embeds: [embed]
+        });
     };
 }
 
