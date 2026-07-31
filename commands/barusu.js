@@ -124,6 +124,7 @@ function createExecute(data) {
             });
         }
 
+        // 時間差式
         if (mode === "delayed") {
             const timeOptions = getTimeOptions(interaction);
             if (!timeOptions) {
@@ -136,13 +137,15 @@ function createExecute(data) {
             const executeAt = getExecuteAt(timeOptions);
             createSchedule(interaction, target, info.message, executeAt);
             const embed = new EmbedBuilder()
-                .setColor(0xff9900) // オレンジ
-                .setTitle("⏰ 時間差式バルス")
+                .setColor(0xFF9900)
                 .setDescription(
-                    `${target.name}へ時間差式バルス！\n\n発動予定：${formatDiscordTime(executeAt)}`
+            `${info.name}
+
+            発動予定：${formatDiscordTime(executeAt)}`
                 );
 
             return interaction.reply({
+                content: `${target.name}へ`,
                 embeds: [embed]
             });
         }
@@ -165,16 +168,16 @@ function createExecute(data) {
             }
 
             const embed = new EmbedBuilder()
-                .setColor(0xffcc00)
-                .setTitle("💥 多段時間差式バルス")
+                .setColor(0xFFCC00)
                 .setDescription(
-            `${target.name}へ多段時間差式バルス！
+            `${info.name}
 
             発動予定
             ${executeAts.map(formatDiscordTime).join("\n")}`
                 );
 
             return interaction.reply({
+                content: `${target.name}へ`,
                 embeds: [embed]
             });
         }
@@ -182,13 +185,14 @@ function createExecute(data) {
         // 管理者バルス
         if (info.permission === "admin") {
             const embed = new EmbedBuilder()
-                .setColor(0x8B0000) // ダークレッド
-                .setDescription(`${target.name}${info.message}`)
+                .setColor(0x8B0000)
+                .setDescription(info.name)
                 .setFooter({
                     text: `実行者：${interaction.member?.displayName ?? interaction.user.username}`
-                })
+                });
 
             return interaction.reply({
+                content: `${target.name}へ`,
                 embeds: [embed]
             });
         }
@@ -196,9 +200,10 @@ function createExecute(data) {
         // 通常バルス
         const embed = new EmbedBuilder()
             .setColor(0xFF0000)
-            .setDescription(`${target.name}${info.message}`);
+            .setDescription(info.name);
 
         return interaction.reply({
+            content: `${target.name}へ`,
             embeds: [embed]
         });
     };
