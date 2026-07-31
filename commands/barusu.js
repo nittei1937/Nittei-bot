@@ -183,7 +183,7 @@ function createExecute(data) {
         }
 
         // 管理者バルス
-        if (info.permission === "admin") {
+        if (info.permission === "admin" && info.permission === "owner") {
             const embed = new EmbedBuilder()
                 .setColor(0x8B0000)
                 .setDescription(info.name)

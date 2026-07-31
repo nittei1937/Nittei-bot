@@ -160,5 +160,11 @@
     "message": "へ戦術核バルス",
     "mode": "normal",
     "permission": "admin"
+  },
+  "Owner_barusu1": {
+    "name": "宇宙崩壊ツァーリ・ボンバルス",
+    "message": "へツァーリ・ボンバ",
+    "mode": "normal",
+    "permission": "owner"
   }
 }
