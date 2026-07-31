@@ -8,7 +8,7 @@
     "start": "node index.js",
     "deploy": "node deploy-commands.js",
     "dev": "nodemon index.js",
-    "bot": "npm run deploy && npm run dev",
+    "bot": "npm run deploy && npm run dev"
   },
   "dependencies": {
     "discord.js": "^14.15.3",
