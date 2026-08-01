@@ -72,13 +72,38 @@ function hasPermission(userId, permission) {
         return AUTHO.nullifiers?.includes(userId) ?? false;
     }
 
+    // 自由入力バルス専用の権限（authority.json の customUsers）
+    if (permission === "custom") {
+        return AUTHO.customUsers?.includes(userId) ?? false;
+    }
+
     return false;
 }
 
 function createExecute(data) {
     return async interaction => {
+        const customText = interaction.options.getString("custom");
         const type = interaction.options.getString("type");
-        const info = data[type];
+
+        let info;
+        if (customText) {
+            // 自由入力バルス：typeの代わりに任意のテキストでバルスを発動する
+            info = {
+                name: customText,
+                message: `へ${customText}`,
+                mode: "normal",
+                permission: "custom"
+            };
+        } else {
+            if (!type) {
+                return interaction.reply({
+                    content: "「type」または「custom」のどちらかを指定してください。",
+                    ephemeral: true
+                });
+            }
+
+            info = data[type];
+        }
 
         if (!info) {
             return interaction.reply({
@@ -255,7 +280,8 @@ const barusuCommand = {
         .addSubcommand(sub =>
             sub.setName("barusu")
                 .setDescription("バルスを放つ")
-                .addStringOption(option => option.setName("type").setDescription("種類").setRequired(true).setAutocomplete(true))
+                .addStringOption(option => option.setName("type").setDescription("種類（customを指定した場合は無視されます）").setRequired(false).setAutocomplete(true))
+                .addStringOption(option => option.setName("custom").setDescription("自由入力（指定するとtypeより優先されます）").setMaxLength(100))
                 .addUserOption(option => option.setName("user").setDescription("対象").setRequired(true))
                 .addUserOption(option => option.setName("user2").setDescription("跳弾先（跳弾式バルスのみ）"))
                 .addIntegerOption(option => option.setName("delay").setDescription("発動までの分数（時間差式・多段時間差式）").setMinValue(1).setMaxValue(525600))
