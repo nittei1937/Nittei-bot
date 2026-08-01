@@ -280,9 +280,9 @@ const barusuCommand = {
         .addSubcommand(sub =>
             sub.setName("barusu")
                 .setDescription("バルスを放つ")
+                .addUserOption(option => option.setName("user").setDescription("対象").setRequired(true))
                 .addStringOption(option => option.setName("type").setDescription("種類（customを指定した場合は無視されます）").setRequired(false).setAutocomplete(true))
                 .addStringOption(option => option.setName("custom").setDescription("自由入力（指定するとtypeより優先されます）").setMaxLength(100))
-                .addUserOption(option => option.setName("user").setDescription("対象").setRequired(true))
                 .addUserOption(option => option.setName("user2").setDescription("跳弾先（跳弾式バルスのみ）"))
                 .addIntegerOption(option => option.setName("delay").setDescription("発動までの分数（時間差式・多段時間差式）").setMinValue(1).setMaxValue(525600))
                 .addIntegerOption(option => option.setName("delay2").setDescription("2回目までの分数（多段時間差式のみ）").setMinValue(1).setMaxValue(525600))
