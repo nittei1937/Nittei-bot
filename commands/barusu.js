@@ -3,7 +3,13 @@ const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 const BARUSU = require("../data/barusu/barusu.json");
 const HANSYA = require("../data/barusu/hansya.json");
 const AUTHO = require("../data/barusu/authority.json");
-const { addSchedule, formatDiscordTime, getExecuteAt } = require("../utils/schedule");
+const {
+    addSchedule,
+    removeSchedule,
+    getSchedules,
+    formatDiscordTime,
+    getExecuteAt
+} = require("../utils/schedule");
 
 function createAutocomplete(data) {
     return async interaction => {
@@ -61,6 +67,11 @@ function hasPermission(userId, permission) {
         return AUTHO.owners.includes(userId);
     }
 
+    // バルス無効化専用の権限（authority.json の nullifiers）
+    if (permission === "nullifier") {
+        return AUTHO.nullifiers?.includes(userId) ?? false;
+    }
+
     return false;
 }
 
@@ -76,10 +87,10 @@ function createExecute(data) {
             });
         }
 
-        // 管理者限定
+        // 権限限定（管理者・オーナー・バルス無効化権限者）
         if (!hasPermission(interaction.user.id, info.permission)) {
             return interaction.reply({
-                content: "このバルスを使用する権限がありません。",
+                content: "このコマンドを使用する権限がありません。",
                 ephemeral: true
             });
         }
@@ -182,6 +193,34 @@ function createExecute(data) {
             });
         }
 
+        // バルス無効化（予約済みの時間差式・多段時間差式バルスを取り消す）
+        if (mode === "nullify") {
+            const removed = getSchedules().filter(schedule =>
+                schedule.guildId === interaction.guildId && schedule.userId === target.id
+            );
+
+            for (const schedule of removed) {
+                removeSchedule(schedule.id);
+            }
+
+            if (removed.length === 0) {
+                return interaction.reply({
+                    content: `${target.name}への予約バルスは見つかりませんでした。`,
+                    ephemeral: true
+                });
+            }
+
+            const embed = new EmbedBuilder()
+                .setColor(0x00ff7f)
+                .setTitle("🛡️ バルス無効化")
+                .setDescription(`${target.name}への予約バルス（${removed.length}件）を無効化しました。`)
+                .setFooter({
+                    text: `実行者：${interaction.member?.displayName ?? interaction.user.username}`
+                });
+
+            return interaction.reply({ embeds: [embed] });
+        }
+
         // 管理者バルス
         if (info.permission === "admin" && info.permission === "owner") {
             const embed = new EmbedBuilder()
@@ -197,7 +236,7 @@ function createExecute(data) {
             });
         }
 
-        // 通常バルス
+        // 通常バルス／反射
         const embed = new EmbedBuilder()
             .setColor(0xFF0000)
             .setDescription(info.name);
@@ -212,27 +251,33 @@ function createExecute(data) {
 const barusuCommand = {
     data: new SlashCommandBuilder()
         .setName("barusu")
-        .setDescription("バルスを放つ")
-        .addStringOption(option => option.setName("type").setDescription("種類").setRequired(true).setAutocomplete(true))
-        .addUserOption(option => option.setName("user").setDescription("対象").setRequired(true))
-        .addUserOption(option => option.setName("user2").setDescription("跳弾先（跳弾式バルスのみ）"))
-        .addIntegerOption(option => option.setName("delay").setDescription("発動までの分数（時間差式・多段時間差式）").setMinValue(1).setMaxValue(525600))
-        .addIntegerOption(option => option.setName("delay2").setDescription("2回目までの分数（多段時間差式のみ）").setMinValue(1).setMaxValue(525600))
-        .addIntegerOption(option => option.setName("delay3").setDescription("3回目までの分数（多段時間差式のみ）").setMinValue(1).setMaxValue(525600))
-        .addIntegerOption(option => option.setName("hour").setDescription("発動時（0〜23、時間差式のみ）").setMinValue(0).setMaxValue(23))
-        .addIntegerOption(option => option.setName("minute").setDescription("発動分（0〜59、時間差式のみ）").setMinValue(0).setMaxValue(59)),
-    autocomplete: createAutocomplete(BARUSU),
-    execute: createExecute(BARUSU)
+        .setDescription("バルス関連コマンド")
+        .addSubcommand(sub =>
+            sub.setName("barusu")
+                .setDescription("バルスを放つ")
+                .addStringOption(option => option.setName("type").setDescription("種類").setRequired(true).setAutocomplete(true))
+                .addUserOption(option => option.setName("user").setDescription("対象").setRequired(true))
+                .addUserOption(option => option.setName("user2").setDescription("跳弾先（跳弾式バルスのみ）"))
+                .addIntegerOption(option => option.setName("delay").setDescription("発動までの分数（時間差式・多段時間差式）").setMinValue(1).setMaxValue(525600))
+                .addIntegerOption(option => option.setName("delay2").setDescription("2回目までの分数（多段時間差式のみ）").setMinValue(1).setMaxValue(525600))
+                .addIntegerOption(option => option.setName("delay3").setDescription("3回目までの分数（多段時間差式のみ）").setMinValue(1).setMaxValue(525600))
+                .addIntegerOption(option => option.setName("hour").setDescription("発動時（0〜23、時間差式のみ）").setMinValue(0).setMaxValue(23))
+                .addIntegerOption(option => option.setName("minute").setDescription("発動分（0〜59、時間差式のみ）").setMinValue(0).setMaxValue(59))
+        )
+        .addSubcommand(sub =>
+            sub.setName("hansya")
+                .setDescription("反射・バルス無効化を放つ")
+                .addStringOption(option => option.setName("type").setDescription("種類").setRequired(true).setAutocomplete(true))
+                .addUserOption(option => option.setName("user").setDescription("対象").setRequired(true))
+        ),
+    autocomplete: async interaction => {
+        const data = interaction.options.getSubcommand() === "hansya" ? HANSYA : BARUSU;
+        return createAutocomplete(data)(interaction);
+    },
+    execute: async interaction => {
+        const data = interaction.options.getSubcommand() === "hansya" ? HANSYA : BARUSU;
+        return createExecute(data)(interaction);
+    }
 };
 
-const hansyaCommand = {
-    data: new SlashCommandBuilder()
-        .setName("hansya")
-        .setDescription("反射を放つ")
-        .addStringOption(option => option.setName("type").setDescription("種類").setRequired(true).setAutocomplete(true))
-        .addUserOption(option => option.setName("user").setDescription("対象").setRequired(true)),
-    autocomplete: createAutocomplete(HANSYA),
-    execute: createExecute(HANSYA)
-};
-
-module.exports = [barusuCommand, hansyaCommand];
+module.exports = [barusuCommand];

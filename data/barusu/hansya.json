@@ -14,5 +14,11 @@
     "kyoyuu": {
         "name": "共有",
         "message": "へ共有！"
+    },
+    "barusu_muko": {
+        "name": "バルス無効化",
+        "message": "への予約バルスを無効化した",
+        "permission": "nullifier",
+        "mode": "nullify"
     }
 }
