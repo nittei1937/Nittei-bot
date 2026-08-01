@@ -37,6 +37,10 @@ function removeSchedule(id) {
     writeSchedules(readSchedules().filter(schedule => schedule.id !== id));
 }
 
+function getSchedule(id) {
+    return readSchedules().find(schedule => schedule.id === id) ?? null;
+}
+
 function retrySchedule(id) {
     const schedules = readSchedules().map(schedule =>
         schedule.id === id
@@ -103,4 +107,12 @@ function startScheduleRunner(client) {
     }, 1000);
 }
 
-module.exports = { addSchedule, formatDiscordTime, getExecuteAt, startScheduleRunner };
+module.exports = {
+    addSchedule,
+    removeSchedule,
+    getSchedule,
+    getSchedules: readSchedules,
+    formatDiscordTime,
+    getExecuteAt,
+    startScheduleRunner
+};
