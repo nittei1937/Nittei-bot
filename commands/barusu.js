@@ -59,10 +59,12 @@ function getTimeOptions(interaction) {
 function hasPermission(userId, permission) {
     if (!permission) return true;
 
+    // 管理者専用バルスの権限（authority.json の admins）
     if (permission === "admin") {
         return AUTHO.admins.includes(userId);
     }
 
+    // 開発者専用バルスの権限（authority.json の owners）
     if (permission === "owner") {
         return AUTHO.owners.includes(userId);
     }
@@ -74,7 +76,8 @@ function hasPermission(userId, permission) {
 
     // 自由入力バルス専用の権限（authority.json の customUsers）
     if (permission === "custom") {
-        return AUTHO.customUsers?.includes(userId) ?? false;
+        // return AUTHO.customUsers?.includes(userId) ?? false;
+        return true; // ⚠️一時的に制限撤廃中
     }
 
     return false;

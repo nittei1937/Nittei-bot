@@ -161,9 +161,57 @@
     "mode": "normal",
     "permission": "admin"
   },
+  "Admin_barusu3": {
+    "name": "全次元崩壊バルス",
+    "message": "へ全次元崩壊バルス！！！",
+    "mode": "normal",
+    "permission": "admin"
+  },
+  "Admin_barusu4": {
+    "name": "宇宙定数改変バルス",
+    "message": "へ宇宙定数改変バルス",
+    "mode": "normal",
+    "permission": "admin"
+  },
+  "Admin_barusu5": {
+    "name": "因果律干渉バルス",
+    "message": "へ因果律干渉バルス！！",
+    "mode": "normal",
+    "permission": "admin"
+  },
+  "Admin_barusu6": {
+    "name": "多元宇宙同時消滅バルス",
+    "message": "へ多元宇宙同時消滅バルス！！！",
+    "mode": "normal",
+    "permission": "admin"
+  },
   "Owner_barusu1": {
     "name": "宇宙崩壊ツァーリ・ボンバルス",
     "message": "へツァーリ・ボンバ",
+    "mode": "normal",
+    "permission": "owner"
+  },
+  "Owner_barusu2": {
+    "name": "存在自体消去バルス",
+    "message": "へ存在自体消去バルス",
+    "mode": "normal",
+    "permission": "owner"
+  },
+  "Owner_barusu3": {
+    "name": "システムルート権限バルス",
+    "message": "へシステムルート権限バルス",
+    "mode": "normal",
+    "permission": "owner"
+  },
+  "Owner_barusu4": {
+    "name": "全宇宙リセットバルス",
+    "message": "へ全宇宙リセットバルス！！！",
+    "mode": "normal",
+    "permission": "owner"
+  },
+  "Owner_barusu5": {
+    "name": "サーバー丸ごと初期化バルス",
+    "message": "へサーバー丸ごと初期化バルス",
     "mode": "normal",
     "permission": "owner"
   }
