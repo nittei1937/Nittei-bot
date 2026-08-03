@@ -89,11 +89,6 @@
     "message": "へ不意打ち超新星バルス！！",
     "mode": "normal"
   },
-  "huiuchi_hichushinkuhoukai_tyoshinseigingadan_syoumetubarusu": {
-    "name": "不意打ち必中真空崩壊超新星超銀河団消滅バルス",
-    "message": "へ不意打ち必中真空崩壊超新星超銀河団消滅バルス！！！！！",
-    "mode": "normal"
-  },
   "hukahi_barusu": {
     "name": "不可避バルス",
     "message": "へ不可避バルス！！",
@@ -124,11 +119,6 @@
     "message": "へ特大バルス！！",
     "mode": "normal"
   },
-  "huiuchi....._super_barusu": {
-    "name": "不意打ち必中真空崩壊超銀河団消滅南無妙法蓮華経虚式不可避催眠原子力超超超超超新星レインボーファントムアクロバティックSUPERバルス",
-    "message": "へ不意打ち必中真空崩壊超銀河団消滅南無妙法蓮華経虚式不可避催眠原子力超超超超超新星レインボーファントムアクロバティックSUPERバルス！！！！！！！！！",
-    "mode": "normal"
-  },
   "keiroku_tokkagata_tyosinsei_sinkuhokai_barusu": {
     "name": "けいろく特化型超新星真空崩壊バルス",
     "message": "へけいろく特化型超新星真空崩壊バルス",
@@ -148,6 +138,16 @@
     "name": "天の川バルス",
     "message": "へ天の川バルス",
     "mode": "normal"
+  },
+  "Admin_huiuchi_hichushinkuhoukai_tyoshinseigingadan_syoumetubarusu": {
+    "name": "不意打ち必中真空崩壊超新星超銀河団消滅バルス",
+    "message": "へ不意打ち必中真空崩壊超新星超銀河団消滅バルス！！！！！",
+    "mode": "admin"
+  },
+  "Admin_huiuchi....._super_barusu": {
+    "name": "不意打ち必中真空崩壊超銀河団消滅南無妙法蓮華経虚式不可避催眠原子力超超超超超新星レインボーファントムアクロバティックSUPERバルス",
+    "message": "へ不意打ち必中真空崩壊超銀河団消滅南無妙法蓮華経虚式不可避催眠原子力超超超超超新星レインボーファントムアクロバティックSUPERバルス！！！！！！！！！",
+    "mode": "admin"
   },
   "Admin_barusu1": {
     "name": "超銀河団消滅重力崩壊ビッグバンバルス",
@@ -212,6 +212,12 @@
   "Owner_barusu5": {
     "name": "サーバー丸ごと初期化バルス",
     "message": "へサーバー丸ごと初期化バルス",
+    "mode": "normal",
+    "permission": "owner"
+  },
+  "Owner_barusu_kagedon": {
+    "name": "対かげどん特化型超新星真空崩壊必中不可避天の川銀河爆破バルス",
+    "message": "へ対かげどん特化型超新星真空崩壊必中不可避天の川銀河爆破バルス",
     "mode": "normal",
     "permission": "owner"
   }
