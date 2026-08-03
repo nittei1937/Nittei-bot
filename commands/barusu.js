@@ -403,26 +403,36 @@ const barusuCommand = {
         }
         if (subcommand === "status") {
             const status = loadStatus();
-            ensureStatus(status, interaction.user.id);
-            const me = status[interaction.user.id];
+            const usedRanking = Object.entries(status)
+                .sort(([, a], [, b]) => b.used - a.used)
+                .map(([id, data], index) =>
+                    `${index + 1}. <@${id}>：**${data.used}回**`
+                )
+                .join("\n");
+
+            const receivedRanking = Object.entries(status)
+                .sort(([, a], [, b]) => b.received - a.received)
+                .map(([id, data], index) =>
+                    `${index + 1}. <@${id}>：**${data.received}回**`
+                )
+                .join("\n");
+
             const embed = new EmbedBuilder()
                 .setColor(0x00AEFF)
                 .setTitle("📊 バルス統計")
                 .addFields(
                     {
-                        name: "バルスした回数",
-                        value: `${me.used} 回`,
-                        inline: true
+                        name: "🔥 バルスした回数ランキング",
+                        value: usedRanking || "まだ記録がありません。"
                     },
                     {
-                        name: "バルスされた回数",
-                        value: `${me.received} 回`,
-                        inline: true
+                        name: "💥 バルスされた回数ランキング",
+                        value: receivedRanking || "まだ記録がありません。"
                     }
                 );
+
             return interaction.reply({
-                embeds: [embed],
-                ephemeral: true
+                embeds: [embed]
             });
         }
         const data = subcommand === "hansya" ? HANSYA : BARUSU;
