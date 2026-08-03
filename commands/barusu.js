@@ -1,8 +1,14 @@
+const fs = require("fs");
+const path = require("path");
+
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 
 const BARUSU = require("../data/barusu/barusu.json");
 const HANSYA = require("../data/barusu/hansya.json");
 const AUTHO = require("../data/barusu/authority.json");
+const STATUS_FILE = path.join(__dirname, "../data/barusu/status.json");
+
+
 const {
     addSchedule,
     removeSchedule,
@@ -10,6 +16,37 @@ const {
     formatDiscordTime,
     getExecuteAt
 } = require("../utils/schedule");
+
+
+function loadStatus() {
+    if (!fs.existsSync(STATUS_FILE)) return {};
+    return JSON.parse(fs.readFileSync(STATUS_FILE, "utf8"));
+}
+
+function saveStatus(data) {
+    fs.writeFileSync(STATUS_FILE, JSON.stringify(data, null, 4));
+}
+
+function ensureStatus(data, id) {
+    if (!data[id]) {
+        data[id] = {
+            used: 0,
+            received: 0
+        };
+    }
+}
+
+function addBarusuCount(userId, targetId) {
+    const status = loadStatus();
+
+    ensureStatus(status, userId);
+    ensureStatus(status, targetId);
+
+    status[userId].used++;
+    status[targetId].received++;
+
+    saveStatus(status);
+}
 
 function createAutocomplete(data) {
     return async interaction => {
@@ -84,6 +121,12 @@ function hasPermission(userId, permission) {
 }
 
 function createExecute(data) {
+
+    function replyWithCount(replyOptions) {
+        addBarusuCount(interaction.user.id, target.id);
+        return interaction.reply(replyOptions);
+    }
+
     return async interaction => {
         const customText = interaction.options.getString("custom");
         const type = interaction.options.getString("type");
@@ -97,6 +140,7 @@ function createExecute(data) {
                 mode: "normal",
                 permission: "custom"
             };
+            addBarusuCount(interaction.user.id, target.id);
         } else {
             if (!type) {
                 return interaction.reply({
@@ -139,7 +183,7 @@ function createExecute(data) {
             ${actorName}も物理的バルス！`
                 );
 
-            return interaction.reply({
+            return replyWithCount({
                 embeds: [embed]
             });
         }
@@ -158,7 +202,8 @@ function createExecute(data) {
             `${target.name}と${secondTarget.name}に跳弾式バルス！`
                 );
 
-            return interaction.reply({
+            addBarusuCount(interaction.user.id, target.id);
+            return replyWithCount({
                 embeds: [embed]
             });
         }
@@ -183,7 +228,7 @@ function createExecute(data) {
             発動予定：${formatDiscordTime(executeAt)}`
                 );
 
-            return interaction.reply({
+            return replyWithCount({
                 content: `${target.name}へ`,
                 embeds: [embed]
             });
@@ -215,7 +260,7 @@ function createExecute(data) {
             ${executeAts.map(formatDiscordTime).join("\n")}`
                 );
 
-            return interaction.reply({
+            return replyWithCount({
                 content: `${target.name}へ`,
                 embeds: [embed]
             });
@@ -246,7 +291,9 @@ function createExecute(data) {
                     text: `実行者：${interaction.member?.displayName ?? interaction.user.username}`
                 });
 
-            return interaction.reply({ embeds: [embed] });
+            return interaction.reply({
+                embeds: [embed]
+            });
         }
 
         // 管理者バルス
@@ -258,7 +305,7 @@ function createExecute(data) {
                     text: `実行者：${interaction.member?.displayName ?? interaction.user.username}`
                 });
 
-            return interaction.reply({
+            return replyWithCount({
                 content: `${target.name}へ`,
                 embeds: [embed]
             });
@@ -340,6 +387,10 @@ const barusuCommand = {
         .addSubcommand(sub =>
             sub.setName("list")
                 .setDescription("使用できるバルスの一覧を表示")
+        )
+        .addSubcommand(sub =>
+            sub.setName("status")
+                .setDescription("バルス統計を表示")
         ),
     autocomplete: async interaction => {
         const data = interaction.options.getSubcommand() === "hansya" ? HANSYA : BARUSU;
@@ -347,11 +398,33 @@ const barusuCommand = {
     },
     execute: async interaction => {
         const subcommand = interaction.options.getSubcommand();
-
         if (subcommand === "list") {
             return createListExecute(BARUSU)(interaction);
         }
-
+        if (subcommand === "status") {
+            const status = loadStatus();
+            ensureStatus(status, interaction.user.id);
+            const me = status[interaction.user.id];
+            const embed = new EmbedBuilder()
+                .setColor(0x00AEFF)
+                .setTitle("📊 バルス統計")
+                .addFields(
+                    {
+                        name: "バルスした回数",
+                        value: `${me.used} 回`,
+                        inline: true
+                    },
+                    {
+                        name: "バルスされた回数",
+                        value: `${me.received} 回`,
+                        inline: true
+                    }
+                );
+            return interaction.reply({
+                embeds: [embed],
+                ephemeral: true
+            });
+        }
         const data = subcommand === "hansya" ? HANSYA : BARUSU;
         return createExecute(data)(interaction);
     }
