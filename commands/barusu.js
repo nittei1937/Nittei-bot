@@ -316,7 +316,7 @@ function createExecute(data) {
             .setColor(0xFF0000)
             .setDescription(info.name);
 
-        return interaction.reply({
+        return replyWithCount({
             content: `${target.name}へ`,
             embeds: [embed]
         });
