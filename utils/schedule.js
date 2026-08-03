@@ -25,12 +25,14 @@ function writeSchedules(schedules) {
 
 function addSchedule(schedule) {
     const schedules = readSchedules();
-    schedules.push({
+    const newSchedule = {
         id: `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`,
         createdAt: Date.now(),
         ...schedule
-    });
+    };
+    schedules.push(newSchedule);
     writeSchedules(schedules);
+    console.log("[schedule] 予約を追加しました:", JSON.stringify(newSchedule));
 }
 
 function removeSchedule(id) {
@@ -80,15 +82,21 @@ async function runDueSchedules(client) {
     isRunning = true;
 
     const schedules = readSchedules();
+    if (schedules.length > 0) {
+        console.log(`[schedule] チェック中: 全${schedules.length}件 / 期限到達${schedules.filter(s => s.executeAt <= Date.now()).length}件`);
+    }
     try {
         for (const schedule of schedules) {
             if (schedule.executeAt > Date.now()) continue;
+
+            console.log(`[schedule] 送信を試みます: ${schedule.id} -> channel:${schedule.channelId}`);
 
             try {
                 const channel = await client.channels.fetch(schedule.channelId);
                 if (!channel || !channel.isTextBased()) throw new Error("送信先チャンネルが見つかりません。");
                 await channel.send(schedule.content);
                 removeSchedule(schedule.id);
+                console.log(`[schedule] 送信成功: ${schedule.id}`);
             } catch (error) {
                 console.error(`予約 ${schedule.id} の送信に失敗しました。`, error);
                 retrySchedule(schedule.id);
