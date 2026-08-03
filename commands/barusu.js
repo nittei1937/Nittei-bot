@@ -276,6 +276,44 @@ function createExecute(data) {
     };
 }
 
+function createListExecute(data) {
+    return async interaction => {
+        const userId = interaction.user.id;
+        const groups = { normal: [], admin: [], owner: [] };
+
+        for (const info of Object.values(data)) {
+            const tier = info.permission === "admin" ? "admin"
+                : info.permission === "owner" ? "owner"
+                : "normal";
+            groups[tier].push(info.name);
+        }
+
+        const embed = new EmbedBuilder()
+            .setColor(0x5865F2)
+            .setTitle("📜 バルス一覧")
+            .addFields({
+                name: `🌀 通常バルス（${groups.normal.length}）`,
+                value: groups.normal.length > 0 ? groups.normal.map(name => `・${name}`).join("\n") : "なし"
+            });
+
+        if (hasPermission(userId, "admin") && groups.admin.length > 0) {
+            embed.addFields({
+                name: `⚠️ 管理者バルス（${groups.admin.length}）`,
+                value: groups.admin.map(name => `・${name}`).join("\n")
+            });
+        }
+
+        if (hasPermission(userId, "owner") && groups.owner.length > 0) {
+            embed.addFields({
+                name: `👑 開発者専用バルス（${groups.owner.length}）`,
+                value: groups.owner.map(name => `・${name}`).join("\n")
+            });
+        }
+
+        return interaction.reply({ embeds: [embed], ephemeral: true });
+    };
+}
+
 const barusuCommand = {
     data: new SlashCommandBuilder()
         .setName("barusu")
@@ -298,13 +336,23 @@ const barusuCommand = {
                 .setDescription("反射・バルス無効化を放つ")
                 .addStringOption(option => option.setName("type").setDescription("種類").setRequired(true).setAutocomplete(true))
                 .addUserOption(option => option.setName("user").setDescription("対象").setRequired(true))
+        )
+        .addSubcommand(sub =>
+            sub.setName("list")
+                .setDescription("使用できるバルスの一覧を表示")
         ),
     autocomplete: async interaction => {
         const data = interaction.options.getSubcommand() === "hansya" ? HANSYA : BARUSU;
         return createAutocomplete(data)(interaction);
     },
     execute: async interaction => {
-        const data = interaction.options.getSubcommand() === "hansya" ? HANSYA : BARUSU;
+        const subcommand = interaction.options.getSubcommand();
+
+        if (subcommand === "list") {
+            return createListExecute(BARUSU)(interaction);
+        }
+
+        const data = subcommand === "hansya" ? HANSYA : BARUSU;
         return createExecute(data)(interaction);
     }
 };

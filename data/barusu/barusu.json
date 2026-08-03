@@ -142,12 +142,14 @@
   "Admin_huiuchi_hichushinkuhoukai_tyoshinseigingadan_syoumetubarusu": {
     "name": "不意打ち必中真空崩壊超新星超銀河団消滅バルス",
     "message": "へ不意打ち必中真空崩壊超新星超銀河団消滅バルス！！！！！",
-    "mode": "admin"
+    "mode": "normal",
+    "permission": "admin"
   },
   "Admin_huiuchi....._super_barusu": {
     "name": "不意打ち必中真空崩壊超銀河団消滅南無妙法蓮華経虚式不可避催眠原子力超超超超超新星レインボーファントムアクロバティックSUPERバルス",
     "message": "へ不意打ち必中真空崩壊超銀河団消滅南無妙法蓮華経虚式不可避催眠原子力超超超超超新星レインボーファントムアクロバティックSUPERバルス！！！！！！！！！",
-    "mode": "admin"
+    "mode": "normal",
+    "permission": "admin"
   },
   "Admin_barusu1": {
     "name": "超銀河団消滅重力崩壊ビッグバンバルス",
