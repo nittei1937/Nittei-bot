@@ -412,20 +412,18 @@ const barusuCommand = {
         if (subcommand === "status") {
             const status = loadStatus();
             const guildStatus = status[interaction.guildId] ?? {};
+            const usedRanking = Object.entries(guildStatus)
+                .sort(([, a], [, b]) => b.used - a.used)
+                .map(([id, data], index) =>
+                    `${index + 1}. <@${id}>：**${data.used}回**`
+                )
+                .join("\n");
             const receivedRanking = Object.entries(guildStatus)
                 .sort(([, a], [, b]) => b.received - a.received)
                 .map(([id, data], index) =>
                     `${index + 1}. <@${id}>：**${data.received}回**`
                 )
                 .join("\n");
-
-            const receivedRanking = Object.entries(status)
-                .sort(([, a], [, b]) => b.received - a.received)
-                .map(([id, data], index) =>
-                    `${index + 1}. <@${id}>：**${data.received}回**`
-                )
-                .join("\n");
-
             const embed = new EmbedBuilder()
                 .setColor(0x00AEFF)
                 .setTitle("📊 バルス統計")
