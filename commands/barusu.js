@@ -27,23 +27,27 @@ function saveStatus(data) {
     fs.writeFileSync(STATUS_FILE, JSON.stringify(data, null, 4));
 }
 
-function ensureStatus(data, id) {
-    if (!data[id]) {
-        data[id] = {
+function ensureStatus(data, guildId, userId) {
+    if (!data[guildId]) {
+        data[guildId] = {};
+    }
+
+    if (!data[guildId][userId]) {
+        data[guildId][userId] = {
             used: 0,
             received: 0
         };
     }
 }
 
-function addBarusuCount(userId, targetId) {
+function addBarusuCount(guildId, userId, targetId) {
     const status = loadStatus();
 
-    ensureStatus(status, userId);
-    ensureStatus(status, targetId);
+    ensureStatus(status, guildId, userId);
+    ensureStatus(status, guildId, targetId);
 
-    status[userId].used++;
-    status[targetId].received++;
+    status[guildId][userId].used++;
+    status[guildId][targetId].received++;
 
     saveStatus(status);
 }
@@ -165,7 +169,12 @@ function createExecute(data) {
         const mode = info.mode ?? "normal";
 
         function replyWithCount(replyOptions) {
-            addBarusuCount(interaction.user.id, target.id);
+            addBarusuCount(
+                interaction.guildId,
+                interaction.user.id,
+                target.id
+            );
+
             return interaction.reply(replyOptions);
         }
 
@@ -402,10 +411,11 @@ const barusuCommand = {
         }
         if (subcommand === "status") {
             const status = loadStatus();
-            const usedRanking = Object.entries(status)
-                .sort(([, a], [, b]) => b.used - a.used)
+            const guildStatus = status[interaction.guildId] ?? {};
+            const receivedRanking = Object.entries(guildStatus)
+                .sort(([, a], [, b]) => b.received - a.received)
                 .map(([id, data], index) =>
-                    `${index + 1}. <@${id}>：**${data.used}回**`
+                    `${index + 1}. <@${id}>：**${data.received}回**`
                 )
                 .join("\n");
 
