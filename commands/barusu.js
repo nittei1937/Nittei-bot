@@ -122,11 +122,6 @@ function hasPermission(userId, permission) {
 
 function createExecute(data) {
 
-    function replyWithCount(replyOptions) {
-        addBarusuCount(interaction.user.id, target.id);
-        return interaction.reply(replyOptions);
-    }
-
     return async interaction => {
         const customText = interaction.options.getString("custom");
         const type = interaction.options.getString("type");
@@ -140,7 +135,6 @@ function createExecute(data) {
                 mode: "normal",
                 permission: "custom"
             };
-            addBarusuCount(interaction.user.id, target.id);
         } else {
             if (!type) {
                 return interaction.reply({
@@ -170,6 +164,11 @@ function createExecute(data) {
         const target = getTarget(interaction);
         const mode = info.mode ?? "normal";
 
+        function replyWithCount(replyOptions) {
+            addBarusuCount(interaction.user.id, target.id);
+            return interaction.reply(replyOptions);
+        }
+
         if (mode === "physical") {
             const actorName = interaction.member?.displayName
                 ?? interaction.user.globalName
@@ -188,6 +187,7 @@ function createExecute(data) {
             });
         }
 
+        // 跳弾式
         if (mode === "ricochet") {
             const secondUser = interaction.options.getUser("user2");
             if (!secondUser) {
@@ -202,7 +202,6 @@ function createExecute(data) {
             `${target.name}と${secondTarget.name}に跳弾式バルス！`
                 );
 
-            addBarusuCount(interaction.user.id, target.id);
             return replyWithCount({
                 embeds: [embed]
             });
