@@ -1,8 +1,10 @@
 const { SlashCommandBuilder } = require("discord.js");
 const { DisTube } = require("distube");
-const { YouTubePlugin } = require("@distube/youtube");
-const { SpotifyPlugin } = require("@distube/spotify");
+const { YtDlpPlugin } = require("@distube/yt-dlp");
 const ffmpegPath = require("ffmpeg-static");
+
+// 「本日の営業終了」で再生する固定URL（検索機能を使わないURL直指定）
+const TODAY_END_URL = "https://www.youtube.com/watch?v=krra1UQ5ztw";
 
 // =========================
 // DisTube インスタンス（プロセス内で1つだけ生成する）
@@ -42,21 +44,11 @@ function scheduleLeave(guildId) {
 function getDisTube(client) {
     if (distube) return distube;
 
-    let youtubeCookies = [];
-    if (process.env.YOUTUBE_COOKIES) {
-        try {
-            youtubeCookies = JSON.parse(process.env.YOUTUBE_COOKIES);
-        } catch (error) {
-            console.error("[music] YOUTUBE_COOKIES のJSON解析に失敗しました。", error);
-        }
-    }
-
     distube = new DisTube(client, {
         emitNewSongOnly: true,
         ffmpeg: { path: ffmpegPath },
         plugins: [
-            new YouTubePlugin({ cookies: youtubeCookies }),
-            new SpotifyPlugin(),
+            new YtDlpPlugin({ update: true }),
         ],
     });
 
@@ -79,14 +71,13 @@ function getDisTube(client) {
     });
 
     distube.on("error", (error, queue, song) => {
-        console.error("[music] DisTubeエラー:", error?.stack || error);
+        console.error("[music] DisTubeエラー:", error);
 
         const channel = queue?.textChannel;
         if (!channel) return;
 
         const label = song?.name ? `「${song.name}」の` : "";
-        const detail = error?.message ? `\n\`\`\`${error.message}\`\`\`` : "";
-        channel.send(`⚠️ ${label}再生中にエラーが発生しました。${detail}`).catch(() => {});
+        channel.send(`⚠️ ${label}再生中にエラーが発生しました。`).catch(() => {});
     });
 
     return distube;
@@ -203,7 +194,7 @@ async function handleTodayEnd(interaction, distube) {
     await interaction.deferReply();
 
     try {
-        await distube.play(voiceChannel, "蛍の光 オルゴール", {
+        await distube.play(voiceChannel, TODAY_END_URL, {
             member: interaction.member,
             textChannel: interaction.channel,
         });
@@ -252,7 +243,7 @@ module.exports = {
                 .addStringOption(option =>
                     option
                         .setName("url")
-                        .setDescription("YouTube / Spotify のURL、または検索ワード")
+                        .setDescription("再生するURL（YouTubeなど。検索ワードは非対応）")
                         .setRequired(true)
                 )
         )

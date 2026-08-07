@@ -11,8 +11,7 @@
     "bot": "npm run deploy && npm run dev"
   },
   "dependencies": {
-    "@distube/spotify": "^2.0.2",
-    "@distube/youtube": "^1.0.4",
+    "@distube/yt-dlp": "^2.0.1",
     "discord.js": "^14.15.3",
     "distube": "^5.2.3",
     "dotenv": "^16.4.5",
