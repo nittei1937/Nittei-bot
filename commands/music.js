@@ -70,13 +70,14 @@ function getDisTube(client) {
     });
 
     distube.on("error", (error, queue, song) => {
-        console.error("[music] DisTubeエラー:", error);
+        console.error("[music] DisTubeエラー:", error?.stack || error);
 
         const channel = queue?.textChannel;
         if (!channel) return;
 
         const label = song?.name ? `「${song.name}」の` : "";
-        channel.send(`⚠️ ${label}再生中にエラーが発生しました。`).catch(() => {});
+        const detail = error?.message ? `\n\`\`\`${error.message}\`\`\`` : "";
+        channel.send(`⚠️ ${label}再生中にエラーが発生しました。${detail}`).catch(() => {});
     });
 
     return distube;
