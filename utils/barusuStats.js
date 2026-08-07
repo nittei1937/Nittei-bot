@@ -1,21 +1,40 @@
 const fs = require("fs");
+const path = require("path");
 
-const FILE = "./barusu.json";
+const filePath = path.join(__dirname, "data", "commandCounts.json");
 
-function loadData() {
-    if (!fs.existsSync(FILE)) return {};
-    return JSON.parse(fs.readFileSync(FILE, "utf8"));
-}
-
-function saveData(data) {
-    fs.writeFileSync(FILE, JSON.stringify(data, null, 2));
-}
-
-function ensureUser(data, id) {
-    if (!data[id]) {
-        data[id] = {
-            used: 0,
-            received: 0
-        };
+// JSON読み込み
+function loadCounts() {
+    if (!fs.existsSync(filePath)) {
+        fs.writeFileSync(filePath, "{}");
     }
+
+    return JSON.parse(fs.readFileSync(filePath, "utf8"));
 }
+
+// JSON保存
+function saveCounts(counts) {
+    fs.writeFileSync(filePath, JSON.stringify(counts, null, 4));
+}
+
+// カウント追加
+function increment(commandName) {
+    const counts = loadCounts();
+
+    counts[commandName] = (counts[commandName] || 0) + 1;
+
+    saveCounts(counts);
+
+    return counts[commandName];
+}
+
+// カウント取得
+function getCount(commandName) {
+    const counts = loadCounts();
+    return counts[commandName] || 0;
+}
+
+module.exports = {
+    increment,
+    getCount
+};

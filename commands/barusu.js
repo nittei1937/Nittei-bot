@@ -1,14 +1,9 @@
-const fs = require("fs");
-const path = require("path");
-
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 
 const BARUSU = require("../data/barusu/barusu.json");
 const HANSYA = require("../data/barusu/hansya.json");
 const AUTHO = require("../data/barusu/authority.json");
-const STATUS_FILE = path.join(__dirname, "../data/barusu/status.json");
-
-
+const COUNTMANAGER = require("./countManager");
 const {
     addSchedule,
     removeSchedule,
@@ -16,41 +11,6 @@ const {
     formatDiscordTime,
     getExecuteAt
 } = require("../utils/schedule");
-
-
-function loadStatus() {
-    if (!fs.existsSync(STATUS_FILE)) return {};
-    return JSON.parse(fs.readFileSync(STATUS_FILE, "utf8"));
-}
-
-function saveStatus(data) {
-    fs.writeFileSync(STATUS_FILE, JSON.stringify(data, null, 4));
-}
-
-function ensureStatus(data, guildId, userId) {
-    if (!data[guildId]) {
-        data[guildId] = {};
-    }
-
-    if (!data[guildId][userId]) {
-        data[guildId][userId] = {
-            used: 0,
-            received: 0
-        };
-    }
-}
-
-function addBarusuCount(guildId, userId, targetId) {
-    const status = loadStatus();
-
-    ensureStatus(status, guildId, userId);
-    ensureStatus(status, guildId, targetId);
-
-    status[guildId][userId].used++;
-    status[guildId][targetId].received++;
-
-    saveStatus(status);
-}
 
 function createAutocomplete(data) {
     return async interaction => {
@@ -125,7 +85,6 @@ function hasPermission(userId, permission) {
 }
 
 function createExecute(data) {
-
     return async interaction => {
         const customText = interaction.options.getString("custom");
         const type = interaction.options.getString("type");
@@ -168,16 +127,6 @@ function createExecute(data) {
         const target = getTarget(interaction);
         const mode = info.mode ?? "normal";
 
-        function replyWithCount(replyOptions) {
-            addBarusuCount(
-                interaction.guildId,
-                interaction.user.id,
-                target.id
-            );
-
-            return interaction.reply(replyOptions);
-        }
-
         if (mode === "physical") {
             const actorName = interaction.member?.displayName
                 ?? interaction.user.globalName
@@ -191,12 +140,11 @@ function createExecute(data) {
             ${actorName}も物理的バルス！`
                 );
 
-            return replyWithCount({
+            return interaction.reply({
                 embeds: [embed]
             });
         }
 
-        // 跳弾式
         if (mode === "ricochet") {
             const secondUser = interaction.options.getUser("user2");
             if (!secondUser) {
@@ -211,7 +159,7 @@ function createExecute(data) {
             `${target.name}と${secondTarget.name}に跳弾式バルス！`
                 );
 
-            return replyWithCount({
+            return interaction.reply({
                 embeds: [embed]
             });
         }
@@ -236,7 +184,7 @@ function createExecute(data) {
             発動予定：${formatDiscordTime(executeAt)}`
                 );
 
-            return replyWithCount({
+            return interaction.reply({
                 content: `${target.name}へ`,
                 embeds: [embed]
             });
@@ -268,7 +216,7 @@ function createExecute(data) {
             ${executeAts.map(formatDiscordTime).join("\n")}`
                 );
 
-            return replyWithCount({
+            return interaction.reply({
                 content: `${target.name}へ`,
                 embeds: [embed]
             });
@@ -299,9 +247,7 @@ function createExecute(data) {
                     text: `実行者：${interaction.member?.displayName ?? interaction.user.username}`
                 });
 
-            return interaction.reply({
-                embeds: [embed]
-            });
+            return interaction.reply({ embeds: [embed] });
         }
 
         // 管理者バルス
@@ -313,7 +259,7 @@ function createExecute(data) {
                     text: `実行者：${interaction.member?.displayName ?? interaction.user.username}`
                 });
 
-            return replyWithCount({
+            return interaction.reply({
                 content: `${target.name}へ`,
                 embeds: [embed]
             });
@@ -324,7 +270,7 @@ function createExecute(data) {
             .setColor(0xFF0000)
             .setDescription(info.name);
 
-        return replyWithCount({
+        return interaction.reply({
             content: `${target.name}へ`,
             embeds: [embed]
         });
@@ -395,10 +341,6 @@ const barusuCommand = {
         .addSubcommand(sub =>
             sub.setName("list")
                 .setDescription("使用できるバルスの一覧を表示")
-        )
-        .addSubcommand(sub =>
-            sub.setName("status")
-                .setDescription("バルス統計を表示")
         ),
     autocomplete: async interaction => {
         const data = interaction.options.getSubcommand() === "hansya" ? HANSYA : BARUSU;
@@ -406,42 +348,11 @@ const barusuCommand = {
     },
     execute: async interaction => {
         const subcommand = interaction.options.getSubcommand();
+
         if (subcommand === "list") {
             return createListExecute(BARUSU)(interaction);
         }
-        if (subcommand === "status") {
-            const status = loadStatus();
-            const guildStatus = status[interaction.guildId] ?? {};
-            const usedRanking = Object.entries(guildStatus)
-                .sort(([, a], [, b]) => b.used - a.used)
-                .map(([id, data], index) =>
-                    `${index + 1}. <@${id}>：**${data.used}回**`
-                )
-                .join("\n");
-            const receivedRanking = Object.entries(guildStatus)
-                .sort(([, a], [, b]) => b.received - a.received)
-                .map(([id, data], index) =>
-                    `${index + 1}. <@${id}>：**${data.received}回**`
-                )
-                .join("\n");
-            const embed = new EmbedBuilder()
-                .setColor(0x00AEFF)
-                .setTitle("📊 バルス統計")
-                .addFields(
-                    {
-                        name: "🔥 バルスした回数ランキング",
-                        value: usedRanking || "まだ記録がありません。"
-                    },
-                    {
-                        name: "💥 バルスされた回数ランキング",
-                        value: receivedRanking || "まだ記録がありません。"
-                    }
-                );
 
-            return interaction.reply({
-                embeds: [embed]
-            });
-        }
         const data = subcommand === "hansya" ? HANSYA : BARUSU;
         return createExecute(data)(interaction);
     }
