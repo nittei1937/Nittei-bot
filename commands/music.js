@@ -42,11 +42,20 @@ function scheduleLeave(guildId) {
 function getDisTube(client) {
     if (distube) return distube;
 
+    let youtubeCookies = [];
+    if (process.env.YOUTUBE_COOKIES) {
+        try {
+            youtubeCookies = JSON.parse(process.env.YOUTUBE_COOKIES);
+        } catch (error) {
+            console.error("[music] YOUTUBE_COOKIES のJSON解析に失敗しました。", error);
+        }
+    }
+
     distube = new DisTube(client, {
         emitNewSongOnly: true,
         ffmpeg: { path: ffmpegPath },
         plugins: [
-            new YouTubePlugin(),
+            new YouTubePlugin({ cookies: youtubeCookies }),
             new SpotifyPlugin(),
         ],
     });
