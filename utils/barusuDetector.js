@@ -1,5 +1,6 @@
 const fs = require("fs");
 const path = require("path");
+const { isDetectEnabled } = require("./barusuDetectSettings");
 
 const barusuPath = path.join(__dirname, "..", "data", "barusu", "barusu.json");
 
@@ -29,6 +30,7 @@ loadBarusuNames();
 function checkBarusuMessage(message) {
     if (message.author.bot) return;
     if (!message.content) return;
+    if (!isDetectEnabled(message.guildId)) return;
 
     const matched = barusuNames.find(name => message.content.includes(name));
 
