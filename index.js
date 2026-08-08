@@ -14,6 +14,7 @@ const {
 } = require("discord.js");
 const { startScheduleRunner } = require("./utils/schedule");
 const { checkBarusuMessage } = require("./utils/barusuDetector");
+const { isCommandDisabled } = require("./utils/commandSettings");
 
 // =========================
 // Discord Client
@@ -141,6 +142,17 @@ client.on(Events.InteractionCreate, async interaction => {
 
         return;
 
+    }
+
+    if (
+        interaction.guildId &&
+        interaction.commandName !== "servercommand" &&
+        isCommandDisabled(interaction.guildId, interaction.commandName)
+    ) {
+        return interaction.reply({
+            content: `\`/${interaction.commandName}\` はこのサーバーでは無効化されています。`,
+            flags: MessageFlags.Ephemeral,
+        });
     }
 
     try {
