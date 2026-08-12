@@ -2,6 +2,10 @@ const fs = require("fs");
 const path = require("path");
 const { SlashCommandBuilder, PermissionFlagsBits } = require("discord.js");
 const { isDetectEnabled, setDetectEnabled } = require("../utils/barusuDetectSettings");
+const {
+    isProfanityDetectEnabled,
+    setProfanityDetectEnabled,
+} = require("../utils/profanityDetectSettings");
 
 const authorityPath = path.join(__dirname, "..", "data", "barusu", "authority.json");
 
@@ -22,16 +26,47 @@ function canManageDetect(interaction) {
     return interaction.memberPermissions?.has(PermissionFlagsBits.ManageGuild) ?? false;
 }
 
+// 検出種ごとに、表示名と設定の読み書き関数をまとめておく
+const DETECT_TYPES = {
+    barusu: {
+        label: "バルス検出",
+        isEnabled: isDetectEnabled,
+        setEnabled: setDetectEnabled,
+    },
+    profanity: {
+        label: "暴言検出",
+        isEnabled: isProfanityDetectEnabled,
+        setEnabled: setProfanityDetectEnabled,
+    },
+};
+
 module.exports = {
     data: new SlashCommandBuilder()
         .setName("detect")
-        .setDescription("チャット内バルス検出のON/OFF")
-        .addSubcommand(sub => sub.setName("on").setDescription("バルス検出を有効にする"))
-        .addSubcommand(sub => sub.setName("off").setDescription("バルス検出を無効にする"))
-        .addSubcommand(sub => sub.setName("status").setDescription("現在の設定を確認")),
+        .setDescription("チャット内検出機能のON/OFF")
+        .addStringOption(option =>
+            option
+                .setName("type")
+                .setDescription("対象の検出機能")
+                .setRequired(true)
+                .addChoices(
+                    { name: "バルス検出", value: "barusu" },
+                    { name: "暴言検出", value: "profanity" }
+                )
+        )
+        .addStringOption(option =>
+            option
+                .setName("action")
+                .setDescription("操作")
+                .setRequired(true)
+                .addChoices(
+                    { name: "on", value: "on" },
+                    { name: "off", value: "off" },
+                    { name: "status", value: "status" }
+                )
+        ),
 
     execute: async interaction => {
-        const subcommand = interaction.options.getSubcommand();
         const guildId = interaction.guildId;
 
         if (!guildId) {
@@ -48,17 +83,28 @@ module.exports = {
             });
         }
 
-        if (subcommand === "status") {
-            const enabled = isDetectEnabled(guildId);
+        const type = interaction.options.getString("type", true);
+        const action = interaction.options.getString("action", true);
+        const target = DETECT_TYPES[type];
+
+        if (!target) {
             return interaction.reply({
-                content: `現在バルス検出は **${enabled ? "有効" : "無効"}** です。`,
+                content: `不明な検出種です: ${type}`,
                 ephemeral: true,
             });
         }
 
-        const enabled = subcommand === "on";
-        setDetectEnabled(guildId, enabled);
+        if (action === "status") {
+            const enabled = target.isEnabled(guildId);
+            return interaction.reply({
+                content: `現在${target.label}は **${enabled ? "有効" : "無効"}** です。`,
+                ephemeral: true,
+            });
+        }
 
-        return interaction.reply(`🔧 バルス検出を **${enabled ? "有効" : "無効"}** にしました。`);
+        const enabled = action === "on";
+        target.setEnabled(guildId, enabled);
+
+        return interaction.reply(`🔧 ${target.label}を **${enabled ? "有効" : "無効"}** にしました。`);
     },
 };

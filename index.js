@@ -14,6 +14,7 @@ const {
 } = require("discord.js");
 const { startScheduleRunner } = require("./utils/schedule");
 const { checkBarusuMessage } = require("./utils/barusuDetector");
+const { checkProfanityMessage } = require("./utils/profanityDetector");
 const { isCommandDisabled } = require("./utils/commandSettings");
 
 // =========================
@@ -92,6 +93,7 @@ client.once(Events.ClientReady, (readyClient) => {
 
 client.on(Events.MessageCreate, message => {
     checkBarusuMessage(message);
+    checkProfanityMessage(message);
 });
 
 // =========================
