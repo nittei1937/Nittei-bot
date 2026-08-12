@@ -1,10 +1,10 @@
-const { SlashCommandBuilder, time, TimestampStyles } = require('discord.js')
+const { SlashCommandBuilder, EmbedBuilder, time, TimestampStyles } = require('discord.js')
 
 
 function create_userEmbed(user,timeString,formattedDate,roleNames){
     const userEmbed = new EmbedBuilder()
         .setColor(0x0099FF)
-        .setTitle(`${user.username}`)
+        .setTitle('ユーザープロフィール')
         .addFields(
             { name:'ユーザー名', value:`${user.username}`  },
             { name:'ユーザーID', value:`${user.id}`},
