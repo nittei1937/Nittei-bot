@@ -27,16 +27,28 @@ function canManageDetect(interaction) {
 }
 
 // 検出種ごとに、表示名と設定の読み書き関数をまとめておく
+const {
+    isDailyMessageEnabled,
+    setDailyMessageEnabled,
+} = require("../utils/dailyMessageSettings");
+
 const DETECT_TYPES = {
     barusu: {
         label: "バルス検出",
         isEnabled: isDetectEnabled,
         setEnabled: setDetectEnabled,
     },
+
     profanity: {
         label: "暴言検出",
         isEnabled: isProfanityDetectEnabled,
         setEnabled: setProfanityDetectEnabled,
+    },
+
+    daily: {
+        label: "定時メッセージ",
+        isEnabled: isDailyMessageEnabled,
+        setEnabled: setDailyMessageEnabled,
     },
 };
 
@@ -51,7 +63,8 @@ module.exports = {
                 .setRequired(true)
                 .addChoices(
                     { name: "バルス検出", value: "barusu" },
-                    { name: "暴言検出", value: "profanity" }
+                    { name: "暴言検出", value: "profanity" },
+                    { name: "定時メッセージ", value: "daily" }
                 )
         )
         .addStringOption(option =>
@@ -97,7 +110,8 @@ module.exports = {
         if (action === "status") {
             const enabled = target.isEnabled(guildId);
             return interaction.reply({
-                content: `現在${target.label}は **${enabled ? "有効" : "無効"}** です。`,
+                content:
+                    `現在、${target.label}は **${enabled ? "有効" : "無効"}** です。`,
                 ephemeral: true,
             });
         }

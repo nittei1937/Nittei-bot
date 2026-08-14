@@ -16,6 +16,7 @@ const { startScheduleRunner } = require("./utils/schedule");
 const { checkBarusuMessage } = require("./utils/barusuDetector");
 const { checkProfanityMessage } = require("./utils/profanityDetector");
 const { isCommandDisabled } = require("./utils/commandSettings");
+const { startDailyMessageRunner } = require("./utils/dailyMessage");
 
 // =========================
 // Discord Client
@@ -85,6 +86,7 @@ client.once(Events.ClientReady, (readyClient) => {
     console.log("====================================");
 
     startScheduleRunner(readyClient);
+    startDailyMessageRunner(readyClient);
 });
 
 // =========================
