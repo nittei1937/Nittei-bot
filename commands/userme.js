@@ -93,13 +93,18 @@ module.exports = {
                 }
             });
 
-            recordUserme({
-                messageId: sentMessage.id,
-                authorId: interaction.user.id,
-                targetUserId: user.id,
-                channelId: interaction.channel.id,
-                guildId: interaction.guild.id,
-            });
+            try {
+                recordUserme({
+                    messageId: sentMessage.id,
+                    authorId: interaction.user.id,
+                    targetUserId: user.id,
+                    channelId: interaction.channel.id,
+                    guildId: interaction.guild.id,
+                });
+            } catch (logError) {
+                // 投稿自体は成功しているので、記録だけ失敗してもエラー扱いにしない
+                console.error("[userme] ログ記録に失敗しました:", logError);
+            }
 
             // 「投稿しました」等の通知は表示しない
             return interaction.deleteReply();
