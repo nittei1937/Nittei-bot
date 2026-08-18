@@ -1,6 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const { isDetectEnabled } = require("./barusuDetectSettings");
+const { findIndex, findDisplayText } = require("./textMatch");
 
 const barusuPath = path.join(__dirname, "..", "data", "barusu", "barusu.json");
 
@@ -27,18 +28,20 @@ function loadBarusuNames() {
 
 loadBarusuNames();
 
-function checkBarusuMessage(message) {
+async function checkBarusuMessage(message) {
     if (message.author.bot) return;
     if (!message.content) return;
     if (!isDetectEnabled(message.guildId)) return;
 
-    const matched = barusuNames.find(name => message.content.includes(name));
+    const matched = barusuNames.find(name => findIndex(message.content, name));
 
     if (!matched) return;
 
+    const display = (await findDisplayText(message.content, matched)) ?? matched;
+
     message
         .reply({
-            content: `バルスを検出しました。\n「${matched}」`,
+            content: `バルスを検出しました。\n「${display}」`,
             allowedMentions: { repliedUser: false },
         })
         .catch(error => {

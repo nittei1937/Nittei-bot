@@ -17,6 +17,12 @@ const { checkBarusuMessage } = require("./utils/barusuDetector");
 const { checkProfanityMessage } = require("./utils/profanityDetector");
 const { isCommandDisabled } = require("./utils/commandSettings");
 const { startDailyMessageRunner } = require("./utils/dailyMessage");
+const { getTokenizer } = require("./utils/tokenizer");
+
+// 起動時に辞書を読み込んでおく（最初のメッセージ判定が遅れないように）
+getTokenizer().catch(error => {
+    console.error("❌ 形態素解析辞書の読み込みに失敗しました。", error);
+});
 
 // =========================
 // Discord Client
@@ -94,8 +100,12 @@ client.once(Events.ClientReady, (readyClient) => {
 // =========================
 
 client.on(Events.MessageCreate, message => {
-    checkBarusuMessage(message);
-    checkProfanityMessage(message);
+    checkBarusuMessage(message).catch(error => {
+        console.error("[barusuDetector] 予期しないエラー:", error);
+    });
+    checkProfanityMessage(message).catch(error => {
+        console.error("[profanityDetector] 予期しないエラー:", error);
+    });
 });
 
 // =========================
