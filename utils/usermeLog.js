@@ -1,26 +1,39 @@
 const fs = require("fs");
 const path = require("path");
 
-const logPath = path.join(__dirname, "..", "data", "moderation", "usermeLog.json");
+const logPath = path.join(
+    __dirname,
+    "..",
+    "data",
+    "moderation",
+    "usermeLog.json"
+);
 
-// 記録を残しておく期間（これより古い記録は書き込み時に自動で削除する）
+// 記録を残しておく期間
 const RETENTION_DAYS = 30;
 
 function readLog() {
     try {
         const raw = fs.readFileSync(logPath, "utf8");
         return JSON.parse(raw);
-    } catch (error) {
+    } catch {
         return {};
     }
 }
 
 function writeLog(log) {
-    fs.mkdirSync(path.dirname(logPath), { recursive: true });
+    fs.mkdirSync(
+        path.dirname(logPath),
+        { recursive: true }
+    );
 
-    // 古い記録を削除してファイルが際限なく大きくならないようにする
-    const cutoff = Date.now() - RETENTION_DAYS * 24 * 60 * 60 * 1000;
+    // 古いログを削除
+    const cutoff =
+        Date.now() -
+        RETENTION_DAYS * 24 * 60 * 60 * 1000;
+
     const pruned = {};
+
     for (const [messageId, entry] of Object.entries(log)) {
         if (entry.timestamp >= cutoff) {
             pruned[messageId] = entry;
@@ -28,29 +41,54 @@ function writeLog(log) {
     }
 
     const temporaryPath = `${logPath}.tmp`;
-    fs.writeFileSync(temporaryPath, `${JSON.stringify(pruned, null, 2)}\n`, "utf8");
-    fs.renameSync(temporaryPath, logPath);
+
+    fs.writeFileSync(
+        temporaryPath,
+        `${JSON.stringify(pruned, null, 2)}\n`,
+        "utf8"
+    );
+
+    fs.renameSync(
+        temporaryPath,
+        logPath
+    );
 }
 
-// userme経由で投稿されたメッセージ1件分を記録する
-function recordUserme({ messageId, authorId, targetUserId, channelId, guildId }) {
+// userme投稿を記録
+function recordUserme({
+    messageId,
+    authorId,
+    type = "user",
+    targetUserId = null,
+    targetName = null,
+    avatarURL = null,
+    channelId,
+    guildId
+}) {
     const log = readLog();
 
     log[messageId] = {
         authorId,
+        type,
         targetUserId,
+        targetName,
+        avatarURL,
         channelId,
         guildId,
-        timestamp: Date.now(),
+        timestamp: Date.now()
     };
 
     writeLog(log);
 }
 
-// messageIdから記録を取得する（無ければnull）
+// messageIdから記録を取得
 function getUsermeLog(messageId) {
     const log = readLog();
+
     return log[messageId] ?? null;
 }
 
-module.exports = { recordUserme, getUsermeLog };
+module.exports = {
+    recordUserme,
+    getUsermeLog
+};
