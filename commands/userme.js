@@ -1,4 +1,5 @@
 const { SlashCommandBuilder } = require("discord.js");
+const { recordUserme } = require("../utils/usermeLog");
 
 const WEBHOOK_NAME = "UserMeBot";
 
@@ -83,13 +84,21 @@ module.exports = {
                 size: 256
             });
 
-            await webhook.send({
+            const sentMessage = await webhook.send({
                 username,
                 avatarURL,
                 content: word,
                 allowedMentions: {
                     parse: []
                 }
+            });
+
+            recordUserme({
+                messageId: sentMessage.id,
+                authorId: interaction.user.id,
+                targetUserId: user.id,
+                channelId: interaction.channel.id,
+                guildId: interaction.guild.id,
             });
 
             // 「投稿しました」等の通知は表示しない

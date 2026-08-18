@@ -142,9 +142,9 @@ client.on(Events.InteractionCreate, async interaction => {
 
     }
 
-    // ---------- Slash Command ----------
+    // ---------- Slash Command / Context Menu ----------
 
-    if (!interaction.isChatInputCommand()) return;
+    if (!interaction.isChatInputCommand() && !interaction.isMessageContextMenuCommand()) return;
 
     const command = client.commands.get(interaction.commandName);
 
