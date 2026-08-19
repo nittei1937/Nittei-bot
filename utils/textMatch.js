@@ -1,10 +1,13 @@
 const { getTokenizer } = require("./tokenizer");
 
+// 助詞・助動詞・記号は「単語の切れ目」とみなし、これらをまたいだだけの
+// 偶然の一致（例:「です」＋「し」＋「ねぇ」の「し」「ね」）は検出しない
+const NON_CONTENT_POS = new Set(["助詞", "助動詞", "記号"]);
+
 // フォールバック用：漢字・カタカナの連続部分だけを拾う簡易版
-// （形態素解析で辞書に無い語だった場合の保険）
+// （形態素解析そのものが使えない場合の保険）
 const ATTACHED_CHAR = /[\u4E00-\u9FFF\u30A0-\u30FF\u31F0-\u31FF]/;
 
-// contentの中からtermを大文字小文字を無視して探し、見つかった範囲を返す
 function findIndex(content, term) {
     const lowerContent = content.toLowerCase();
     const lowerTerm = term.toLowerCase();
@@ -23,27 +26,32 @@ function expandByCharClass(content, start, end) {
     return content.slice(s, e);
 }
 
-// 形態素解析で、登録語を含むトークンの前後にある「名詞」の連続部分をまとめて拾う
-async function expandByTokenizer(content, term) {
+// トークン列から「内容語（助詞・助動詞・記号を除く）」が連続する部分をまとめた文字列の配列を作る
+function buildContentRuns(tokens) {
+    const runs = [];
+    let current = "";
+
+    for (const token of tokens) {
+        if (NON_CONTENT_POS.has(token.pos)) {
+            if (current) runs.push(current);
+            current = "";
+            continue;
+        }
+        current += token.surface_form;
+    }
+
+    if (current) runs.push(current);
+
+    return runs;
+}
+
+// メッセージ本文を1回だけ形態素解析し、内容語の連続部分の配列を返す。
+// 解析に失敗した場合はnullを返す（呼び出し側でフォールバック判断に使う）
+async function getContentRuns(content) {
     try {
         const tokenizer = await getTokenizer();
         const tokens = tokenizer.tokenize(content);
-        const lowerTerm = term.toLowerCase();
-        const index = tokens.findIndex(t => t.surface_form.toLowerCase().includes(lowerTerm));
-
-        if (index === -1) return null;
-
-        let start = index;
-        let end = index;
-        const isNoun = t => t.pos === "名詞";
-
-        while (start > 0 && isNoun(tokens[start - 1])) start--;
-        while (end < tokens.length - 1 && isNoun(tokens[end + 1])) end++;
-
-        return tokens
-            .slice(start, end + 1)
-            .map(t => t.surface_form)
-            .join("");
+        return buildContentRuns(tokens);
 
     } catch (error) {
 
@@ -53,16 +61,10 @@ async function expandByTokenizer(content, term) {
     }
 }
 
-// 登録語が実際にcontentに含まれているかを確認したうえで、表示用テキストを組み立てる
-// 形態素解析がうまくいけばそちらを優先し、ダメなら文字種ベースの簡易版にフォールバックする
-async function findDisplayText(content, term) {
-    const range = findIndex(content, term);
-    if (!range) return null;
-
-    const tokenized = await expandByTokenizer(content, term);
-    if (tokenized) return tokenized;
-
-    return expandByCharClass(content, range.start, range.end);
+// 内容語の連続部分の配列の中からtermを含むものを探す（大文字小文字は無視）
+function matchInRuns(runs, term) {
+    const lowerTerm = term.toLowerCase();
+    return runs.find(run => run.toLowerCase().includes(lowerTerm)) ?? null;
 }
 
-module.exports = { findIndex, findDisplayText };
+module.exports = { getContentRuns, matchInRuns, findIndex, expandByCharClass };

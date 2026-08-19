@@ -765,7 +765,7 @@ module.exports = {
         // botme
         // ====================================================
 
-        if (subcommand === "botme") {
+        if (subcommand === "touhoume") {
 
             const query =
                 interaction.options

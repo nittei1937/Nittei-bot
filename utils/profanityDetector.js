@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const { isProfanityDetectEnabled } = require("./profanityDetectSettings");
-const { findIndex, findDisplayText } = require("./textMatch");
+const { getContentRuns, matchInRuns, findIndex, expandByCharClass } = require("./textMatch");
 
 const badWordsPath = path.join(__dirname, "..", "data", "moderation", "badwords.json");
 
@@ -43,15 +43,38 @@ async function checkProfanityMessage(message) {
     if (!message.content) return;
     if (!isProfanityDetectEnabled(message.guildId)) return;
 
-    const matched = badWords.find(entry => findIndex(message.content, entry.word));
+    const runs = await getContentRuns(message.content);
+
+    let matched = null;
+    let expanded = null;
+
+    if (runs) {
+        // 形態素解析が使えた場合：内容語のまとまりの中に含まれるものだけを検出対象にする
+        for (const entry of badWords) {
+            const hit = matchInRuns(runs, entry.word);
+            if (hit) {
+                matched = entry;
+                expanded = hit;
+                break;
+            }
+        }
+    } else {
+        // 解析自体が失敗した場合のみ、従来の単純な部分一致にフォールバックする
+        for (const entry of badWords) {
+            const range = findIndex(message.content, entry.word);
+            if (range) {
+                matched = entry;
+                expanded = expandByCharClass(message.content, range.start, range.end);
+                break;
+            }
+        }
+    }
 
     if (!matched) return;
 
-    // 手動でlabelが設定されている場合はそちらを優先し、無ければ形態素解析で付随語を含めて表示する
+    // 手動でlabelが設定されている場合はそちらを優先し、無ければ検出時に拾ったまとまりを使う
     const hasCustomLabel = matched.label !== matched.word;
-    const display = hasCustomLabel
-        ? matched.label
-        : (await findDisplayText(message.content, matched.word)) ?? matched.word;
+    const display = hasCustomLabel ? matched.label : expanded;
 
     message
         .reply({

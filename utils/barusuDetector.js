@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const { isDetectEnabled } = require("./barusuDetectSettings");
-const { findIndex, findDisplayText } = require("./textMatch");
+const { getContentRuns, matchInRuns, findIndex, expandByCharClass } = require("./textMatch");
 
 const barusuPath = path.join(__dirname, "..", "data", "barusu", "barusu.json");
 
@@ -33,11 +33,31 @@ async function checkBarusuMessage(message) {
     if (!message.content) return;
     if (!isDetectEnabled(message.guildId)) return;
 
-    const matched = barusuNames.find(name => findIndex(message.content, name));
+    const runs = await getContentRuns(message.content);
 
-    if (!matched) return;
+    let display = null;
 
-    const display = (await findDisplayText(message.content, matched)) ?? matched;
+    if (runs) {
+        // 形態素解析が使えた場合：内容語のまとまりの中に含まれるものだけを検出対象にする
+        for (const name of barusuNames) {
+            const hit = matchInRuns(runs, name);
+            if (hit) {
+                display = hit;
+                break;
+            }
+        }
+    } else {
+        // 解析自体が失敗した場合のみ、従来の単純な部分一致にフォールバックする
+        for (const name of barusuNames) {
+            const range = findIndex(message.content, name);
+            if (range) {
+                display = expandByCharClass(message.content, range.start, range.end);
+                break;
+            }
+        }
+    }
+
+    if (!display) return;
 
     message
         .reply({
