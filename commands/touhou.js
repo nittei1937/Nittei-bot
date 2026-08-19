@@ -531,7 +531,7 @@ module.exports = {
 
         .addSubcommand(sub =>
             sub
-                .setName("botme")
+                .setName("touhoume")
                 .setDescription(
                     "キャラクターとして文章を投稿"
                 )
