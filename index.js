@@ -211,6 +211,27 @@ client.on("error", error => {
 
 });
 
+client.on(Events.ShardError, error => {
+    console.error("❌ Shard Error:", error);
+});
+
+client.on(Events.ShardDisconnect, (event, shardId) => {
+    console.error(`⚠️ Shard ${shardId} disconnected:`, event?.code, event?.reason);
+});
+
+client.on(Events.Invalidated, () => {
+    console.error("❌ セッションが無効化されました（Invalidated）。トークンやIntentの設定を確認してください。");
+});
+
+// ログインが一定時間で完了しない場合に気づけるようにする（診断用）
+const loginTimeout = setTimeout(() => {
+    console.error("⏰ ログイン処理が30秒経っても完了していません。ネットワークまたはIntent設定を確認してください。");
+}, 30000);
+
+client.once(Events.ClientReady, () => {
+    clearTimeout(loginTimeout);
+});
+
 // =========================
 // 終了処理
 // =========================
