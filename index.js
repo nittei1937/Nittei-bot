@@ -251,7 +251,25 @@ process.on("SIGINT", () => {
 // Discord Login
 // =========================
 
-console.log("🔄 Discordへ接続中...");
+// 診断用：Discordへの疎通確認（認証不要なエンドポイント）
+console.log("🔍 Discord APIへの疎通を確認中...");
+
+const https = require("https");
+
+const diagnosticStart = Date.now();
+const diagnosticReq = https.get("https://discord.com/api/v10/gateway", res => {
+    console.log(`✅ Discord APIに到達できました（${Date.now() - diagnosticStart}ms, status: ${res.statusCode}）`);
+    res.resume();
+});
+
+diagnosticReq.setTimeout(10000, () => {
+    console.error("❌ Discord APIへの接続が10秒でタイムアウトしました。ネットワーク経路に問題がある可能性が高いです。");
+    diagnosticReq.destroy();
+});
+
+diagnosticReq.on("error", error => {
+    console.error("❌ Discord APIへの接続でエラーが発生しました:", error.message);
+});
 
 client.login(DISCORD_TOKEN).catch(error => {
 
