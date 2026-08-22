@@ -67,4 +67,22 @@ function matchInRuns(runs, term) {
     return runs.find(run => run.toLowerCase().includes(lowerTerm)) ?? null;
 }
 
-module.exports = { getContentRuns, matchInRuns, findIndex, expandByCharClass };
+// 単語単体を形態素解析し、内部に助詞・助動詞・記号が現れないか（＝辞書的に
+// ひとまとまりの語として認識できるか）を判定する。
+// 「きもい」「うぜぇ」のような辞書に無い俗語は、単体でも助詞が混ざって
+// 分割されてしまうことがあり、そういう単語は厳密な判定だと逆に検出漏れになる。
+async function isWordClean(word) {
+    try {
+        const tokenizer = await getTokenizer();
+        const tokens = tokenizer.tokenize(word);
+        return !tokens.some(t => NON_CONTENT_POS.has(t.pos));
+
+    } catch (error) {
+
+        console.error("[textMatch] 単語のクリーン判定に失敗しました。", error);
+        return false;
+
+    }
+}
+
+module.exports = { getContentRuns, matchInRuns, findIndex, expandByCharClass, isWordClean };
