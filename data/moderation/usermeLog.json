@@ -1,0 +1,72 @@
+{
+  "1543631204811800677": {
+    "authorId": "1423144854078361682",
+    "type": "user",
+    "targetUserId": "1302137903140306980",
+    "targetName": "あたまのわるいひと",
+    "avatarURL": null,
+    "channelId": "1471819645316235335",
+    "guildId": "1455225075023216672",
+    "timestamp": 1788100749581
+  },
+  "1543631307760992306": {
+    "authorId": "1423144854078361682",
+    "type": "user",
+    "targetUserId": "1302137903140306980",
+    "targetName": "あたまのわるいひと",
+    "avatarURL": null,
+    "channelId": "1471819645316235335",
+    "guildId": "1455225075023216672",
+    "timestamp": 1788100774078
+  },
+  "1543631478318174480": {
+    "authorId": "1302137903140306980",
+    "type": "user",
+    "targetUserId": "1152822143810289714",
+    "targetName": "Keiroku",
+    "avatarURL": null,
+    "channelId": "1471819645316235335",
+    "guildId": "1455225075023216672",
+    "timestamp": 1788100815117
+  },
+  "1543631731444289596": {
+    "authorId": "1423144854078361682",
+    "type": "custom",
+    "targetUserId": null,
+    "targetName": "竈門炭治郎",
+    "avatarURL": "https://kimetsu.com/anime/assets/img/special/degicon/Twitter_icon10.png",
+    "channelId": "1471819645316235335",
+    "guildId": "1455225075023216672",
+    "timestamp": 1788100875076
+  },
+  "1543631940828012670": {
+    "authorId": "1302137903140306980",
+    "type": "custom",
+    "targetUserId": null,
+    "targetName": "松本等しい",
+    "avatarURL": "https://cdn.discordapp.com/attachments/1466372734379626658/1543155532414844928/IMG_9516.jpg?ex=6a952895&is=6a93d715&hm=9d7f4c9984daa05b923fe02387415ead2f7d03dfbf404bbccae093147abc2307&",
+    "channelId": "1471819645316235335",
+    "guildId": "1455225075023216672",
+    "timestamp": 1788100925134
+  },
+  "1543632377803317319": {
+    "authorId": "1302137903140306980",
+    "type": "user",
+    "targetUserId": "1224572800237568081",
+    "targetName": "ハミガキ",
+    "avatarURL": null,
+    "channelId": "1471819645316235335",
+    "guildId": "1455225075023216672",
+    "timestamp": 1788101029191
+  },
+  "1543633505706319914": {
+    "authorId": "1302137903140306980",
+    "type": "custom",
+    "targetUserId": null,
+    "targetName": "あたまのわるいけいろく",
+    "avatarURL": "https://cdn.discordapp.com/attachments/1466372734379626658/1542939066872631327/IMG_3401.jpg?ex=6a9507bb&is=6a93b63b&hm=6091e7a081a6ce77daa36204ad46aa4cc5a0a921223089a2eb471fd99d1a454f&",
+    "channelId": "1471819645316235335",
+    "guildId": "1455225075023216672",
+    "timestamp": 1788101298332
+  }
+}
