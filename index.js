@@ -18,6 +18,7 @@ const { checkProfanityMessage } = require("./utils/profanityDetector");
 const { isCommandDisabled } = require("./utils/commandSettings");
 const { startDailyMessageRunner } = require("./utils/dailyMessage");
 const { getTokenizer } = require("./utils/tokenizer");
+const { handleVoiceStateUpdate } = require("./utils/vcWatchHandler");
 
 // 起動時に辞書を読み込んでおく（最初のメッセージ判定が遅れないように）
 getTokenizer().catch(error => {
@@ -40,6 +41,7 @@ const client = new Client({
         GatewayIntentBits.Guilds,
         GatewayIntentBits.GuildMessages,
         GatewayIntentBits.MessageContent,
+        GatewayIntentBits.GuildVoiceStates,
     ],
 });
 
@@ -101,10 +103,16 @@ client.once(Events.ClientReady, (readyClient) => {
 
 client.on(Events.MessageCreate, message => {
     checkBarusuMessage(message).catch(error => {
-        console.error("[barusuDetector] 予期しないエラー:", error);
+        console.error(`${TAG} [barusuDetector] 予期しないエラー:`, error);
     });
     checkProfanityMessage(message).catch(error => {
-        console.error("[profanityDetector] 予期しないエラー:", error);
+        console.error(`${TAG} [profanityDetector] 予期しないエラー:`, error);
+    });
+});
+
+client.on(Events.VoiceStateUpdate, (oldState, newState) => {
+    handleVoiceStateUpdate(oldState, newState).catch(error => {
+        console.error(`${TAG} [vcWatch] 予期しないエラー:`, error);
     });
 });
 
