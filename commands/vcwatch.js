@@ -36,8 +36,7 @@ module.exports = {
                 .addChannelOption(option =>
                     option
                         .setName("channel")
-                        .setDescription("通知先のテキストチャンネル")
-                        .addChannelOption()
+                        .setDescription("通知先のチャンネル")
                         .setRequired(true)
                 )
                 .addChannelOption(option =>
@@ -89,9 +88,24 @@ module.exports = {
             const voiceChannel = interaction.options.getChannel("voice_channel");
             const message = interaction.options.getString("message");
 
-            addWatch(guildId, user.id, channel.id, message, voiceChannel?.id ?? null);
+            if (!channel.isTextBased()) {
+                return interaction.reply({
+                    content: "通知先にはメッセージを送信できるチャンネルを選択してください。",
+                    ephemeral: true,
+                });
+            }
 
-            const scope = voiceChannel ? `<#${voiceChannel.id}> に` : "どのVCでも";
+            addWatch(
+                guildId,
+                user.id,
+                channel.id,
+                message,
+                voiceChannel?.id ?? null
+            );
+
+            const scope = voiceChannel
+                ? `<#${voiceChannel.id}> に`
+                : "どのVCでも";
 
             return interaction.reply(
                 `🔔 ${user} が${scope}入室したら <#${channel.id}> に通知するよう設定しました。`
