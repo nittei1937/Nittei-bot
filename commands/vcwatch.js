@@ -36,7 +36,12 @@ module.exports = {
                 .addChannelOption(option =>
                     option
                         .setName("channel")
-                        .setDescription("通知先のチャンネル")
+                        .setDescription("通知先のチャンネル（VCのチャットも選択可能）")
+                        .addChannelTypes(
+                            ChannelType.GuildText,
+                            ChannelType.GuildVoice,
+                            ChannelType.GuildStageVoice
+                        )
                         .setRequired(true)
                 )
                 .addChannelOption(option =>
@@ -107,16 +112,20 @@ module.exports = {
                 ? `<#${voiceChannel.id}> に`
                 : "どのVCでも";
 
-            return interaction.reply(
-                `🔔 ${user} が${scope}入室したら <#${channel.id}> に通知するよう設定しました。`
-            );
+            return interaction.reply({
+                content: `🔔 ${user} が${scope}入室したら <#${channel.id}> に通知するよう設定しました。`,
+                ephemeral: true,
+            });
         }
 
         if (subcommand === "remove") {
             const user = interaction.options.getUser("user", true);
             removeWatch(guildId, user.id);
 
-            return interaction.reply(`🔕 ${user} の監視を解除しました。`);
+            return interaction.reply({
+                content: `🔕 ${user} の監視を解除しました。`,
+                ephemeral: true,
+            });
         }
 
         // ---- list ----
