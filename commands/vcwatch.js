@@ -37,7 +37,7 @@ module.exports = {
                     option
                         .setName("channel")
                         .setDescription("通知先のテキストチャンネル")
-                        .addChannelTypes(ChannelType.GuildText)
+                        .addChannelOption()
                         .setRequired(true)
                 )
                 .addChannelOption(option =>
