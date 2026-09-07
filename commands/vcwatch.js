@@ -40,6 +40,12 @@ module.exports = {
                         .addChannelTypes(ChannelType.GuildText)
                         .setRequired(true)
                 )
+                .addChannelOption(option =>
+                    option
+                        .setName("voice_channel")
+                        .setDescription("監視するVC（省略時はどのVCに入室しても通知）")
+                        .addChannelTypes(ChannelType.GuildVoice)
+                )
                 .addStringOption(option =>
                     option
                         .setName("message")
@@ -80,12 +86,15 @@ module.exports = {
         if (subcommand === "add") {
             const user = interaction.options.getUser("user", true);
             const channel = interaction.options.getChannel("channel", true);
+            const voiceChannel = interaction.options.getChannel("voice_channel");
             const message = interaction.options.getString("message");
 
-            addWatch(guildId, user.id, channel.id, message);
+            addWatch(guildId, user.id, channel.id, message, voiceChannel?.id ?? null);
+
+            const scope = voiceChannel ? `<#${voiceChannel.id}> に` : "どのVCでも";
 
             return interaction.reply(
-                `🔔 ${user} がVCに入室したら <#${channel.id}> に通知するよう設定しました。`
+                `🔔 ${user} が${scope}入室したら <#${channel.id}> に通知するよう設定しました。`
             );
         }
 
@@ -107,9 +116,10 @@ module.exports = {
             });
         }
 
-        const lines = entries.map(
-            ([userId, watch]) => `・<@${userId}> → <#${watch.channelId}>`
-        );
+        const lines = entries.map(([userId, watch]) => {
+            const vcLabel = watch.voiceChannelId ? `<#${watch.voiceChannelId}>` : "どのVCでも";
+            return `・<@${userId}>（${vcLabel}） → <#${watch.channelId}>`;
+        });
 
         return interaction.reply({
             content: `🔔 監視中のユーザー:\n${lines.join("\n")}`,

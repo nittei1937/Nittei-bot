@@ -13,6 +13,9 @@ async function handleVoiceStateUpdate(oldState, newState) {
     const watch = getWatch(guildId, userId);
     if (!watch) return;
 
+    // 監視対象VCが指定されている場合は、そのVC以外への入室は無視する
+    if (watch.voiceChannelId && watch.voiceChannelId !== newState.channelId) return;
+
     const textChannel = await newState.guild.channels.fetch(watch.channelId).catch(() => null);
     if (!textChannel) return;
 

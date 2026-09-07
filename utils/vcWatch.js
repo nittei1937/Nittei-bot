@@ -19,10 +19,10 @@ function writeWatches(watches) {
     fs.renameSync(temporaryPath, watchPath);
 }
 
-function addWatch(guildId, userId, channelId, message) {
+function addWatch(guildId, userId, channelId, message, voiceChannelId = null) {
     const watches = readWatches();
     watches[guildId] ??= {};
-    watches[guildId][userId] = { channelId, message: message ?? null };
+    watches[guildId][userId] = { channelId, message: message ?? null, voiceChannelId };
     writeWatches(watches);
 }
 
