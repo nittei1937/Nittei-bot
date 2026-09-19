@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const { SlashCommandBuilder, PermissionFlagsBits, ChannelType } = require("discord.js");
-const { addWatch, removeWatch, getAllWatches } = require("../utils/vcWatch");
+const { addWatch, removeWatch, getAllWatches, flushToGitHub } = require("../utils/vcWatch");
 
 const authorityPath = path.join(__dirname, "..", "data", "barusu", "authority.json");
 
@@ -67,6 +67,9 @@ module.exports = {
         )
         .addSubcommand(sub =>
             sub.setName("list").setDescription("現在の監視対象一覧を表示")
+        )
+        .addSubcommand(sub =>
+            sub.setName("save").setDescription("保留中の変更を今すぐGitHubに保存する（通常は5分後に自動で保存されます）")
         ),
 
     async execute(interaction) {
@@ -124,6 +127,17 @@ module.exports = {
 
             return interaction.reply({
                 content: `🔕 ${user} の監視を解除しました。`,
+                ephemeral: true,
+            });
+        }
+
+        if (subcommand === "save") {
+            const flushed = await flushToGitHub();
+
+            return interaction.reply({
+                content: flushed
+                    ? "💾 GitHubへ保存しました。まもなく再デプロイが走ります。"
+                    : "保存待ちの変更はありません（すでに最新の状態です）。",
                 ephemeral: true,
             });
         }

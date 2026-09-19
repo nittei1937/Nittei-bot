@@ -1,5 +1,6 @@
 const fs = require("fs");
 const path = require("path");
+const { persistFile, flushPersist } = require("./githubPersist");
 
 const watchPath = path.join(__dirname, "..", "data", "moderation", "vcWatch.json");
 
@@ -14,9 +15,19 @@ function readWatches() {
 
 function writeWatches(watches) {
     fs.mkdirSync(path.dirname(watchPath), { recursive: true });
+    const content = `${JSON.stringify(watches, null, 2)}\n`;
+
     const temporaryPath = `${watchPath}.tmp`;
-    fs.writeFileSync(temporaryPath, `${JSON.stringify(watches, null, 2)}\n`, "utf8");
+    fs.writeFileSync(temporaryPath, content, "utf8");
     fs.renameSync(temporaryPath, watchPath);
+
+    // GitHub連携が設定されていれば、5分操作が無いタイミングでまとめてコミットする
+    persistFile(watchPath, content);
+}
+
+// 保留中の変更があれば、待たずに今すぐGitHubへコミットする
+function flushToGitHub() {
+    return flushPersist(watchPath);
 }
 
 function addWatch(guildId, userId, channelId, message, voiceChannelId = null) {
@@ -44,4 +55,4 @@ function getAllWatches(guildId) {
     return watches[guildId] ?? {};
 }
 
-module.exports = { addWatch, removeWatch, getWatch, getAllWatches };
+module.exports = { addWatch, removeWatch, getWatch, getAllWatches, flushToGitHub };
