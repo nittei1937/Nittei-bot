@@ -2,6 +2,11 @@ const fs = require("fs");
 const path = require("path");
 const { SlashCommandBuilder, PermissionFlagsBits, ChannelType } = require("discord.js");
 const { addWatch, removeWatch, getAllWatches, flushToGitHub } = require("../utils/vcWatch");
+const {
+    isRestrictionEnabled,
+    setRestrictionEnabled,
+    flushToGitHub: flushSettingsToGitHub,
+} = require("../utils/vcWatchSettings");
 
 const authorityPath = path.join(__dirname, "..", "data", "barusu", "authority.json");
 
@@ -70,6 +75,22 @@ module.exports = {
         )
         .addSubcommand(sub =>
             sub.setName("save").setDescription("保留中の変更を今すぐGitHubに保存する（通常は5分後に自動で保存されます）")
+        )
+        .addSubcommand(sub =>
+            sub
+                .setName("restriction")
+                .setDescription("vcwatchの使用制限（owners・管理者限定／誰でも）を切り替える")
+                .addStringOption(option =>
+                    option
+                        .setName("action")
+                        .setDescription("操作")
+                        .setRequired(true)
+                        .addChoices(
+                            { name: "on（owners・管理者だけ使える）", value: "on" },
+                            { name: "off（誰でも使える）", value: "off" },
+                            { name: "status（今の設定を確認）", value: "status" }
+                        )
+                )
         ),
 
     async execute(interaction) {
@@ -80,15 +101,45 @@ module.exports = {
             });
         }
 
-        if (!canManage(interaction)) {
+        const subcommand = interaction.options.getSubcommand();
+        const guildId = interaction.guildId;
+
+        // restrictionの切り替え自体は常にowners・管理者限定
+        // （制限offの状態でも、誰でも切り替えられてしまわないようにするため）
+        if (subcommand === "restriction") {
+            if (!canManage(interaction)) {
+                return interaction.reply({
+                    content: "このコマンドを使用する権限がありません。（サーバー管理権限が必要です）",
+                    ephemeral: true,
+                });
+            }
+
+            const action = interaction.options.getString("action", true);
+
+            if (action === "status") {
+                const enabled = isRestrictionEnabled();
+                return interaction.reply({
+                    content: `現在 \`/vcwatch\` は **${enabled ? "owners・管理者だけ使える状態" : "誰でも使える状態"}** です。`,
+                    ephemeral: true,
+                });
+            }
+
+            const enabled = action === "on";
+            setRestrictionEnabled(enabled);
+
+            return interaction.reply({
+                content: `🔧 \`/vcwatch\` を **${enabled ? "owners・管理者だけ使える" : "誰でも使える"}** ように設定しました。`,
+                ephemeral: true,
+            });
+        }
+
+        // それ以外のサブコマンドは、制限が有効な時だけ権限チェックする
+        if (isRestrictionEnabled() && !canManage(interaction)) {
             return interaction.reply({
                 content: "このコマンドを使用する権限がありません。（サーバー管理権限が必要です）",
                 ephemeral: true,
             });
         }
-
-        const subcommand = interaction.options.getSubcommand();
-        const guildId = interaction.guildId;
 
         if (subcommand === "add") {
             const user = interaction.options.getUser("user", true);
@@ -132,7 +183,9 @@ module.exports = {
         }
 
         if (subcommand === "save") {
-            const flushed = await flushToGitHub();
+            const flushedWatch = await flushToGitHub();
+            const flushedSettings = await flushSettingsToGitHub();
+            const flushed = flushedWatch || flushedSettings;
 
             return interaction.reply({
                 content: flushed
