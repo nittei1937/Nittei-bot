@@ -50,27 +50,52 @@ function buildNationDashboardEmbed(nation, data) {
         .setColor(COLOR)
         .setDescription(
             [
+                `国家の長：${nation.head_of_state ?? "-"}`,
+                `行政府の長：${nation.head_of_government ?? "-"}`,
                 `政体：${nation.government}`,
                 `首都：${nation.capital}`,
                 `建国：${nation.founded}`,
-                `国土面積：${nation.area}`,
             ].join("\n")
         )
         .addFields(
-            { name: "人口", value: `${formatJapaneseNumber(nation.population)}人`, inline: true },
-            { name: "GDP", value: `$${formatJapaneseNumber(nation.gdp)}`, inline: true },
-            { name: "国防費", value: `$${formatJapaneseNumber(nation.military_budget)}`, inline: true },
-            { name: "現役兵力", value: `${formatJapaneseNumber(nation.active_personnel)}人`, inline: true },
-            { name: "予備役", value: `${formatJapaneseNumber(nation.reserve_personnel)}人`, inline: true },
-            { name: "核兵器", value: nation.has_nuclear ? "保有" : "非保有", inline: true },
-            { name: "保有戦車", value: `${formatJapaneseNumber(nation.tanks_count)}輌`, inline: true },
-            { name: "保有艦艇", value: `${formatJapaneseNumber(nation.ships_count)}隻`, inline: true },
-            { name: "保有航空機", value: `${formatJapaneseNumber(nation.aircraft_count)}機`, inline: true },
-            { name: "同盟国", value: resolveAllyNames(data, nation.allies), inline: false }
+            {
+                name: "人口",
+                value: `${formatJapaneseNumber(nation.population)}人`,
+                inline: true,
+            },
+            {
+                name: "国防費",
+                value: `$${formatJapaneseNumber(nation.military_budget)}`,
+                inline: true,
+            },
+            {
+                name: "保有戦車",
+                value: `${formatJapaneseNumber(nation.tanks_count)}輌`,
+                inline: true,
+            },
+            {
+                name: "保有艦艇",
+                value: `${formatJapaneseNumber(nation.ships_count)}隻`,
+                inline: true,
+            },
+            {
+                name: "保有航空機",
+                value: `${formatJapaneseNumber(nation.aircraft_count)}機`,
+                inline: true,
+            },
+            {
+                name: "同盟国",
+                value: resolveAllyNames(data, nation.allies),
+                inline: false,
+            }
         );
 
     if (nation.notes) {
-        embed.addFields({ name: "備考", value: nation.notes, inline: false });
+        embed.addFields({
+            name: "備考",
+            value: nation.notes,
+            inline: false,
+        });
     }
 
     return embed;

@@ -24,11 +24,11 @@
   "Empire of Siopoteto": {
     "name": "しおぽてと帝国",
     "capital": "トウヒ村",
-    "government": "立憲共和制・議院内閣制",
+    "government": "指導者・副指導者による共同統治制",
     "head_of_state": "のっち",
-    "head_of_government": "のっち",
+    "head_of_government": "けいろく",
     "founded": "2026年6月20日",
-    "population": "10人",
+    "population": "8人",
     "area": "1000000km²",
     "gdp": "150億ドル",
     "military_budget": "1億5000万ドル",
@@ -38,7 +38,7 @@
     "ships_count": "340隻",
     "aircraft_count": "20機",
     "has_nuclear": false,
-    "allies": [],
+    "allies": ["グリーンラック帝国","大日本帝國"],
     "rivals": [],
     "notes": ""
   }
