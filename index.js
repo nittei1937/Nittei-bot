@@ -172,6 +172,19 @@ client.on("error", error => {
     console.error(error);
 });
 
+client.ws.on("INTERACTION_CREATE", data => {
+    console.log("[WS] INTERACTION_CREATE", data);
+});
+
+client.on("warn", message => {
+    console.warn(`[Discord Warn] ${message}`);
+});
+
+client.on("error", error => {
+    console.error("❌ Discord Client Error");
+    console.error(error);
+});
+
 // ==============================
 // Discord Ready
 // ==============================
@@ -195,6 +208,16 @@ client.once(Events.ClientReady, readyClient => {
 // ==============================
 // Discord Login
 // ==============================
+
+process.on("unhandledRejection", error => {
+    console.error("❌ Unhandled Promise Rejection");
+    console.error(error);
+});
+
+process.on("uncaughtException", error => {
+    console.error("❌ Uncaught Exception");
+    console.error(error);
+});
 
 console.log("🔐 Discordへログインしています...");
 
