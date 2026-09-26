@@ -214,7 +214,7 @@ client.on("shardDisconnect", (event, shardId) => {
 client.on("shardError", (error, shardId) => {
     console.error(`❌ Gatewayエラー : Shard ${shardId}`);
     console.error(error);
-});
+});x
 
 // ==============================
 // Discord Ready
@@ -252,10 +252,79 @@ process.on("uncaughtException", error => {
 
 console.log("🔐 Discordへログインしています...");
 
+// ==============================
+// Discord Gateway 接続診断
+// ==============================
+
+client.on("shardConnecting", shardId => {
+    console.log(`🔌 Shard ${shardId} : Gateway接続開始`);
+});
+
+client.on("shardReady", (shardId) => {
+    console.log(`✅ Shard ${shardId} : Gateway接続完了`);
+});
+
+client.on("shardReconnecting", shardId => {
+    console.log(`🔄 Shard ${shardId} : Gateway再接続`);
+});
+
+client.on("shardDisconnect", (event, shardId) => {
+    console.error(`❌ Shard ${shardId} : Gateway切断`);
+    console.error(`Code: ${event?.code}`);
+    console.error(`Reason: ${event?.reason}`);
+});
+
+client.on("shardError", (error, shardId) => {
+    console.error(`❌ Shard ${shardId} : Gatewayエラー`);
+    console.error(error);
+});
+
+const https = require("https");
+
+function testDiscordGateway() {
+    console.log("🔎 Discord Gateway接続診断を開始します...");
+
+    const req = https.get(
+        "https://discord.com/api/v10/gateway",
+        {
+            timeout: 10000,
+            headers: {
+                "User-Agent": "NitteiBot/1.0",
+            },
+        },
+        res => {
+            console.log(`🔎 Discord Gateway HTTP Status : ${res.statusCode}`);
+
+            let data = "";
+
+            res.on("data", chunk => {
+                data += chunk;
+            });
+
+            res.on("end", () => {
+                console.log(`🔎 Discord Gateway Response : ${data}`);
+            });
+        }
+    );
+
+    req.on("timeout", () => {
+        console.error("❌ Discord Gateway HTTP接続が10秒でタイムアウトしました。");
+        req.destroy();
+    });
+
+    req.on("error", error => {
+        console.error("❌ Discord Gateway HTTP接続エラー");
+        console.error(error);
+    });
+}
+
+testDiscordGateway();
+
+console.log("🔐 Discordへログインしています...");
+
 client.login(DISCORD_TOKEN).catch(error => {
     console.error("❌ Discordへのログインに失敗しました。");
     console.error(error);
-
     process.exit(1);
 });
 
