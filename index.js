@@ -156,10 +156,16 @@ client.on(Events.InteractionCreate, async interaction => {
 });
 
 // ==============================
-// Discord Client Debug / Warning
+// Discord Debug / Warning
 // ==============================
 
 client.on("debug", message => {
+    // Tokenそのものをログに出さない
+    if (message.includes("Provided token:")) {
+        console.log("[Discord Debug] Token received.");
+        return;
+    }
+
     console.log(`[Discord Debug] ${message}`);
 });
 
@@ -172,16 +178,41 @@ client.on("error", error => {
     console.error(error);
 });
 
+// Gateway WebSocket関連
 client.ws.on("INTERACTION_CREATE", data => {
-    console.log("[WS] INTERACTION_CREATE", data);
+    console.log("[Discord WS] INTERACTION_CREATE");
 });
 
-client.on("warn", message => {
-    console.warn(`[Discord Warn] ${message}`);
+// Shard関連イベント
+client.ws.on("DEBUG", message => {
+    console.log(`[Discord WS Debug] ${message}`);
 });
 
-client.on("error", error => {
-    console.error("❌ Discord Client Error");
+// ==============================
+// Gateway接続状態
+// ==============================
+
+client.on("shardConnecting", shardId => {
+    console.log(`🔌 Gateway接続中 : Shard ${shardId}`);
+});
+
+client.on("shardReady", (shardId, unavailableGuilds) => {
+    console.log(`✅ Gateway接続完了 : Shard ${shardId}`);
+});
+
+client.on("shardReconnecting", shardId => {
+    console.log(`🔄 Gateway再接続中 : Shard ${shardId}`);
+});
+
+client.on("shardDisconnect", (event, shardId) => {
+    console.error(
+        `❌ Gateway切断 : Shard ${shardId} / Code: ${event?.code}`
+    );
+    console.error(event);
+});
+
+client.on("shardError", (error, shardId) => {
+    console.error(`❌ Gatewayエラー : Shard ${shardId}`);
     console.error(error);
 });
 
