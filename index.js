@@ -23,7 +23,9 @@ const { startScheduleRunner } = require("./utils/schedule");
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
 
 if (!DISCORD_TOKEN) {
-    console.error("❌ DISCORD_TOKEN が .env / Render の環境変数に設定されていません。");
+    console.error(
+        "❌ DISCORD_TOKEN が .env / Render の環境変数に設定されていません。"
+    );
     process.exit(1);
 }
 
@@ -49,7 +51,9 @@ client.commands = new Collection();
 const commandsPath = path.join(__dirname, "commands");
 
 if (!fs.existsSync(commandsPath)) {
-    console.error(`❌ commands ディレクトリが見つかりません: ${commandsPath}`);
+    console.error(
+        `❌ commands ディレクトリが見つかりません: ${commandsPath}`
+    );
 } else {
     const commandFiles = fs
         .readdirSync(commandsPath)
@@ -60,14 +64,15 @@ if (!fs.existsSync(commandsPath)) {
             const filePath = path.join(commandsPath, file);
             const command = require(filePath);
 
-            // 配列でexportされているコマンドにも対応
             const commands = Array.isArray(command)
                 ? command
                 : [command];
 
             for (const cmd of commands) {
                 if (!cmd?.data?.name) {
-                    console.warn(`⚠️ コマンド名を取得できませんでした: ${file}`);
+                    console.warn(
+                        `⚠️ コマンド名を取得できませんでした: ${file}`
+                    );
                     continue;
                 }
 
@@ -149,7 +154,9 @@ client.on(Events.InteractionCreate, async interaction => {
                 });
             }
         } catch (replyError) {
-            console.error("❌ エラー通知の送信にも失敗しました。");
+            console.error(
+                "❌ エラー通知の送信にも失敗しました。"
+            );
             console.error(replyError);
         }
     }
@@ -178,16 +185,6 @@ client.on("error", error => {
     console.error(error);
 });
 
-// Gateway WebSocket関連
-client.ws.on("INTERACTION_CREATE", data => {
-    console.log("[Discord WS] INTERACTION_CREATE");
-});
-
-// Shard関連イベント
-client.ws.on("DEBUG", message => {
-    console.log(`[Discord WS Debug] ${message}`);
-});
-
 // ==============================
 // Gateway接続状態
 // ==============================
@@ -196,7 +193,7 @@ client.on("shardConnecting", shardId => {
     console.log(`🔌 Gateway接続中 : Shard ${shardId}`);
 });
 
-client.on("shardReady", (shardId, unavailableGuilds) => {
+client.on("shardReady", shardId => {
     console.log(`✅ Gateway接続完了 : Shard ${shardId}`);
 });
 
@@ -206,38 +203,21 @@ client.on("shardReconnecting", shardId => {
 
 client.on("shardDisconnect", (event, shardId) => {
     console.error(
-        `❌ Gateway切断 : Shard ${shardId} / Code: ${event?.code}`
+        `❌ Gateway切断 : Shard ${shardId}`
     );
-    console.error(event);
+    console.error(`Code: ${event?.code}`);
+    console.error(`Reason: ${event?.reason}`);
 });
 
 client.on("shardError", (error, shardId) => {
-    console.error(`❌ Gatewayエラー : Shard ${shardId}`);
+    console.error(
+        `❌ Gatewayエラー : Shard ${shardId}`
+    );
     console.error(error);
 });
 
 // ==============================
-// Discord Ready
-// ==============================
-
-client.once(Events.ClientReady, readyClient => {
-    console.log("========================================");
-    console.log(`✅ Discordログイン完了 : ${readyClient.user.tag}`);
-    console.log(`🌐 接続サーバー数 : ${readyClient.guilds.cache.size}`);
-    console.log("========================================");
-
-    // スケジュール処理開始
-    try {
-        startScheduleRunner(client);
-        console.log("⏰ スケジュールランナーを開始しました。");
-    } catch (error) {
-        console.error("❌ スケジュールランナーの起動に失敗しました。");
-        console.error(error);
-    }
-});
-
-// ==============================
-// Discord Login
+// Node.js エラー
 // ==============================
 
 process.on("unhandledRejection", error => {
@@ -250,81 +230,46 @@ process.on("uncaughtException", error => {
     console.error(error);
 });
 
-console.log("🔐 Discordへログインしています...");
-
 // ==============================
-// Discord Gateway 接続診断
+// Discord Ready
 // ==============================
 
-client.on("shardConnecting", shardId => {
-    console.log(`🔌 Shard ${shardId} : Gateway接続開始`);
-});
-
-client.on("shardReady", (shardId) => {
-    console.log(`✅ Shard ${shardId} : Gateway接続完了`);
-});
-
-client.on("shardReconnecting", shardId => {
-    console.log(`🔄 Shard ${shardId} : Gateway再接続`);
-});
-
-client.on("shardDisconnect", (event, shardId) => {
-    console.error(`❌ Shard ${shardId} : Gateway切断`);
-    console.error(`Code: ${event?.code}`);
-    console.error(`Reason: ${event?.reason}`);
-});
-
-client.on("shardError", (error, shardId) => {
-    console.error(`❌ Shard ${shardId} : Gatewayエラー`);
-    console.error(error);
-});
-
-const https = require("https");
-
-function testDiscordGateway() {
-    console.log("🔎 Discord Gateway接続診断を開始します...");
-
-    const req = https.get(
-        "https://discord.com/api/v10/gateway",
-        {
-            timeout: 10000,
-            headers: {
-                "User-Agent": "NitteiBot/1.0",
-            },
-        },
-        res => {
-            console.log(`🔎 Discord Gateway HTTP Status : ${res.statusCode}`);
-
-            let data = "";
-
-            res.on("data", chunk => {
-                data += chunk;
-            });
-
-            res.on("end", () => {
-                console.log(`🔎 Discord Gateway Response : ${data}`);
-            });
-        }
+client.once(Events.ClientReady, readyClient => {
+    console.log("========================================");
+    console.log(
+        `✅ Discordログイン完了 : ${readyClient.user.tag}`
     );
+    console.log(
+        `🌐 接続サーバー数 : ${readyClient.guilds.cache.size}`
+    );
+    console.log("========================================");
 
-    req.on("timeout", () => {
-        console.error("❌ Discord Gateway HTTP接続が10秒でタイムアウトしました。");
-        req.destroy();
-    });
-
-    req.on("error", error => {
-        console.error("❌ Discord Gateway HTTP接続エラー");
+    // スケジュール処理開始
+    try {
+        startScheduleRunner(client);
+        console.log(
+            "⏰ スケジュールランナーを開始しました。"
+        );
+    } catch (error) {
+        console.error(
+            "❌ スケジュールランナーの起動に失敗しました。"
+        );
         console.error(error);
-    });
-}
+    }
+});
 
-testDiscordGateway();
+// ==============================
+// Discord Login
+// ==============================
 
 console.log("🔐 Discordへログインしています...");
 
 client.login(DISCORD_TOKEN).catch(error => {
-    console.error("❌ Discordへのログインに失敗しました。");
+    console.error(
+        "❌ Discordへのログインに失敗しました。"
+    );
     console.error(error);
+
     process.exit(1);
 });
 
@@ -357,12 +302,16 @@ app.listen(PORT, () => {
 // ==============================
 
 process.on("SIGINT", async () => {
-    console.log("🛑 SIGINTを受信しました。Botを終了します。");
+    console.log(
+        "🛑 SIGINTを受信しました。Botを終了します。"
+    );
 
     try {
         client.destroy();
     } catch (error) {
-        console.error("❌ Discord Client終了時にエラーが発生しました。");
+        console.error(
+            "❌ Discord Client終了時にエラーが発生しました。"
+        );
         console.error(error);
     }
 
