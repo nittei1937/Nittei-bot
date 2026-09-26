@@ -214,7 +214,7 @@ client.on("shardDisconnect", (event, shardId) => {
 client.on("shardError", (error, shardId) => {
     console.error(`❌ Gatewayエラー : Shard ${shardId}`);
     console.error(error);
-});x
+});
 
 // ==============================
 // Discord Ready
