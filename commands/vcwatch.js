@@ -10,6 +10,9 @@ const {
 
 const authorityPath = path.join(__dirname, "..", "data", "barusu", "authority.json");
 
+// 🚧 工事中設定
+const VCWATCH_UNDER_CONSTRUCTION = true;
+
 function loadOwners() {
     try {
         const data = JSON.parse(fs.readFileSync(authorityPath, "utf8"));
@@ -94,6 +97,15 @@ module.exports = {
         ),
 
     async execute(interaction) {
+
+        // 🚧 工事中
+        if (VCWATCH_UNDER_CONSTRUCTION) {
+            return interaction.reply({
+                content: "🚧 現在このコマンドは工事中です。",
+                ephemeral: true,
+            });
+        }
+
         if (!interaction.guildId) {
             return interaction.reply({
                 content: "このコマンドはサーバー内でのみ使用できます。",
