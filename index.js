@@ -117,10 +117,14 @@ client.on(Events.InteractionCreate, async interaction => {
     }
 
     // ------------------------------
-    // Slash Command
+    // Slash Command / Context Menu
     // ------------------------------
 
-    if (!interaction.isChatInputCommand()) {
+    if (
+        !interaction.isChatInputCommand() &&
+        !interaction.isMessageContextMenuCommand() &&
+        !interaction.isUserContextMenuCommand()
+    ) {
         return;
     }
 
