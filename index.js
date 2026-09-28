@@ -206,6 +206,19 @@ client.on(Events.InteractionCreate, async interaction => {
 });
 
 // ==============================
+// VC監視
+// ==============================
+
+client.on(Events.VoiceStateUpdate, async (oldState, newState) => {
+    try {
+        await handleVoiceStateUpdate(oldState, newState);
+    } catch (error) {
+        console.error("❌ VC監視処理でエラーが発生しました。");
+        console.error(error);
+    }
+});
+
+// ==============================
 // Discord Debug / Warning
 // ==============================
 
@@ -305,27 +318,27 @@ client.once(Events.ClientReady, readyClient => {
 // 診断: Discord APIへの疎通確認
 // ==============================
 
-console.log("🔍 Discord APIへの疎通を確認中...");
+// console.log("🔍 Discord APIへの疎通を確認中...");
 
-const https = require("https");
+// const https = require("https");
 
-const diagnosticStart = Date.now();
-const diagnosticReq = https.get("https://discord.com/api/v10/gateway", res => {
-    console.log(`✅ Discord APIに到達できました（${Date.now() - diagnosticStart}ms, status: ${res.statusCode}）`);
-    if (res.statusCode === 429) {
-        console.error(`⚠️ レート制限中です。Retry-After: ${res.headers["retry-after"]}秒`);
-    }
-    res.resume();
-});
+// const diagnosticStart = Date.now();
+// const diagnosticReq = https.get("https://discord.com/api/v10/gateway", res => {
+//     console.log(`✅ Discord APIに到達できました（${Date.now() - diagnosticStart}ms, status: ${res.statusCode}）`);
+//     if (res.statusCode === 429) {
+//         console.error(`⚠️ レート制限中です。Retry-After: ${res.headers["retry-after"]}秒`);
+//     }
+//     res.resume();
+// });
 
-diagnosticReq.setTimeout(10000, () => {
-    console.error("❌ Discord APIへの接続が10秒でタイムアウトしました。");
-    diagnosticReq.destroy();
-});
+// diagnosticReq.setTimeout(10000, () => {
+//     console.error("❌ Discord APIへの接続が10秒でタイムアウトしました。");
+//     diagnosticReq.destroy();
+// });
 
-diagnosticReq.on("error", error => {
-    console.error("❌ Discord APIへの接続でエラーが発生しました:", error.message);
-});
+// diagnosticReq.on("error", error => {
+//     console.error("❌ Discord APIへの接続でエラーが発生しました:", error.message);
+// });
 
 // ==============================
 // Discord Login
