@@ -93,6 +93,45 @@ if (!fs.existsSync(commandsPath)) {
 
 client.on(Events.InteractionCreate, async interaction => {
 
+        // ------------------------------
+    // 翻訳 言語選択メニュー
+    // ------------------------------
+
+    if (
+        interaction.isStringSelectMenu() &&
+        interaction.customId.startsWith("translate_language_")
+    ) {
+        const translateCommand = client.commands.get("翻訳");
+
+        if (!translateCommand?.handleSelectMenu) {
+            console.error("❌ 翻訳コマンドの選択処理が見つかりません。");
+            return;
+        }
+
+        try {
+            await translateCommand.handleSelectMenu(interaction);
+        } catch (error) {
+            console.error("❌ 翻訳言語選択エラー");
+            console.error(error);
+
+            try {
+                if (interaction.replied || interaction.deferred) {
+                    await interaction.followUp({
+                        content: "❌ 翻訳処理中にエラーが発生しました。",
+                        flags: MessageFlags.Ephemeral,
+                    });
+                } else {
+                    await interaction.reply({
+                        content: "❌ 翻訳処理中にエラーが発生しました。",
+                        flags: MessageFlags.Ephemeral,
+                    });
+                }
+            } catch {}
+        }
+
+        return;
+    }
+
     // ------------------------------
     // Autocomplete
     // ------------------------------
