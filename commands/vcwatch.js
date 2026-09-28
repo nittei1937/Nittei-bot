@@ -1,17 +1,27 @@
 const fs = require("fs");
 const path = require("path");
 const { SlashCommandBuilder, PermissionFlagsBits, ChannelType } = require("discord.js");
-const { addWatch, removeWatch, getAllWatches, flushToGitHub } = require("../utils/vcWatch");
-const {
-    isRestrictionEnabled,
-    setRestrictionEnabled,
-    flushToGitHub: flushSettingsToGitHub,
-} = require("../utils/vcWatchSettings");
+const { addWatch, removeWatch, getAllWatches } = require("../utils/vcWatch");
 
 const authorityPath = path.join(__dirname, "..", "data", "barusu", "authority.json");
 
-// 🚧 工事中設定
+// ==============================
+// /vcwatch の状態設定
+// ==============================
+
+// true  → 工事中（/vcwatch のみ登録）
+// false → 通常運用（/vcwatch add / remove / list を登録）
 const VCWATCH_UNDER_CONSTRUCTION = true;
+
+// 表示する工事内容
+const VCWATCH_STATUS = "工事中";
+
+// 実際に表示するメッセージ
+const VCWATCH_STATUS_MESSAGE = `現在 \`/vcwatch\` は**${VCWATCH_STATUS}**です。`;
+
+// ==============================
+// 権限
+// ==============================
 
 function loadOwners() {
     try {
@@ -30,18 +40,32 @@ function canManage(interaction) {
     return interaction.memberPermissions?.has(PermissionFlagsBits.ManageGuild) ?? false;
 }
 
-module.exports = {
-    data: new SlashCommandBuilder()
-        .setName("vcwatch")
-        .setDescription("特定ユーザーのVC入室を監視して通知する")
-        .addSubcommand(sub =>
+// ==============================
+// /vcwatch コマンド本体
+// ==============================
+
+const vcwatchCommand = new SlashCommandBuilder()
+    .setName("vcwatch")
+    .setDescription("特定ユーザーのVC入室を監視して通知する");
+
+// ==============================
+// 通常時のみサブコマンドを登録
+// ==============================
+
+if (!VCWATCH_UNDER_CONSTRUCTION) {
+    vcwatchCommand
+        // /vcwatch add
+        .addSubcommand((sub) =>
             sub
                 .setName("add")
                 .setDescription("監視対象を追加する")
-                .addUserOption(option =>
-                    option.setName("user").setDescription("監視するユーザー").setRequired(true)
+                .addUserOption((option) =>
+                    option
+                        .setName("user")
+                        .setDescription("監視するユーザー")
+                        .setRequired(true)
                 )
-                .addChannelOption(option =>
+                .addChannelOption((option) =>
                     option
                         .setName("channel")
                         .setDescription("通知先のチャンネル（VCのチャットも選択可能）")
@@ -52,59 +76,68 @@ module.exports = {
                         )
                         .setRequired(true)
                 )
-                .addChannelOption(option =>
+                .addChannelOption((option) =>
                     option
                         .setName("voice_channel")
                         .setDescription("監視するVC（省略時はどのVCに入室しても通知）")
                         .addChannelTypes(ChannelType.GuildVoice)
                 )
-                .addStringOption(option =>
+                .addStringOption((option) =>
                     option
                         .setName("message")
-                        .setDescription("通知文（{user}=ユーザー, {channel}=VC名 が使えます。省略時は標準メッセージ）")
+                        .setDescription(
+                            "通知文（{user}=ユーザー, {channel}=VC名 が使えます。省略時は標準メッセージ）"
+                        )
                         .setMaxLength(200)
                 )
         )
-        .addSubcommand(sub =>
+
+        // /vcwatch remove
+        .addSubcommand((sub) =>
             sub
                 .setName("remove")
                 .setDescription("監視対象を解除する")
-                .addUserOption(option =>
-                    option.setName("user").setDescription("解除するユーザー").setRequired(true)
-                )
-        )
-        .addSubcommand(sub =>
-            sub.setName("list").setDescription("現在の監視対象一覧を表示")
-        )
-        .addSubcommand(sub =>
-            sub.setName("save").setDescription("保留中の変更を今すぐGitHubに保存する（通常は5分後に自動で保存されます）")
-        )
-        .addSubcommand(sub =>
-            sub
-                .setName("restriction")
-                .setDescription("vcwatchの使用制限（owners・管理者限定／誰でも）を切り替える")
-                .addStringOption(option =>
+                .addUserOption((option) =>
                     option
-                        .setName("action")
-                        .setDescription("操作")
+                        .setName("user")
+                        .setDescription("解除するユーザー")
                         .setRequired(true)
-                        .addChoices(
-                            { name: "on（owners・管理者だけ使える）", value: "on" },
-                            { name: "off（誰でも使える）", value: "off" },
-                            { name: "status（今の設定を確認）", value: "status" }
-                        )
                 )
-        ),
+        )
+
+        // /vcwatch list
+        .addSubcommand((sub) =>
+            sub
+                .setName("list")
+                .setDescription("現在の監視対象一覧を表示")
+        );
+}
+
+// ==============================
+// エクスポート
+// ==============================
+
+module.exports = {
+    data: vcwatchCommand,
+
+    // ==============================
+    // 実行
+    // ==============================
 
     async execute(interaction) {
+        // ==========================
+        // 工事中
+        // ==========================
 
-        // 🚧 工事中
         if (VCWATCH_UNDER_CONSTRUCTION) {
             return interaction.reply({
-                content: "🚧 現在このコマンドは工事中です。",
-                ephemeral: true,
+                content: VCWATCH_STATUS_MESSAGE,
             });
         }
+
+        // ==========================
+        // 通常時
+        // ==========================
 
         if (!interaction.guildId) {
             return interaction.reply({
@@ -113,45 +146,19 @@ module.exports = {
             });
         }
 
-        const subcommand = interaction.options.getSubcommand();
-        const guildId = interaction.guildId;
-
-        // restrictionの切り替え自体は常にowners・管理者限定
-        // （制限offの状態でも、誰でも切り替えられてしまわないようにするため）
-        if (subcommand === "restriction") {
-            if (!canManage(interaction)) {
-                return interaction.reply({
-                    content: "このコマンドを使用する権限がありません。（サーバー管理権限が必要です）",
-                    ephemeral: true,
-                });
-            }
-
-            const action = interaction.options.getString("action", true);
-
-            if (action === "status") {
-                const enabled = isRestrictionEnabled();
-                return interaction.reply({
-                    content: `現在 \`/vcwatch\` は **${enabled ? "owners・管理者だけ使える状態" : "誰でも使える状態"}** です。`,
-                    ephemeral: true,
-                });
-            }
-
-            const enabled = action === "on";
-            setRestrictionEnabled(enabled);
-
-            return interaction.reply({
-                content: `🔧 \`/vcwatch\` を **${enabled ? "owners・管理者だけ使える" : "誰でも使える"}** ように設定しました。`,
-                ephemeral: true,
-            });
-        }
-
-        // それ以外のサブコマンドは、制限が有効な時だけ権限チェックする
-        if (isRestrictionEnabled() && !canManage(interaction)) {
+        if (!canManage(interaction)) {
             return interaction.reply({
                 content: "このコマンドを使用する権限がありません。（サーバー管理権限が必要です）",
                 ephemeral: true,
             });
         }
+
+        const subcommand = interaction.options.getSubcommand();
+        const guildId = interaction.guildId;
+
+        // --------------------------
+        // /vcwatch add
+        // --------------------------
 
         if (subcommand === "add") {
             const user = interaction.options.getUser("user", true);
@@ -184,6 +191,10 @@ module.exports = {
             });
         }
 
+        // --------------------------
+        // /vcwatch remove
+        // --------------------------
+
         if (subcommand === "remove") {
             const user = interaction.options.getUser("user", true);
             removeWatch(guildId, user.id);
@@ -194,38 +205,33 @@ module.exports = {
             });
         }
 
-        if (subcommand === "save") {
-            const flushedWatch = await flushToGitHub();
-            const flushedSettings = await flushSettingsToGitHub();
-            const flushed = flushedWatch || flushedSettings;
+        // --------------------------
+        // /vcwatch list
+        // --------------------------
+
+        if (subcommand === "list") {
+            const watches = getAllWatches(guildId);
+            const entries = Object.entries(watches);
+
+            if (entries.length === 0) {
+                return interaction.reply({
+                    content: "現在監視しているユーザーはいません。",
+                    ephemeral: true,
+                });
+            }
+
+            const lines = entries.map(([userId, watch]) => {
+                const vcLabel = watch.voiceChannelId
+                    ? `<#${watch.voiceChannelId}>`
+                    : "どのVCでも";
+
+                return `・<@${userId}>（${vcLabel}） → <#${watch.channelId}>`;
+            });
 
             return interaction.reply({
-                content: flushed
-                    ? "💾 GitHubへ保存しました。まもなく再デプロイが走ります。"
-                    : "保存待ちの変更はありません（すでに最新の状態です）。",
+                content: `🔔 監視中のユーザー:\n${lines.join("\n")}`,
                 ephemeral: true,
             });
         }
-
-        // ---- list ----
-        const watches = getAllWatches(guildId);
-        const entries = Object.entries(watches);
-
-        if (entries.length === 0) {
-            return interaction.reply({
-                content: "現在監視しているユーザーはいません。",
-                ephemeral: true,
-            });
-        }
-
-        const lines = entries.map(([userId, watch]) => {
-            const vcLabel = watch.voiceChannelId ? `<#${watch.voiceChannelId}>` : "どのVCでも";
-            return `・<@${userId}>（${vcLabel}） → <#${watch.channelId}>`;
-        });
-
-        return interaction.reply({
-            content: `🔔 監視中のユーザー:\n${lines.join("\n")}`,
-            ephemeral: true,
-        });
     },
 };
