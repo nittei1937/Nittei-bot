@@ -11,7 +11,7 @@ const authorityPath = path.join(__dirname, "..", "data", "barusu", "authority.js
 
 // true  → 工事中（/vcwatch のみ登録）
 // false → 通常運用（/vcwatch add / remove / list を登録）
-const VCWATCH_UNDER_CONSTRUCTION = true;
+const VCWATCH_UNDER_CONSTRUCTION = false;
 
 // 表示する工事内容
 const VCWATCH_STATUS = "工事中";
