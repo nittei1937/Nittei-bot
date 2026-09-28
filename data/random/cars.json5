@@ -1,0 +1,52 @@
+[
+  
+  // Toyota
+  "Toyota GR Supra",
+  "Toyota 80 Supra",
+  "Toyota GR 86",
+  "Toyota AE 86",
+  "Toyota Hiace",
+  "Toyota Prius",
+  "Toyota Chaser"
+
+  // Nissan
+  "Nissan GT-R BNR35",
+  "Nissan GT-R BNR34",
+  "Nissan GT-R BNR33",
+  "Nissan GT-R BNR33",
+  "Nissan Skyline 32",
+  "Nissan Z30",
+  "Nissan Z31",
+  "Nissan Z32",
+  "Nissan Z33",
+  "Nissan Z34",
+
+  // Mazda
+  "Mazda RX-7",
+
+  // Lexus
+  "Lexus LC",
+
+  // Honda
+  "Honda NSX NC1",
+  "Honda NSX NA1",
+  "Honda NSX NA2",  
+  "Honda Civic Type-R",
+
+  // Subaru
+  "Subaru WRX STI",
+
+  // Mitubisi
+  "Mitubisi ランエボ3",
+  "Mitubisi ランエボ6",
+  "Mitubisi ランエボ9",
+
+  // Lamborghini,
+  "ガヤルド クーペ",
+  "ガヤルド スパイダー",
+  "ディアボロ",
+
+  // 雑多
+  "軽トラ（小）",
+  "軽トラ（大）"
+]

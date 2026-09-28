@@ -11,10 +11,11 @@ const {
     Collection,
     GatewayIntentBits,
     Events,
-    MessageFlags,
+    MessageFlags
 } = require("discord.js");
 
 const { startScheduleRunner } = require("./utils/schedule");
+const { handleVoiceStateUpdate } = require("./utils/vcwatchHandler");
 
 // ==============================
 // 環境変数
@@ -23,11 +24,44 @@ const { startScheduleRunner } = require("./utils/schedule");
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
 
 if (!DISCORD_TOKEN) {
-    console.error(
-        "❌ DISCORD_TOKEN が .env / Render の環境変数に設定されていません。"
-    );
+    console.error("❌ DISCORD_TOKEN が設定されていません。");
     process.exit(1);
 }
+
+// ==============================
+// JSONデータ読み込み
+// ==============================
+
+function loadJson(filePath, defaultValue = []) {
+    try {
+        if (!fs.existsSync(filePath)) {
+            console.warn(`⚠️ JSON5ファイルが見つかりません: ${filePath}`);
+            return defaultValue;
+        }
+
+        const raw = fs.readFileSync(filePath, "utf8");
+        return JSON5.parse(raw);
+    } catch (error) {
+        console.error(`❌ JSON5読み込みエラー: ${filePath}`);
+        console.error(error);
+        return defaultValue;
+    }
+}
+
+const JSON5 = require("json5");
+
+const cars = loadJson(
+    path.join(__dirname, "data", "cars.json5"),
+    []
+);
+
+const handicaps = loadJson(
+    path.join(__dirname, "data", "handicaps.json5"),
+    []
+);
+
+console.log(`🚗 車データ読み込み: ${cars.length}件`);
+console.log(`🏁 ハンデデータ読み込み: ${handicaps.length}件`);
 
 // ==============================
 // Discord Client
@@ -38,8 +72,8 @@ const client = new Client({
         GatewayIntentBits.Guilds,
         GatewayIntentBits.GuildMessages,
         GatewayIntentBits.MessageContent,
-        GatewayIntentBits.GuildVoiceStates,
-    ],
+        GatewayIntentBits.GuildVoiceStates
+    ]
 });
 
 // ==============================
@@ -50,11 +84,7 @@ client.commands = new Collection();
 
 const commandsPath = path.join(__dirname, "commands");
 
-if (!fs.existsSync(commandsPath)) {
-    console.error(
-        `❌ commands ディレクトリが見つかりません: ${commandsPath}`
-    );
-} else {
+if (fs.existsSync(commandsPath)) {
     const commandFiles = fs
         .readdirSync(commandsPath)
         .filter(file => file.endsWith(".js"));
@@ -64,142 +94,191 @@ if (!fs.existsSync(commandsPath)) {
             const filePath = path.join(commandsPath, file);
             const command = require(filePath);
 
-            const commands = Array.isArray(command)
-                ? command
-                : [command];
-
-            for (const cmd of commands) {
-                if (!cmd?.data?.name) {
-                    console.warn(
-                        `⚠️ コマンド名を取得できませんでした: ${file}`
-                    );
-                    continue;
+            if (Array.isArray(command)) {
+                for (const cmd of command) {
+                    if (cmd?.data?.name && typeof cmd.execute === "function") {
+                        client.commands.set(cmd.data.name, cmd);
+                        console.log(`✅ コマンド読込 : /${cmd.data.name}`);
+                    }
                 }
-
-                client.commands.set(cmd.data.name, cmd);
-
-                console.log(`✅ コマンド読込 : /${cmd.data.name}`);
+            } else if (
+                command?.data?.name &&
+                typeof command.execute === "function"
+            ) {
+                client.commands.set(command.data.name, command);
+                console.log(`✅ コマンド読込 : /${command.data.name}`);
+            } else {
+                console.warn(`⚠️ コマンド形式が不正です: ${file}`);
             }
         } catch (error) {
-            console.error(`❌ コマンド読込エラー : ${file}`);
+            console.error(`❌ コマンド読み込み失敗: ${file}`);
             console.error(error);
         }
     }
 }
 
 // ==============================
-// Interaction
+// ランダム選択
+// ==============================
+
+function randomItem(array) {
+    if (!Array.isArray(array) || array.length === 0) {
+        return null;
+    }
+
+    return array[Math.floor(Math.random() * array.length)];
+}
+
+// ==============================
+// メッセージ監視
+// ==============================
+
+client.on(Events.MessageCreate, async message => {
+    // Bot自身のメッセージは無視
+    if (message.author.bot) return;
+
+    try {
+        // ==========================
+        // 車安価
+        // ==========================
+
+        if (message.content === "車安価") {
+            const car = randomItem(cars);
+
+            if (!car) {
+                await message.reply("❌ 車データが登録されていません。");
+                return;
+            }
+
+            await message.reply(String(car));
+            return;
+        }
+
+        // ==========================
+        // ハンデ
+        // ==========================
+
+        if (message.content === "ハンデ") {
+            const handicap = randomItem(handicaps);
+
+            if (!handicap) {
+                await message.reply("❌ ハンデデータが登録されていません。");
+                return;
+            }
+
+            await message.reply(String(handicap));
+            return;
+        }
+
+    } catch (error) {
+        console.error("❌ メッセージ処理中にエラーが発生しました。");
+        console.error(error);
+    }
+});
+
+// ==============================
+// Interaction処理
 // ==============================
 
 client.on(Events.InteractionCreate, async interaction => {
 
-        // ------------------------------
-    // 翻訳 言語選択メニュー
-    // ------------------------------
+    try {
 
-    if (
-        interaction.isStringSelectMenu() &&
-        interaction.customId.startsWith("translate_language_")
-    ) {
-        const translateCommand = client.commands.get("翻訳");
+        // ==========================
+        // 翻訳セレクトメニュー
+        // ==========================
 
-        if (!translateCommand?.handleSelectMenu) {
-            console.error("❌ 翻訳コマンドの選択処理が見つかりません。");
-            return;
-        }
+        if (
+            interaction.isStringSelectMenu() &&
+            interaction.customId.startsWith("translate_language_")
+        ) {
+            const translateCommand = client.commands.get("翻訳");
 
-        try {
-            await translateCommand.handleSelectMenu(interaction);
-        } catch (error) {
-            console.error("❌ 翻訳言語選択エラー");
-            console.error(error);
+            if (
+                translateCommand &&
+                typeof translateCommand.handleSelectMenu === "function"
+            ) {
+                await translateCommand.handleSelectMenu(interaction);
+            } else {
+                console.error("❌ 翻訳コマンドのhandleSelectMenuが見つかりません。");
 
-            try {
-                if (interaction.replied || interaction.deferred) {
-                    await interaction.followUp({
-                        content: "❌ 翻訳処理中にエラーが発生しました。",
-                        flags: MessageFlags.Ephemeral,
-                    });
-                } else {
+                if (!interaction.replied && !interaction.deferred) {
                     await interaction.reply({
-                        content: "❌ 翻訳処理中にエラーが発生しました。",
-                        flags: MessageFlags.Ephemeral,
+                        content: "❌ 翻訳処理を実行できませんでした。",
+                        flags: MessageFlags.Ephemeral
                     });
                 }
-            } catch {}
-        }
+            }
 
-        return;
-    }
-
-    // ------------------------------
-    // Autocomplete
-    // ------------------------------
-
-    if (interaction.isAutocomplete()) {
-        const command = client.commands.get(interaction.commandName);
-
-        if (!command?.autocomplete) {
             return;
         }
 
-        try {
-            await command.autocomplete(interaction);
-        } catch (error) {
-            console.error(
-                `❌ オートコンプリートエラー (${interaction.commandName})`
-            );
-            console.error(error);
+        // ==========================
+        // Autocomplete
+        // ==========================
+
+        if (interaction.isAutocomplete()) {
+
+            const command = client.commands.get(interaction.commandName);
+
+            if (!command || typeof command.autocomplete !== "function") {
+                return;
+            }
+
+            try {
+                await command.autocomplete(interaction);
+            } catch (error) {
+                console.error(
+                    `❌ Autocompleteエラー: /${interaction.commandName}`
+                );
+                console.error(error);
+            }
+
+            return;
         }
 
-        return;
-    }
+        // ==========================
+        // Chat Input / Context Menu
+        // ==========================
 
-    // ------------------------------
-    // Slash Command / Context Menu
-    // ------------------------------
+        if (
+            !interaction.isChatInputCommand() &&
+            !interaction.isMessageContextMenuCommand() &&
+            !interaction.isUserContextMenuCommand()
+        ) {
+            return;
+        }
 
-    if (
-        !interaction.isChatInputCommand() &&
-        !interaction.isMessageContextMenuCommand() &&
-        !interaction.isUserContextMenuCommand()
-    ) {
-        return;
-    }
+        const command = client.commands.get(interaction.commandName);
 
-    const command = client.commands.get(interaction.commandName);
+        if (!command) {
+            console.warn(
+                `⚠️ コマンドが見つかりません: ${interaction.commandName}`
+            );
+            return;
+        }
 
-    if (!command) {
-        console.warn(
-            `⚠️ 未登録のコマンドが実行されました: /${interaction.commandName}`
-        );
-        return;
-    }
-
-    try {
         await command.execute(interaction);
+
     } catch (error) {
-        console.error(
-            `❌ コマンド実行エラー (${interaction.commandName})`
-        );
+
+        console.error("❌ コマンド実行中にエラーが発生しました。");
         console.error(error);
 
         try {
             if (interaction.replied || interaction.deferred) {
                 await interaction.followUp({
                     content: "❌ コマンド実行中にエラーが発生しました。",
-                    flags: MessageFlags.Ephemeral,
+                    flags: MessageFlags.Ephemeral
                 });
             } else {
                 await interaction.reply({
                     content: "❌ コマンド実行中にエラーが発生しました。",
-                    flags: MessageFlags.Ephemeral,
+                    flags: MessageFlags.Ephemeral
                 });
             }
         } catch (replyError) {
-            console.error(
-                "❌ エラー通知の送信にも失敗しました。"
-            );
+            console.error("❌ エラー通知の送信にも失敗しました。");
             console.error(replyError);
         }
     }
@@ -209,31 +288,34 @@ client.on(Events.InteractionCreate, async interaction => {
 // VC監視
 // ==============================
 
-client.on(Events.VoiceStateUpdate, async (oldState, newState) => {
-    try {
-        await handleVoiceStateUpdate(oldState, newState);
-    } catch (error) {
-        console.error("❌ VC監視処理でエラーが発生しました。");
-        console.error(error);
+client.on(
+    Events.VoiceStateUpdate,
+    async (oldState, newState) => {
+        try {
+            await handleVoiceStateUpdate(oldState, newState);
+        } catch (error) {
+            console.error("❌ VC監視処理でエラーが発生しました。");
+            console.error(error);
+        }
     }
-});
+);
 
 // ==============================
-// Discord Debug / Warning
+// Discord Debug
 // ==============================
 
-client.on("debug", message => {
-    // Tokenそのものをログに出さない
-    if (message.includes("Provided token:")) {
+client.on("debug", info => {
+    // トークンそのものがログに出ないようにする
+    if (info.includes("Provided token:")) {
         console.log("[Discord Debug] Token received.");
         return;
     }
 
-    console.log(`[Discord Debug] ${message}`);
+    console.log(`[Discord Debug] ${info}`);
 });
 
-client.on("warn", message => {
-    console.warn(`[Discord Warn] ${message}`);
+client.on("warn", info => {
+    console.warn(`[Discord Warn] ${info}`);
 });
 
 client.on("error", error => {
@@ -242,38 +324,35 @@ client.on("error", error => {
 });
 
 // ==============================
-// Gateway接続状態
+// Gateway / Shard
 // ==============================
 
 client.on("shardConnecting", shardId => {
-    console.log(`🔌 Gateway接続中 : Shard ${shardId}`);
+    console.log(`🔄 Discord Gateway 接続中... Shard ${shardId}`);
 });
 
 client.on("shardReady", shardId => {
-    console.log(`✅ Gateway接続完了 : Shard ${shardId}`);
+    console.log(`🟢 Discord Gateway 接続完了。Shard ${shardId}`);
 });
 
 client.on("shardReconnecting", shardId => {
-    console.log(`🔄 Gateway再接続中 : Shard ${shardId}`);
+    console.log(`🔁 Discord Gateway 再接続中... Shard ${shardId}`);
 });
 
 client.on("shardDisconnect", (event, shardId) => {
-    console.error(
-        `❌ Gateway切断 : Shard ${shardId}`
+    console.warn(
+        `⚠️ Discord Gateway 切断。Shard ${shardId}`,
+        event
     );
-    console.error(`Code: ${event?.code}`);
-    console.error(`Reason: ${event?.reason}`);
 });
 
 client.on("shardError", (error, shardId) => {
-    console.error(
-        `❌ Gatewayエラー : Shard ${shardId}`
-    );
+    console.error(`❌ Discord Gateway Error。Shard ${shardId}`);
     console.error(error);
 });
 
 // ==============================
-// Node.js エラー
+// Process Error
 // ==============================
 
 process.on("unhandledRejection", error => {
@@ -291,54 +370,18 @@ process.on("uncaughtException", error => {
 // ==============================
 
 client.once(Events.ClientReady, readyClient => {
-    console.log("========================================");
     console.log(
-        `✅ Discordログイン完了 : ${readyClient.user.tag}`
+        `✅ Discordログイン完了: ${readyClient.user.tag}`
     );
-    console.log(
-        `🌐 接続サーバー数 : ${readyClient.guilds.cache.size}`
-    );
-    console.log("========================================");
 
-    // スケジュール処理開始
     try {
-        startScheduleRunner(client);
-        console.log(
-            "⏰ スケジュールランナーを開始しました。"
-        );
+        startScheduleRunner(readyClient);
+        console.log("✅ スケジュール処理を開始しました。");
     } catch (error) {
-        console.error(
-            "❌ スケジュールランナーの起動に失敗しました。"
-        );
+        console.error("❌ スケジュール処理の開始に失敗しました。");
         console.error(error);
     }
 });
-
-// ==============================
-// 診断: Discord APIへの疎通確認
-// ==============================
-
-// console.log("🔍 Discord APIへの疎通を確認中...");
-
-// const https = require("https");
-
-// const diagnosticStart = Date.now();
-// const diagnosticReq = https.get("https://discord.com/api/v10/gateway", res => {
-//     console.log(`✅ Discord APIに到達できました（${Date.now() - diagnosticStart}ms, status: ${res.statusCode}）`);
-//     if (res.statusCode === 429) {
-//         console.error(`⚠️ レート制限中です。Retry-After: ${res.headers["retry-after"]}秒`);
-//     }
-//     res.resume();
-// });
-
-// diagnosticReq.setTimeout(10000, () => {
-//     console.error("❌ Discord APIへの接続が10秒でタイムアウトしました。");
-//     diagnosticReq.destroy();
-// });
-
-// diagnosticReq.on("error", error => {
-//     console.error("❌ Discord APIへの接続でエラーが発生しました:", error.message);
-// });
 
 // ==============================
 // Discord Login
@@ -347,55 +390,46 @@ client.once(Events.ClientReady, readyClient => {
 console.log("🔐 Discordへログインしています...");
 
 client.login(DISCORD_TOKEN).catch(error => {
-    console.error(
-        "❌ Discordへのログインに失敗しました。"
-    );
+    console.error("❌ Discordログインに失敗しました。");
     console.error(error);
-
-    process.exit(1);
 });
 
 // ==============================
-// Web Server
-// Renderのヘルスチェック用
+// Express
+// Render用ヘルスチェック
 // ==============================
 
 const app = express();
-
-const PORT = process.env.PORT || 10000;
 
 app.get("/", (req, res) => {
     res.send("NitteiBot is running.");
 });
 
 app.get("/health", (req, res) => {
-    res.json({
+    res.status(200).json({
         status: "ok",
-        discord: client.isReady(),
+        discordReady: client.isReady()
     });
 });
+
+const PORT = process.env.PORT || 10000;
 
 app.listen(PORT, () => {
     console.log(`🌐 Web Server : Port ${PORT}`);
 });
 
 // ==============================
-// SIGINT
+// 終了処理
 // ==============================
 
-process.on("SIGINT", async () => {
-    console.log(
-        "🛑 SIGINTを受信しました。Botを終了します。"
-    );
+process.on("SIGINT", () => {
+    console.log("🛑 SIGINTを受信しました。");
+    client.destroy();
+    process.exit(0);
+});
 
-    try {
-        client.destroy();
-    } catch (error) {
-        console.error(
-            "❌ Discord Client終了時にエラーが発生しました。"
-        );
-        console.error(error);
-    }
-
+process.on("SIGTERM", () => {
+    console.log("🛑 SIGTERMを受信しました。");
+    client.destroy();
     process.exit(0);
 });

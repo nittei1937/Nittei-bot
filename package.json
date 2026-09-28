@@ -11,13 +11,14 @@
     "bot": "npm run deploy && npm run dev"
   },
   "engines": {
-      "node": "24.x"
+    "node": "24.x"
   },
   "dependencies": {
     "@vitalets/google-translate-api": "^9.2.1",
     "discord.js": "^14.15.3",
     "dotenv": "^16.4.5",
     "express": "^5.2.1",
+    "json5": "^2.2.3",
     "kuromoji": "^0.1.2"
   },
   "devDependencies": {
