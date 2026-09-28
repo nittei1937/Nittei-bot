@@ -5,6 +5,7 @@ require("dotenv").config();
 const fs = require("fs");
 const path = require("path");
 const express = require("express");
+const JSON5 = require("json5");
 
 const {
     Client,
@@ -48,15 +49,13 @@ function loadJson(filePath, defaultValue = []) {
     }
 }
 
-const JSON5 = require("json5");
-
 const cars = loadJson(
-    path.join(__dirname, "data", "cars.json5"),
+    path.join(__dirname, "data", "random", "cars.json5"),
     []
 );
 
 const handicaps = loadJson(
-    path.join(__dirname, "data", "handicaps.json5"),
+    path.join(__dirname, "data", "random", "handicaps.json5"),
     []
 );
 
