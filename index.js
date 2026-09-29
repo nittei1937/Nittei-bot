@@ -33,7 +33,11 @@ if (!DISCORD_TOKEN) {
 // JSONデータ読み込み
 // ==============================
 
-function loadJson(filePath, defaultValue = []) {
+// ==============================
+// JSONデータ読み込み
+// ==============================
+
+function loadJson(filePath, defaultValue = {}) {
     try {
         if (!fs.existsSync(filePath)) {
             console.warn(`⚠️ JSON5ファイルが見つかりません: ${filePath}`);
@@ -49,15 +53,32 @@ function loadJson(filePath, defaultValue = []) {
     }
 }
 
-const cars = loadJson(
+function flattenData(data) {
+    if (Array.isArray(data)) {
+        return data;
+    }
+
+    if (data && typeof data === "object") {
+        return Object.values(data)
+            .filter(Array.isArray)
+            .flat();
+    }
+
+    return [];
+}
+
+const carsRaw = loadJson(
     path.join(__dirname, "data", "random", "cars.json5"),
-    []
+    {}
 );
 
-const handicaps = loadJson(
+const handicapsRaw = loadJson(
     path.join(__dirname, "data", "random", "handicaps.json5"),
-    []
+    {}
 );
+
+const cars = flattenData(carsRaw);
+const handicaps = flattenData(handicapsRaw);
 
 console.log(`🚗 車データ読み込み: ${cars.length}件`);
 console.log(`🏁 ハンデデータ読み込み: ${handicaps.length}件`);
