@@ -79,9 +79,6 @@ const JAPANESE_MANUFACTURERS = [
 
 /**
  * 外車メーカー
- *
- * cars.json5に新しい外車メーカーを追加した場合、
- * ここにも追加してください。
  */
 const FOREIGN_MANUFACTURERS = [
     "Lamborghini"
@@ -164,6 +161,18 @@ module.exports = {
                     {
                         name: "待機",
                         value: "waiting"
+                    },
+                    {
+                        name: "縛り",
+                        value: "restriction"
+                    },
+                    {
+                        name: "バージョン",
+                        value: "version"
+                    },
+                    {
+                        name: "視点",
+                        value: "view"
                     }
                 )
         ),
@@ -173,8 +182,9 @@ module.exports = {
         // データ読み込み
         // ---------------------------------
         const carData = loadJson5(carsPath);
-        const handicaps = loadJson5(handicapsPath);
+        const handicapData = loadJson5(handicapsPath);
 
+        // 車データ確認
         if (!carData || typeof carData !== "object") {
             await interaction.reply({
                 content: "❌ 車データの読み込みに失敗しました。",
@@ -183,7 +193,12 @@ module.exports = {
             return;
         }
 
-        if (!Array.isArray(handicaps)) {
+        // ハンデデータ確認
+        if (
+            !handicapData ||
+            typeof handicapData !== "object" ||
+            Array.isArray(handicapData)
+        ) {
             await interaction.reply({
                 content: "❌ ハンデデータの読み込みに失敗しました。",
                 ephemeral: true
@@ -245,18 +260,27 @@ module.exports = {
         // ---------------------------------
         // ハンデを絞り込む
         // ---------------------------------
-        let availableHandicaps = handicaps;
 
-        if (handicapRestriction === "waiting") {
-            availableHandicaps = handicaps.filter(handicap => {
-                return (
-                    typeof handicap === "string" &&
-                    (
-                        handicap.includes("秒待機") ||
-                        handicap.includes("分待機")
-                    )
-                );
-            });
+        let availableHandicaps = [];
+
+        if (handicapRestriction === "none") {
+            // 全カテゴリーからランダム
+            for (const list of Object.values(handicapData)) {
+                if (Array.isArray(list)) {
+                    availableHandicaps.push(...list);
+                }
+            }
+        } else {
+            // 指定カテゴリーからランダム
+            availableHandicaps = handicapData[handicapRestriction];
+
+            if (!Array.isArray(availableHandicaps)) {
+                await interaction.reply({
+                    content: "❌ 指定されたハンデカテゴリーが見つかりません。",
+                    ephemeral: true
+                });
+                return;
+            }
         }
 
         if (availableHandicaps.length === 0) {
@@ -285,11 +309,16 @@ module.exports = {
         // ---------------------------------
         // 表示用のハンデ縛り名
         // ---------------------------------
-        let handicapRestrictionName = "指定なし";
+        const handicapRestrictionNames = {
+            none: "指定なし",
+            waiting: "待機",
+            restriction: "縛り",
+            version: "バージョン",
+            view: "視点"
+        };
 
-        if (handicapRestriction === "waiting") {
-            handicapRestrictionName = "待機";
-        }
+        const handicapRestrictionName =
+            handicapRestrictionNames[handicapRestriction] ?? "指定なし";
 
         // ---------------------------------
         // Embed作成
