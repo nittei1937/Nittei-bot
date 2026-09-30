@@ -1,64 +1,194 @@
 {
-  // 日本車
-  Toyota: [
-    "Toyota GR Supra",
-    "Toyota Supra A80",
-    "Toyota GR86",
-    "Toyota AE86",
-    "Toyota HiAce",
-    "Toyota Prius",
-    "Toyota Chaser"
-  ],
+    // =========================
+    // 日本車
+    // =========================
 
-  Nissan: [
-    "Nissan GT-R R35",
-    "Nissan Skyline GT-R BNR34",
-    "Nissan Skyline GT-R BCNR33",
-    "Nissan Skyline GT-R BNR32",
-    "Nissan Skyline R32",
-    "Nissan Fairlady Z S30",
-    "Nissan Fairlady Z Z31",
-    "Nissan Fairlady Z Z32",
-    "Nissan Fairlady Z Z33",
-    "Nissan Fairlady Z Z34"
-  ],
+    Toyota: [
+        "Toyota GR Supra",
+        "Toyota Supra A80",
+        "Toyota GR86",
+        "Toyota AE86",
+        "Toyota HiAce",
+        "Toyota Prius",
+        "Toyota Chaser",
 
-  Mazda: [
-    "Mazda RX-7"
-  ],
+        "1990 Toyota Corolla E9#? (Yokoda Beater T90 Beater)",
+        "1973 Toyota Celica A20 (Yokoda Relica 2GT)",
+        "2000 Toyota Bb (Yokoda XC S)",
+        "1984 Toyota Supra A60 (Yokoda Supreme MK2)",
+        "2016 Toyota Hiace (Yokoda Biase)",
+        "1983 Toyota AE86 Sprinter Trueno 3Door (Yokoda Akina Runner Hatchback)",
+        "1984 Toyota MR2 AW11 (Yokoda MS2 MW11)",
+        "2007 Toyota MR-S (Yokoda MS-V)",
+        "1999 Toyota Soarer Z30 (Yokoda Sorcer S30)",
+        "2012 Toyota 86GT ZN6 (Yokoda GX68 SH6)",
+        "2016 Toyota 86GT Shooting Brake (Yokoda GX86 Brake Hatchback)",
+        "1999 Toyota Altezza (Yokoda Alcatraz)",
+        "2022 Toyota GR86 ZN8 (Yokoda GX68 SH8 AR)",
+        "1988 Toyota Supra A70 (Yokoda Supreme MK3)",
+        "1999 Toyota Chaser JZX100 (Yokoda Courser KZX)",
+        "1991 Toyota MR2 SW20 (Yokoda MS2 WS20)",
+        "2023 Toyota GR Supra A90 RZ 6MT (Yokoda Supreme AR JZ 6 Speed Manual)",
+        "2019 Toyota Supra GRMN (2025 Yokoda Supreme AR NR)",
+        "2002 Toyota Supra A80",
+        "Toyota Celica GT-Four T200 (Yokoda Relica ST-4)"
+    ],
 
-  Lexus: [
-    "Lexus LC"
-  ],
+    Nissan: [
+        "Nissan GT-R R35",
+        "Nissan Skyline GT-R BNR34",
+        "Nissan Skyline GT-R BCNR33",
+        "Nissan Skyline GT-R BNR32",
+        "Nissan Skyline R32",
+        "Nissan Fairlady Z S30",
+        "Nissan Fairlady Z Z31",
+        "Nissan Fairlady Z Z32",
+        "Nissan Fairlady Z Z33",
+        "Nissan Fairlady Z Z34",
 
-  Honda: [
-    "Honda NSX NC1",
-    "Honda NSX NA1",
-    "Honda NSX NA2",
-    "Honda Civic Type R"
-  ],
+        "1971 Nissan Skyline 2000GT-R KPGC10 (Nikuna Samurai 2000GT-I)",
+        "1983 Nissan Bluebird 910 (Nikuna Redbird 210)",
+        "1984 Nissan Skyline R30 2000 Turbo Intercooler RS-X (1987 Nikuna Samurai T30)",
+        "1988 Nissan Silvia S12 (Nikuna Silver D12)",
+        "1992 Nissan N14 Pulsar GTI-R (Nikuna Nebula GTR)",
+        "1995 Nissan 180SX (Nikuna Silver 110GX)",
+        "1994 Nissan 180SX Sileity (Nikuna Sirreity Takayama Hearts)",
+        "1987 Nissan Skyline R31 GTS-R (Nikuna Samurai T31)",
+        "1979 Nissan Fairlady S130 (Nikuna Angel 30S)",
+        "1986 Nissan Leopard F31 (Nikuna Tiger F31)",
+        "1993 Nissan Silvia S13 (Nikuna Silver D13)",
+        "2003 Nissan Skyline V35 (Nikuna Samurai K35)",
+        "1996 Nissan Silvia S14 (後期) (Nikuna Silver D14 S)",
+        "1995 Nissan Silvia S14 (前期) (Nikuna Silver D14 C)",
+        "1994 Nissan Skyline BNR32 GT-R V-Spec Ⅱ (Nikuna Samurai T32 GR-T)",
+        "2002 Nissan Skyline BNR34 GT-R V-Spec Ⅱ Nür (Nikuna Samurai GR-T A-Spec Ⅱ Nür)",
+        "1999 Nissan Silvia S15 (Nikuna Silver D15)",
+        "1995 Nissan Skyline BCNR33 GT-R V-Spec Ⅱ (Nikuna Samurai T33 GR-T)",
+        "2009 Nissan GT-R R35 (Nikuna GR-T Platinum T35)",
+        "2015 Nissan GT-R R35 Nismo (Nikuna GR-T Nikmo T35)"
+    ],
 
-  Subaru: [
-    "Subaru WRX STI"
-  ],
+    Mazda: [
+        "Mazda RX-7",
 
-  Mitsubishi: [
-    "Mitsubishi Lancer Evolution III",
-    "Mitsubishi Lancer Evolution VI",
-    "Mitsubishi Lancer Evolution IX"
-  ],
+        "1991 Mazda (Eunos) Roadster NA (Shogun Spider)",
+        "1983 Mazda Savanna RX-7 SA22C (Shogun FB 7)",
+        "1992 Mazda MX-6 (Shogun XS 6)",
+        "1991 Mazda Savanna RX-7 FC3S (Shogun FC 7)",
+        "2011 Mazda RX-8 (Shogun XS 8)",
+        "1996 Mazda (Eunos) Cosmo E-JCES (Shogun Galaxy)",
+        "2002 Mazda RX-7 FD3S Spirit R (Shogun FD 7)",
+        "2005 Mazda RX-7 Fortune Veilside (Shogun FD 7 Wildside Edition)"
+    ],
 
-  // 外車
-  Lamborghini: [
-    "Lamborghini Gallardo Coupe",
-    "Lamborghini Gallardo Spyder",
-    "Lamborghini Diablo",
-    "Lamborghini Murciélago"
-  ],
+    Lexus: [
+        "Lexus LC"
+    ],
 
-  // その他
-  Other: [
-    "軽トラ（小）",
-    "軽トラ（大）"
-  ]
+    Honda: [
+        "Honda NSX NC1",
+        "Honda NSX NA1",
+        "Honda NSX NA2",
+        "Honda Civic Type R",
+
+        "1994 Honda Civic EG6 (Hokura Civil GE6)",
+        "1986 Honda CR-X (Hokura BR-X)",
+        "1993 Honda Beat (Hokura Beep)",
+        "1991 Honda Civic EF2 (Hokura Civil FX2)",
+        "1992 Honda Integra DA5 (Hokura Antegra RSi)",
+        "1992 Honda CR-X Delsol (Honda CR-X Delson)",
+        "1997 Honda Civic Type R EK9 (Hokura Civil ER9)",
+        "2017 Honda Civic Type R FK8 (Hokura Civil Ri)",
+        "2008 Honda Civic Type R FD2 (Hokura Civil TS-R FRS)",
+        "2002 Honda Integra Type R LA-DC5 (Hokura Antegra TS-R DS3)",
+        "2005 Honda Integra Type R ABA-DC5 (Hokura Antegra TS-R DS3 Facelift)",
+        "2000 Honda Prelude BB8 SiR 4WS (Hokura Pretense TS-R)",
+        "1999 Honda S2000 (Hokura T2K)",
+        "2023 Honda Civic FL5 Type R (Hokura Civil TS-R)",
+        "1992 Honda NSX Type R NA1 (Hokura RSX)",
+        "2005 Honda NSX-R NA2 (Hokura RSX-I)",
+        "2022 Honda NSX Type S NC1 (Hokura RSX Type Z)"
+    ],
+
+    Subaru: [
+        "Subaru WRX STI"
+    ],
+
+    Mitsubishi: [
+        "Mitsubishi Lancer Evolution III",
+        "Mitsubishi Lancer Evolution VI",
+        "Mitsubishi Lancer Evolution IX",
+
+        "1985 Mitsubishi Lancer 1800GX Turbo (Shuriken Exodus EX)",
+        "1988 Mitsubishi Starion GSR-VR (Shiriken Stardom)",
+        "1997 Mitsubishi Eclipce D38A (1997 Shuriken Solar GT-S)",
+        "1989 Mitsubishi Galant VR-4 (Shuriken Elegant XR4)",
+        "2003 Mitsubishi Eclipce D53A (2003 Shuriken Solar GT-S)",
+        "1995 Mitsubishi Lancer Evolution Ⅲ GSR (Shuriken Exodus Revolution 3)",
+        "1999 Mitsubishi Lancer Evolution Ⅵ (Shuriken Exodus Revolution 6)",
+        "1996 Mitsubishi GTO Twin-Turbo (Shuriken BTO Twin-Turbo)",
+        "2004 Mitsubishi Lancer Evolution Ⅸ MR GSR (Shuriken Exodus Revoution 9)"
+    ],
+
+    Suzuki: [
+        "1993 Suzuki Cappuccino EA11 (Kuzuko Espresso)",
+        "1972 Suzuki Carry L40 (軽トラ)"
+    ],
+
+    // =========================
+    // 外車
+    // =========================
+
+    Lamborghini: [
+        "Lamborghini Gallardo Coupe",
+        "Lamborghini Gallardo Spyder",
+        "Lamborghini Diablo",
+        "Lamborghini Murciélago"
+    ],
+
+    Dodge: [
+        "2005 Dodge Neon SRT-4 (Buffalo Theron SL8)",
+        "1971 Dodge Challenger R/T (Buffalo Contender S/T)",
+        "1996 Dodge Stealth R/T Turbo (Buffalo Bullet R/T Turbo)",
+        "2015 Dodge Viper GTS (Buffalo Adder WLR)",
+        "2020 Dodge Challenger SRT Hellcat Redeye (Buffalo Contender WLR Wildcat Allred)",
+        "2008 Dodge Viper SRT10 (Buffalo Adder WLR10)",
+        "2010 Dodge Viper SRT10 ACR (Buffalo Adder RCT)"
+    ],
+
+    Renault: [
+        "1980 Renault 5 Turbo (Revoult A5 Turbo)"
+    ],
+
+    Lotus: [
+        "1983 Lotus Esprit S2 Turbo (Lucius Spirit S3 Turbo)",
+        "1996 Lotus Esprit S4 V8 (2002 Lucius Spirit S4 V8)",
+        "1992 Lotus Carlton (Lucius Carlson)",
+        "2005 Lotus Elise (2代目) (Lucius Alicia 200R)"
+    ],
+
+    Bentley: [
+        "2009 Bentley Brooklands (2代目) (Berkley Brooklyns)"
+    ],
+
+    Porsche: [
+        "1987 Porsche 944 Turbo (Preusser 884 Turbo)",
+        "1992 Porsche 964 Turbo 3.6 (Preusser 846 Turbo)",
+        "1995 Porsche 993 Carrera 4 (Preusser 883 Camera)",
+        "1997 Porsche 993 Turbo S (Preusser 883 Turbo 4)",
+        "1996 Porsche 993 Carrera Cabriolet (Preusser 883 Convertible)",
+        "1973 Porsche 911 Carrera RS 2.7 (Preusser 801 Camera R)",
+        "1986 Porsche 959 S (1993 Preusser 858)",
+        "2018 Porsche 991 GT3 TP (Preusser 881 GRP.3 Tourer)",
+        "2011 Porsche 997 GT3 RS 4.0 (Preusser 887 GRP.3R 4.0)"
+    ],
+
+    // =========================
+    // その他
+    // =========================
+
+    Other: [
+        "軽トラ（小）",
+        "軽トラ（大）"
+    ]
 }

@@ -327,9 +327,9 @@ module.exports = {
             .setTitle("🚗 車安価")
             .addFields(
                 {
-                    name: "🚘 車",
+                    name: "🚘 車種",
                     value: selectedCar.name,
-                    inline: false
+                    inline: true
                 },
                 {
                     name: "🏭 メーカー",
@@ -337,17 +337,17 @@ module.exports = {
                     inline: true
                 },
                 {
-                    name: "⚠️ ハンデ",
-                    value: selectedHandicap,
-                    inline: false
-                },
-                {
-                    name: "🔧 車縛り",
+                    name: "🔧 限定指定",
                     value: carRestrictionName,
                     inline: true
                 },
                 {
-                    name: "🔒 ハンデ縛り",
+                    name: "⚠️ ハンデ",
+                    value: selectedHandicap,
+                    inline: true
+                },
+                {
+                    name: "🔒 限定指定",
                     value: handicapRestrictionName,
                     inline: true
                 }
