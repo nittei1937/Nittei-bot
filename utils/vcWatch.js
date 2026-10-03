@@ -1,14 +1,15 @@
 const fs = require("fs");
 const path = require("path");
+const JSON5 = require("json5");
 
-const watchPath = path.join(__dirname, "..", "data", "moderation", "vcWatch.json");
+const watchPath = path.join(__dirname, "..", "data", "moderation", "vcWatch.json5");
 
 function readWatches() {
     try {
         const raw = fs.readFileSync(watchPath, "utf8");
-        return JSON.parse(raw);
+        return JSON5.parse(raw);
     } catch (error) {
-        console.error("[vcWatch] vcWatch.json の読み込みに失敗しました。", error);
+        console.error("[vcWatch] vcWatch.json5 の読み込みに失敗しました。", error);
         return {};
     }
 }

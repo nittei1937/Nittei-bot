@@ -22,12 +22,12 @@ function canManage(interaction) {
     return interaction.memberPermissions?.has(PermissionFlagsBits.ManageGuild) ?? false;
 }
 
-// 監視対象の追加・削除は data/moderation/vcWatch.json を直接編集して
+// 監視対象の追加・削除は data/moderation/vcWatch.json5 を直接編集して
 // git push してください（Bot側からの書き込みは行いません）。
 module.exports = {
     data: new SlashCommandBuilder()
         .setName("vcwatch")
-        .setDescription("VC入室監視の設定を確認する（設定はvcWatch.jsonを直接編集してください）")
+        .setDescription("VC入室監視の設定を確認する（設定はvcWatch.json5を直接編集してください）")
         .addSubcommand(sub =>
             sub.setName("list").setDescription("現在の監視対象一覧を表示")
         ),
@@ -52,7 +52,7 @@ module.exports = {
 
         if (entries.length === 0) {
             return interaction.reply({
-                content: "現在監視しているユーザーはいません。（data/moderation/vcWatch.json を編集して追加してください）",
+                content: "現在監視しているユーザーはいません。（data/moderation/vcWatch.json5 を編集して追加してください）",
                 ephemeral: true,
             });
         }
