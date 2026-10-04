@@ -56,14 +56,15 @@ async function handleVoiceStateUpdate(oldState, newState) {
     }
 
     const defaultMessage =
-        `🔔 <@${userId}> が <#${newState.channelId}> に入室しました。`;
+        `<@${userId}> が入室しました。`;
 
-    const message = watch.message
-        ? String(watch.message)
-            .replace(/\{user\}/g, `<@${userId}>`)
-            .replace(/\{channel\}/g, `<#${newState.channelId}>`)
-        : defaultMessage;
-
+    const message =
+        typeof watch.message === "string" &&
+        watch.message.trim().length > 0
+            ? watch.message
+                .replace(/\{user\}/g, `<@${userId}>`)
+                .replace(/\{channel\}/g, `<#${newState.channelId}>`)
+            : defaultMessage;
     try {
         await textChannel.send(message);
 
