@@ -17,6 +17,8 @@ const {
 
 const { startScheduleRunner } = require("./utils/schedule");
 const { handleVoiceStateUpdate } = require("./utils/vcwatchHandler");
+const { checkBarusuMessage } = require("./utils/barusuDetector");
+const { checkProfanityMessage } = require("./utils/profanityDetector");
 
 // ==============================
 // 環境変数
@@ -481,6 +483,12 @@ client.on(
         if (message.author.bot) return;
 
         try {
+
+            // ==========================
+            // 暴言・バルス検出
+            // ==========================
+            await checkBarusuMessage(message);
+            await checkProfanityMessage(message);
 
             // ==========================
             // 車安価
