@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require("discord.js");
 const { getAllOreIds, getOreInfo, setRate } = require("../utils/market.js");
-const { buildGoldRateListEmbed } = require("../utils/marketDisplay.js");
+const { buildIronRateListEmbed } = require("../utils/marketDisplay.js");
 
 const RATE_MANAGER_ROLE_ID = "1519700792267772016";
 
@@ -10,7 +10,7 @@ const RATE_MANAGER_ROLE_ID = "1519700792267772016";
 
 // true  → 工事中（/rate のみ登録）
 // false → 通常運用（/rate set /rate info list を登録）
-const RATE_UNDER_CONSTRUCTION = true;
+const RATE_UNDER_CONSTRUCTION = false;
 
 // 表示する工事内容
 const RATE_STATUS = "工事中";
@@ -142,7 +142,7 @@ module.exports = {
         if (group === "info") {
             if (subcommand === "list") {
                 return interaction.reply({
-                    embeds: [buildGoldRateListEmbed()],
+                    embeds: [buildIronRateListEmbed()],
                 });
             }
 

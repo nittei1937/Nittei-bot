@@ -1,0 +1,57 @@
+{
+  "netherite": {
+    "name": "ネザライトインゴット",
+    "emoji": "🖤",
+    "rate": 0.00390625
+  },
+  "diamond": {
+    "name": "ダイヤモンド",
+    "emoji": "💎",
+    "rate": 0.03125
+  },
+  "emerald": {
+    "name": "エメラルド",
+    "emoji": "💚",
+    "rate": 0.125
+  },
+  "gold": {
+    "name": "金インゴット",
+    "emoji": "🟡",
+    "rate": 0.07692308
+  },
+  "iron": {
+    "name": "鉄インゴット",
+    "emoji": "⚙️",
+    "rate": 1
+  },
+  "copper": {
+    "name": "銅インゴット",
+    "emoji": "🟠",
+    "rate": 1
+  },
+  "redstone": {
+    "name": "レッドストーンダスト",
+    "emoji": "🔺",
+    "rate": 0.2
+  },
+  "lapis": {
+    "name": "ラピスラズリ",
+    "emoji": "🔷",
+    "rate": 0.33333333
+  },
+  "coal": {
+    "name": "石炭",
+    "emoji": "⬛",
+    "rate": 2
+  },
+  "quartz": {
+    "name": "ネザークォーツ",
+    "emoji": "🤍",
+    "rate": 0.25
+  },
+  "amethyst": {
+    "name": "アメジストの欠片",
+    "emoji": "🟣",
+    "rate": 0.76923077
+  }
+}

@@ -1,20 +1,20 @@
 const fs = require("fs");
 const path = require("path");
 
-const ORES_PATH = path.join(__dirname, "..", "data", "ores.json");
+const RATE_PATH = path.join(__dirname, "..", "data", "rate.json");
 
 /**
- * data/ores.json を読み込む
+ * data/rate.json を読み込む
  */
 function loadOres() {
-    return JSON.parse(fs.readFileSync(ORES_PATH, "utf8"));
+    return JSON.parse(fs.readFileSync(RATE_PATH, "utf8"));
 }
 
 /**
  * 小数第2位まで丸める
  */
 function round(value) {
-    return Math.round(value * 100) / 100;
+    return Math.round(value * 100000000) / 100000000;
 }
 
 /**
@@ -33,11 +33,11 @@ function getOreInfo(oreId) {
 }
 
 /**
- * 金基準レートを取得
+ * 鉄基準レートを取得
  */
 function getRate(oreId) {
     const ores = loadOres();
-    return ores[oreId]?.gold_rate;
+    return ores[oreId]?.rate;
 }
 
 /**
@@ -47,8 +47,8 @@ function getRate(oreId) {
 function computeExchangeRate(oreIdA, oreIdB) {
     const ores = loadOres();
 
-    const valueA = ores[oreIdA]?.gold_rate;
-    const valueB = ores[oreIdB]?.gold_rate;
+    const valueA = ores[oreIdA]?.rate;
+    const valueB = ores[oreIdB]?.rate;
 
     if (valueA === undefined || valueB === undefined) {
         return null;
@@ -67,12 +67,12 @@ function setRate(oreId, value) {
         return null;
     }
 
-    const newValue = round(Math.max(0.01, value));
+    const newValue = round(Math.max(0.00000001, value));
 
-    ores[oreId].gold_rate = newValue;
+    ores[oreId].rate = newValue;
 
     fs.writeFileSync(
-        ORES_PATH,
+        RATE_PATH,
         JSON.stringify(ores, null, 2),
         "utf8"
     );
