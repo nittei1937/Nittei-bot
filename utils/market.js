@@ -33,7 +33,7 @@ function getOreInfo(oreId) {
 }
 
 /**
- * 鉄基準レートを取得
+ * 各アイテム1個あたりに必要な鉄の量を取得
  */
 function getRate(oreId) {
     const ores = loadOres();
@@ -42,7 +42,8 @@ function getRate(oreId) {
 
 /**
  * クロスレート計算
- * （例：ダイヤ→鉄）
+ * rate は「アイテム1個あたりに必要な鉄の量」。
+ * 例：ダイヤ1個から鉄何個分か、またはアイテム間の交換数量を計算。
  */
 function computeExchangeRate(oreIdA, oreIdB) {
     const ores = loadOres();

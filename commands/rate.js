@@ -59,7 +59,7 @@ if (!RATE_UNDER_CONSTRUCTION) {
         .addSubcommand((sub) =>
             sub
                 .setName("set")
-                .setDescription("鉱石の交換レートを変更")
+                .setDescription("対象アイテム1個に必要な鉄の量を変更")
                 .addStringOption((option) =>
                     option
                         .setName("ore")
@@ -67,12 +67,12 @@ if (!RATE_UNDER_CONSTRUCTION) {
                         .setRequired(true)
                         .setAutocomplete(true)
                 )
-                .addIntegerOption((option) =>
+                .addNumberOption((option) =>
                     option
                         .setName("value")
-                        .setDescription("交換レート")
+                        .setDescription("対象アイテム1個に必要な鉄の量")
                         .setRequired(true)
-                        .setMinValue(1)
+                        .setMinValue(0.01)
                 )
         )
 
@@ -166,7 +166,7 @@ module.exports = {
             }
 
             const id = interaction.options.getString("ore", true);
-            const value = interaction.options.getInteger("value", true);
+            const value = interaction.options.getNumber("value", true);
 
             const oreInfo = getOreInfo(id);
 
@@ -180,7 +180,7 @@ module.exports = {
             const newValue = setRate(id, value);
 
             return interaction.reply(
-                `${oreInfo.emoji} **${oreInfo.name}** の交換レートを **${newValue}** に変更しました。`
+                `${oreInfo.emoji} **${oreInfo.name}** 1個に必要な鉄の量を **${newValue}個** に変更しました。`
             );
         }
     },
