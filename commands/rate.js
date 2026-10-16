@@ -1,22 +1,22 @@
 const { SlashCommandBuilder } = require("discord.js");
-const { getAllOreIds, getOreInfo, setRate } = require("../utils/market.js");
-const { buildIronRateListEmbed } = require("../utils/marketDisplay.js");
+const {
+    getAllOreIds,
+    getOreInfo,
+    setRate,
+} = require("../utils/market.js");
+const {
+    buildGoldRateListEmbed,
+} = require("../utils/marketDisplay.js");
 
-const RATE_MANAGER_ROLE_ID = "1519700792267772016";
+// 自分のDiscordユーザーIDに置き換える
+const RATE_MANAGER_USER_ID = "1423144854078361682";
 
-// ==============================
-// /rate の状態設定
-// ==============================
-
-// true  → 工事中（/rate のみ登録）
-// false → 通常運用（/rate set /rate info list を登録）
+// 工事中なら true、通常運用なら false
 const RATE_UNDER_CONSTRUCTION = false;
 
-// 表示する工事内容
 const RATE_STATUS = "工事中";
-
-// 実際に表示するメッセージ
-const RATE_STATUS_MESSAGE = `現在 \`/rate\` は**${RATE_STATUS}**です。`;
+const RATE_STATUS_MESSAGE =
+    `現在 \`/rate\` は**${RATE_STATUS}**です。`;
 
 // ==============================
 // 鉱石オートコンプリート
@@ -42,16 +42,12 @@ function oreAutocompleteChoices(focused) {
 }
 
 // ==============================
-// /rate コマンド本体
+// /rate コマンド
 // ==============================
 
 const rateCommand = new SlashCommandBuilder()
     .setName("rate")
     .setDescription("マイクラ鉱石の交換レートを管理");
-
-// ==============================
-// 通常時のみサブコマンドを登録
-// ==============================
 
 if (!RATE_UNDER_CONSTRUCTION) {
     rateCommand
@@ -59,7 +55,7 @@ if (!RATE_UNDER_CONSTRUCTION) {
         .addSubcommand((sub) =>
             sub
                 .setName("set")
-                .setDescription("対象アイテム1個に必要な鉄の量を変更")
+                .setDescription("鉱石の交換レートを変更")
                 .addStringOption((option) =>
                     option
                         .setName("ore")
@@ -70,12 +66,11 @@ if (!RATE_UNDER_CONSTRUCTION) {
                 .addNumberOption((option) =>
                     option
                         .setName("value")
-                        .setDescription("対象アイテム1個に必要な鉄の量")
+                        .setDescription("対象鉱石1個に必要な鉄の量")
                         .setRequired(true)
-                        .setMinValue(0.01)
+                        .setMinValue(0.000001)
                 )
         )
-
         // /rate info list
         .addSubcommandGroup((group) =>
             group
@@ -101,66 +96,51 @@ module.exports = {
     // ==============================
 
     async autocomplete(interaction) {
-        // 工事中はオートコンプリート不要
         if (RATE_UNDER_CONSTRUCTION) {
             return interaction.respond([]);
         }
 
         const focused = interaction.options.getFocused();
-
         const choices = oreAutocompleteChoices(focused);
 
         await interaction.respond(choices);
     },
 
     // ==============================
-    // 実行
+    // コマンド実行
     // ==============================
 
     async execute(interaction) {
-        // ==========================
-        // 工事中
-        // ==========================
-
         if (RATE_UNDER_CONSTRUCTION) {
             return interaction.reply({
                 content: RATE_STATUS_MESSAGE,
+                ephemeral: true,
             });
         }
-
-        // ==========================
-        // 通常時
-        // ==========================
 
         const group = interaction.options.getSubcommandGroup(false);
         const subcommand = interaction.options.getSubcommand();
 
-        // --------------------------
-        // /rate info
-        // --------------------------
+        // ------------------------------
+        // /rate info list
+        // ------------------------------
 
-        if (group === "info") {
-            if (subcommand === "list") {
-                return interaction.reply({
-                    embeds: [buildIronRateListEmbed()],
-                });
-            }
-
-            return;
+        if (group === "info" && subcommand === "list") {
+            return interaction.reply({
+                embeds: [buildGoldRateListEmbed()],
+            });
         }
 
-        // --------------------------
+        // ------------------------------
         // /rate set
-        // --------------------------
+        // ------------------------------
 
         if (subcommand === "set") {
-            // 権限チェック
-            const hasRole =
-                interaction.member.roles.cache.has(RATE_MANAGER_ROLE_ID);
-
-            if (!hasRole) {
+            // 実行者をユーザーIDで確認
+            if (interaction.user.id !== RATE_MANAGER_USER_ID) {
                 return interaction.reply({
-                    content: "❌ このコマンドを使用する権限がありません。",
+                    content:
+                        "❌ このコマンドを使用できるのはBot管理者本人だけです。",
                     ephemeral: true,
                 });
             }
@@ -177,11 +157,23 @@ module.exports = {
                 });
             }
 
-            const newValue = setRate(id, value);
+            try {
+                const newValue = setRate(id, value);
 
-            return interaction.reply(
-                `${oreInfo.emoji} **${oreInfo.name}** 1個に必要な鉄の量を **${newValue}個** に変更しました。`
-            );
+                return interaction.reply({
+                    content:
+                        `${oreInfo.emoji} **${oreInfo.name}** の交換レートを ` +
+                        `**鉄${newValue}個** に変更しました。\n` +
+                        `（${oreInfo.name}1個 = 鉄${newValue}個）`,
+                });
+            } catch (error) {
+                console.error("[rate set] レート変更エラー:", error);
+
+                return interaction.reply({
+                    content: "❌ レートの変更に失敗しました。",
+                    ephemeral: true,
+                });
+            }
         }
     },
 };
