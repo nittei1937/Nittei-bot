@@ -5,7 +5,7 @@ const {
     setRate,
 } = require("../utils/market.js");
 const {
-    buildGoldRateListEmbed,
+    buildIronRateListEmbed,
 } = require("../utils/marketDisplay.js");
 
 // 自分のDiscordユーザーIDに置き換える
@@ -71,16 +71,11 @@ if (!RATE_UNDER_CONSTRUCTION) {
                         .setMinValue(0.000001)
                 )
         )
-        // /rate info list
-        .addSubcommandGroup((group) =>
-            group
+        // /rate info
+        .addSubcommand((sub) =>
+            sub
                 .setName("info")
-                .setDescription("鉱石の交換レート情報")
-                .addSubcommand((sub) =>
-                    sub
-                        .setName("list")
-                        .setDescription("現在の交換レート一覧を表示")
-                )
+                .setDescription("現在の交換レート一覧を表示")
         );
 }
 
@@ -129,7 +124,7 @@ module.exports = {
           try {
             console.log("[rate info list] 処理開始");
 
-            const embed = buildGoldRateListEmbed();
+            const embed = buildIronRateListEmbed();
 
             console.log("[rate info list] Embed作成成功");
 
