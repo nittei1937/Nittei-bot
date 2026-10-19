@@ -942,6 +942,25 @@ setInterval(() => {
     });
 }, 10_000);
 
+client.rest.on("response", (request, response) => {
+    console.log(
+        `[Discord REST] ${request.method} ${request.path} -> ${response.status}`
+    );
+});
+
+client.rest.on("rateLimited", info => {
+    console.warn("[Discord REST] Rate limited", info);
+});
+
+setTimeout(async () => {
+    console.log("[Login診断] 60秒経過", {
+        ready: client.isReady(),
+        status: client.ws.status,
+        gateway: client.ws.gateway,
+        shardCount: client.ws.shards.size
+    });
+}, 60_000);
+
 // ==============================
 // Discord Login
 // ==============================
