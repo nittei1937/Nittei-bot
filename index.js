@@ -971,15 +971,16 @@ fetch("https://discord.com/api/v10/gateway/bot", {
     signal: AbortSignal.timeout(15000)
 })
     .then(async response => {
-        const data = await response.json();
+        const body = await response.text();
 
         console.log("[Gateway APIテスト]", {
             httpStatus: response.status,
-            hasGatewayUrl: typeof data.url === "string",
-            shards: data.shards ?? null,
-            errorCode: data.code ?? null
+            contentType: response.headers.get("content-type"),
+            retryAfter: response.headers.get("retry-after"),
+            bodyPreview: body.slice(0, 300)
         });
     })
+
     .catch(error => {
         console.error("[Gateway APIテスト失敗]", {
             name: error.name,
