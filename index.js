@@ -927,6 +927,22 @@ client.once(
 );
 
 // ==============================
+// Gateway search
+// ==============================
+
+
+setInterval(() => {
+    console.log("[Gateway診断]", {
+        ready: client.isReady(),
+        status: client.ws.status,
+        shards: client.ws.shards.map((shard, id) => ({
+            id,
+            status: shard.status
+        }))
+    });
+}, 10_000);
+
+// ==============================
 // Discord Login
 // ==============================
 
