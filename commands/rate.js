@@ -192,5 +192,9 @@ module.exports = {
                 });
             }
         }
+        return interaction.reply({
+            content: "❌ 未対応のrateコマンドです。/rate info または /rate set を使用してください。",
+            ephemeral: true,
+        });
     },
 };

@@ -930,20 +930,16 @@ client.once(
 // Discord Login
 // ==============================
 
-console.log(
-    "🔐 Discordへログインしています..."
-);
+console.log("🔐 Discordへログインしています...");
 
-client.login(
-    DISCORD_TOKEN
-).catch(error => {
-
-    console.error(
-        "❌ Discordログインに失敗しました。"
-    );
-
-    console.error(error);
-});
+client.login(DISCORD_TOKEN)
+    .then(() => {
+        console.log("🔑 Discord Gatewayへのログイン処理が完了しました。");
+    })
+    .catch(error => {
+        console.error("❌ Discordログインに失敗しました。");
+        console.error(error);
+    });
 
 // ==============================
 // Express
