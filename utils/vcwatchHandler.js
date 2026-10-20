@@ -17,11 +17,33 @@ async function handleVoiceStateUpdate(oldState, newState) {
 
     const watch = getWatch(guildId, userId);
 
-    // 監視対象として登録されていない
+    // 監視対象として登録されていない場合
     if (!watch) {
         console.log(
             `[vcWatch] 監視対象ではありません: ${userId}`
         );
+
+        // 入室先VCのチャットに挨拶を送信
+        const username =
+            newState.member?.user.username ?? "ユーザー";
+
+        try {
+            const voiceChannel = newState.channel;
+
+            if (!voiceChannel) return;
+
+            await voiceChannel.send(`${username}さん、こんにちは。`);
+
+            console.log(
+                `[vcWatch] 未登録ユーザーへの挨拶送信成功: ${username}`
+            );
+        } catch (error) {
+            console.error(
+                "[vcWatch] 未登録ユーザーへの挨拶送信に失敗しました。"
+            );
+            console.error(error);
+        }
+
         return;
     }
 
@@ -37,7 +59,7 @@ async function handleVoiceStateUpdate(oldState, newState) {
         return;
     }
 
-    // 通知先チャンネルを取得
+    // 登録済みユーザーの通知先チャンネルを取得
     const textChannel = await newState.guild.channels
         .fetch(String(watch.channelId))
         .catch(error => {
@@ -55,8 +77,7 @@ async function handleVoiceStateUpdate(oldState, newState) {
         return;
     }
 
-    const defaultMessage =
-        `<@${userId}> さん、こんにちは`;
+    const defaultMessage = `<@${userId}> さん、こんにちは。`;
 
     const message =
         typeof watch.message === "string" &&
@@ -65,6 +86,7 @@ async function handleVoiceStateUpdate(oldState, newState) {
                 .replace(/\{user\}/g, `<@${userId}>`)
                 .replace(/\{channel\}/g, `<#${newState.channelId}>`)
             : defaultMessage;
+
     try {
         await textChannel.send(message);
 
@@ -73,7 +95,7 @@ async function handleVoiceStateUpdate(oldState, newState) {
         );
     } catch (error) {
         console.error(
-            `[vcWatch] 通知の送信に失敗しました。`
+            "[vcWatch] 通知の送信に失敗しました。"
         );
         console.error(error);
     }

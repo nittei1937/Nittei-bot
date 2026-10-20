@@ -3,7 +3,6 @@ const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 const BARUSU = require("../data/barusu/barusu.json");
 const HANSYA = require("../data/barusu/hansya.json");
 const AUTHO = require("../data/barusu/authority.json");
-const COUNTMANAGER = require("./countManager");
 const {
     addSchedule,
     removeSchedule,
