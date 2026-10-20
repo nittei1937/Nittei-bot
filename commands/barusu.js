@@ -11,18 +11,27 @@ const {
     getExecuteAt
 } = require("../utils/schedule");
 
+
 function createAutocomplete(data) {
     return async interaction => {
         try {
             const focused = interaction.options.getFocused().toLowerCase();
+
             const choices = Object.entries(data)
-                .filter(([id, value]) => id.toLowerCase().includes(focused) || value.name.toLowerCase().includes(focused))
+                .filter(([id, value]) =>
+                    id.toLowerCase().includes(focused) ||
+                    value.name.toLowerCase().includes(focused)
+                )
                 .slice(0, 25)
-                .map(([id, value]) => ({ name: value.name, value: id }));
+                .map(([id, value]) => ({
+                    name: value.name,
+                    value: id
+                }));
+
             await interaction.respond(choices);
         } catch (error) {
-            console.error(error);
-            if (!interaction.responded) await interaction.respond([]);
+            console.error("❌ オートコンプリート応答エラー:", error);
+            // 応答済みのInteractionには再度respondしない
         }
     };
 }
