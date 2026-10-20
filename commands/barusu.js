@@ -3,6 +3,7 @@ const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 const BARUSU = require("../data/barusu/barusu.json");
 const HANSYA = require("../data/barusu/hansya.json");
 const AUTHO = require("../data/barusu/authority.json");
+const COUNTMANAGER = require("./countManager");
 const {
     addSchedule,
     removeSchedule,
@@ -30,9 +31,12 @@ function createAutocomplete(data) {
 function getTarget(interaction, optionName = "user") {
     const member = interaction.options.getMember(optionName);
     const user = interaction.options.getUser(optionName);
+    if (!user) return null;
+
     return {
         id: user.id,
-        name: member?.displayName ?? user.username
+        name: member?.displayName ?? user.username,
+        isAll: false
     };
 }
 
@@ -42,7 +46,8 @@ function createSchedule(interaction, target, message, executeAt) {
         guildId: interaction.guildId,
         userId: target.id,
         userName: target.name,
-        content: `<@${target.id}>${message}`,
+        // 全員対象は文字列だけを送信し、ユーザーメンションを作らない
+        content: target.isAll ? `${target.name}${message}` : `<@${target.id}>${message}`,
         executeAt
     });
 }
@@ -123,7 +128,19 @@ function createExecute(data) {
             });
         }
 
-        const target = getTarget(interaction);
+        const isAll = interaction.options.getBoolean("all") === true;
+        const selectedTarget = getTarget(interaction);
+
+        if (!isAll && !selectedTarget) {
+            return interaction.reply({
+                content: "対象ユーザーを選択するか、all を true にしてください。",
+                ephemeral: true
+            });
+        }
+
+        const target = isAll
+            ? { id: null, name: "全員", isAll: true }
+            : selectedTarget;
         const mode = info.mode ?? "normal";
 
         if (mode === "physical") {
@@ -321,7 +338,8 @@ const barusuCommand = {
         .addSubcommand(sub =>
             sub.setName("barusu")
                 .setDescription("バルスを放つ")
-                .addUserOption(option => option.setName("user").setDescription("対象").setRequired(true))
+                .addUserOption(option => option.setName("user").setDescription("対象ユーザー（全員を対象にする場合は省略）").setRequired(false))
+                .addBooleanOption(option => option.setName("all").setDescription("全員を対象にする（メンションはしません）"))
                 .addStringOption(option => option.setName("type").setDescription("種類（customを指定した場合は無視されます）").setRequired(false).setAutocomplete(true))
                 .addStringOption(option => option.setName("custom").setDescription("自由入力（指定するとtypeより優先されます）").setMaxLength(100))
                 .addUserOption(option => option.setName("user2").setDescription("跳弾先（跳弾式バルスのみ）"))

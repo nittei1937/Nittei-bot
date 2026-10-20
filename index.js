@@ -748,40 +748,40 @@ client.on(
 // Discord Debug
 // ==============================
 
-client.on("debug", info => {
+// client.on("debug", info => {
 
-    // トークンそのものがログに出ないようにする
-    if (
-        info.includes("Provided token:")
-    ) {
+//     // トークンそのものがログに出ないようにする
+//     if (
+//         info.includes("Provided token:")
+//     ) {
 
-        console.log(
-            "[Discord Debug] Token received."
-        );
+//         console.log(
+//             "[Discord Debug] Token received."
+//         );
 
-        return;
-    }
+//         return;
+//     }
 
-    console.log(
-        `[Discord Debug] ${info}`
-    );
-});
+//     console.log(
+//         `[Discord Debug] ${info}`
+//     );
+// });
 
-client.on("warn", info => {
+// client.on("warn", info => {
 
-    console.warn(
-        `[Discord Warn] ${info}`
-    );
-});
+//     console.warn(
+//         `[Discord Warn] ${info}`
+//     );
+// });
 
-client.on("error", error => {
+// client.on("error", error => {
 
-    console.error(
-        "❌ Discord Client Error"
-    );
+//     console.error(
+//         "❌ Discord Client Error"
+//     );
 
-    console.error(error);
-});
+//     console.error(error);
+// });
 
 // ==============================
 // Gateway / Shard
