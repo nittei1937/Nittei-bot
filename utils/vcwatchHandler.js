@@ -25,7 +25,7 @@ async function handleVoiceStateUpdate(oldState, newState) {
 
         // 入室先VCのチャットに挨拶を送信
         const username =
-            newState.member?.user.username ?? "ユーザー";
+            newState.member?.user.displayname ?? "ユーザー";
 
         try {
             const voiceChannel = newState.channel;
