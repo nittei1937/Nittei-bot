@@ -56,7 +56,7 @@ async function handleVoiceStateUpdate(oldState, newState) {
     }
 
     const defaultMessage =
-        `<@${userId}> が入室しました。`;
+        `<@${userId}> さん、こんにちは`;
 
     const message =
         typeof watch.message === "string" &&
