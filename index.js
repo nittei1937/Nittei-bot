@@ -1010,6 +1010,20 @@ client.login(DISCORD_TOKEN)
 
 const app = express();
 
+// メモリ使用量を1分ごとに記録（落ちる直前の値で、メモリ超過か判断できる）
+setInterval(() => {
+    const m = process.memoryUsage();
+    console.log(`[Memory] rss=${Math.round(m.rss / 1048576)}MB heap=${Math.round(m.heapUsed / 1048576)}MB`);
+}, 60_000);
+
+// GASのpingが新URLに届いているかの確認（const app = express(); の直後に置く）
+app.use((req, res, next) => {
+    if (req.path === "/" || req.path === "/health") {
+        console.log(`[Ping] ${req.path} ${new Date().toISOString()}`);
+    }
+    next();
+});
+
 app.get(
     "/",
     (req, res) => {
