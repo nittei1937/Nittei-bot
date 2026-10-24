@@ -554,6 +554,14 @@ client.on(
 // Interaction処理
 // ==============================
 
+// 診断: コマンドを受け取れているか、受信が遅れていないかを記録
+client.on(Events.InteractionCreate, interaction => {
+    console.log(
+        `[Interaction] ${interaction.commandName ?? interaction.customId ?? "?"} ` +
+        `delay=${Date.now() - interaction.createdTimestamp}ms`
+    );
+});
+
 client.on(
     Events.InteractionCreate,
     async interaction => {
@@ -931,62 +939,62 @@ client.once(
 // ==============================
 
 
-// setInterval(() => {
-//     console.log("[Gateway診断]", {
-//         ready: client.isReady(),
-//         status: client.ws.status,
-//         shards: client.ws.shards.map((shard, id) => ({
-//             id,
-//             status: shard.status
-//         }))
-//     });
-// }, 10_000);
+setInterval(() => {
+    console.log("[Gateway診断]", {
+        ready: client.isReady(),
+        status: client.ws.status,
+        shards: client.ws.shards.map((shard, id) => ({
+            id,
+            status: shard.status
+        }))
+    });
+}, 10_000);
 
-// client.rest.on("response", (request, response) => {
-//     console.log(
-//         `[Discord REST] ${request.method} ${request.path} -> ${response.status}`
-//     );
-// });
+client.rest.on("response", (request, response) => {
+    console.log(
+        `[Discord REST] ${request.method} ${request.path} -> ${response.status}`
+    );
+});
 
-// client.rest.on("rateLimited", info => {
-//     console.warn("[Discord REST] Rate limited", info);
-// });
+client.rest.on("rateLimited", info => {
+    console.warn("[Discord REST] Rate limited", info);
+});
 
-// setTimeout(async () => {
-//     console.log("[Login診断] 60秒経過", {
-//         ready: client.isReady(),
-//         status: client.ws.status,
-//         gateway: client.ws.gateway,
-//         shardCount: client.ws.shards.size
-//     });
-// }, 60_000);
+setTimeout(async () => {
+    console.log("[Login診断] 60秒経過", {
+        ready: client.isReady(),
+        status: client.ws.status,
+        gateway: client.ws.gateway,
+        shardCount: client.ws.shards.size
+    });
+}, 60_000);
 
 // Discord APIへの直接接続テスト（トークンは表示しない）
-// console.log("[Gateway APIテスト] 開始");
+console.log("[Gateway APIテスト] 開始");
 
-// fetch("https://discord.com/api/v10/gateway/bot", {
-//     headers: {
-//         Authorization: `Bot ${DISCORD_TOKEN}`
-//     },
-//     signal: AbortSignal.timeout(15000)
-// })
-//     .then(async response => {
-//         const body = await response.text();
+fetch("https://discord.com/api/v10/gateway/bot", {
+    headers: {
+        Authorization: `Bot ${DISCORD_TOKEN}`
+    },
+    signal: AbortSignal.timeout(15000)
+})
+    .then(async response => {
+        const body = await response.text();
 
-//         console.log("[Gateway APIテスト]", {
-//             httpStatus: response.status,
-//             contentType: response.headers.get("content-type"),
-//             retryAfter: response.headers.get("retry-after"),
-//             bodyPreview: body.slice(0, 300)
-//         });
-//     })
+        console.log("[Gateway APIテスト]", {
+            httpStatus: response.status,
+            contentType: response.headers.get("content-type"),
+            retryAfter: response.headers.get("retry-after"),
+            bodyPreview: body.slice(0, 300)
+        });
+    })
 
-//     .catch(error => {
-//         console.error("[Gateway APIテスト失敗]", {
-//             name: error.name,
-//             message: error.message
-//         });
-//     });
+    .catch(error => {
+        console.error("[Gateway APIテスト失敗]", {
+            name: error.name,
+            message: error.message
+        });
+    });
 
 // ==============================
 // Discord Login
@@ -1010,11 +1018,11 @@ client.login(DISCORD_TOKEN)
 
 const app = express();
 
-// // メモリ使用量を1分ごとに記録（落ちる直前の値で、メモリ超過か判断できる）
-// setInterval(() => {
-//     const m = process.memoryUsage();
-//     console.log(`[Memory] rss=${Math.round(m.rss / 1048576)}MB heap=${Math.round(m.heapUsed / 1048576)}MB`);
-// }, 60_000);
+// メモリ使用量を1分ごとに記録（落ちる直前の値で、メモリ超過か判断できる）
+setInterval(() => {
+    const m = process.memoryUsage();
+    console.log(`[Memory] rss=${Math.round(m.rss / 1048576)}MB heap=${Math.round(m.heapUsed / 1048576)}MB`);
+}, 60_000);
 
 // GASのpingが新URLに届いているかの確認（const app = express(); の直後に置く）
 app.use((req, res, next) => {
