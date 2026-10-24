@@ -970,31 +970,31 @@ setTimeout(async () => {
 }, 60_000);
 
 // Discord APIへの直接接続テスト（トークンは表示しない）
-console.log("[Gateway APIテスト] 開始");
+// console.log("[Gateway APIテスト] 開始");
 
-fetch("https://discord.com/api/v10/gateway/bot", {
-    headers: {
-        Authorization: `Bot ${DISCORD_TOKEN}`
-    },
-    signal: AbortSignal.timeout(15000)
-})
-    .then(async response => {
-        const body = await response.text();
+// fetch("https://discord.com/api/v10/gateway/bot", {
+//     headers: {
+//         Authorization: `Bot ${DISCORD_TOKEN}`
+//     },
+//     signal: AbortSignal.timeout(15000)
+// })
+    // .then(async response => {
+    //     const body = await response.text();
 
-        console.log("[Gateway APIテスト]", {
-            httpStatus: response.status,
-            contentType: response.headers.get("content-type"),
-            retryAfter: response.headers.get("retry-after"),
-            bodyPreview: body.slice(0, 300)
-        });
-    })
+    //     console.log("[Gateway APIテスト]", {
+    //         httpStatus: response.status,
+    //         contentType: response.headers.get("content-type"),
+    //         retryAfter: response.headers.get("retry-after"),
+    //         bodyPreview: body.slice(0, 300)
+    //     });
+    // })
 
-    .catch(error => {
-        console.error("[Gateway APIテスト失敗]", {
-            name: error.name,
-            message: error.message
-        });
-    });
+    // .catch(error => {
+    //     console.error("[Gateway APIテスト失敗]", {
+    //         name: error.name,
+    //         message: error.message
+    //     });
+    // });
 
 // ==============================
 // Discord Login
