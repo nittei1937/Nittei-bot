@@ -1,4 +1,4 @@
-const { getWatch } = require("./vcWatch");
+const { getWatch, getAllWatches } = require("./vcWatch");
 
 async function handleVoiceStateUpdate(oldState, newState) {
     // VCが変わっていない場合は無視
@@ -20,26 +20,44 @@ async function handleVoiceStateUpdate(oldState, newState) {
     // 監視対象として登録されていない場合
     if (!watch) {
         console.log(
-            `[vcWatch] 監視対象ではありません: ${userId}`
+            `[vcWatch] 監視対象ユーザーではありません: ${userId}`
         );
 
-        // 入室先VCのチャットに挨拶を送信
+        // このサーバーで、入室先VCを監視対象に指定している設定を取得
+        const allWatches = getAllWatches(guildId);
+
+        const isTargetVoiceChannel = Object.values(allWatches).some(
+            item =>
+                item.voiceChannelId &&
+                String(item.voiceChannelId) === String(newState.channelId)
+        );
+
+        // /vcwatch で指定された監視対象VCでなければ何もしない
+        if (!isTargetVoiceChannel) {
+            console.log(
+                `[vcWatch] 未登録ユーザーの対象VC外への入室: ${newState.channelId}`
+            );
+            return;
+        }
+
+        // サーバーニックネームを取得
         const username =
-            newState.member?.user.displayname ?? "ユーザー";
+            newState.member?.displayName ?? "ユーザー";
 
         try {
+            // 入室先VCのチャットに送信
             const voiceChannel = newState.channel;
 
             if (!voiceChannel) return;
 
-            await voiceChannel.send(`${username}さん、こんにちは。`);
+            await voiceChannel.send(`${username}入室しました。`);
 
             console.log(
-                `[vcWatch] 未登録ユーザーへの挨拶送信成功: ${username}`
+                `[vcWatch] 未登録ユーザーの入室通知成功: ${username}`
             );
         } catch (error) {
             console.error(
-                "[vcWatch] 未登録ユーザーへの挨拶送信に失敗しました。"
+                "[vcWatch] 未登録ユーザーの入室通知に失敗しました。"
             );
             console.error(error);
         }
