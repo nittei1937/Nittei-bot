@@ -954,6 +954,14 @@ client.rest.on("response", (request, response) => {
     console.log(
         `[Discord REST] ${request.method} ${request.path} -> ${response.status}`
     );
+
+    if (response.status === 429) {
+        console.error("[Discord 429 診断]", {
+            scope: response.headers.get("X-RateLimit-Scope"),
+            retryAfter: response.headers.get("Retry-After"),
+            global: response.headers.get("X-RateLimit-Global"),
+        });
+    }
 });
 
 client.rest.on("rateLimited", info => {
