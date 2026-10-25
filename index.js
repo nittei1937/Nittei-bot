@@ -551,26 +551,50 @@ client.on(
 );
 
 // ==============================
-// Interaction処理
+// Interaction処理（診断ログ追加版）
 // ==============================
 
-// 診断: コマンドを受け取れているか、受信が遅れていないかを記録
+// ==============================
+// Interaction受信ログ
+// ==============================
+
 client.on(Events.InteractionCreate, interaction => {
+    const name =
+        interaction.commandName ??
+        interaction.customId ??
+        "unknown";
+
     console.log(
-        `[Interaction] ${interaction.commandName ?? interaction.customId ?? "?"} ` +
-        `delay=${Date.now() - interaction.createdTimestamp}ms`
+        `[Interaction受信] name=${name} ` +
+        `type=${interaction.type} ` +
+        `delay=${Date.now() - interaction.createdTimestamp}ms ` +
+        `guild=${interaction.guildId ?? "DM"}`
     );
 });
+
+// ==============================
+// Interaction本処理
+// ==============================
 
 client.on(
     Events.InteractionCreate,
     async interaction => {
+        const interactionStartedAt = Date.now();
+
+        const interactionName =
+            interaction.commandName ??
+            interaction.customId ??
+            "unknown";
+
+        console.log(
+            `[Interaction処理開始] name=${interactionName} ` +
+            `type=${interaction.type}`
+        );
 
         try {
-
-            // ==========================
+            // ==============================
             // 翻訳セレクトメニュー
-            // ==========================
+            // ==============================
 
             if (
                 interaction.isStringSelectMenu() &&
@@ -578,7 +602,6 @@ client.on(
                     "translate_language_"
                 )
             ) {
-
                 const translateCommand =
                     client.commands.get("翻訳");
 
@@ -587,13 +610,21 @@ client.on(
                     typeof translateCommand.handleSelectMenu ===
                         "function"
                 ) {
+                    console.log(
+                        "[翻訳セレクト] 処理開始"
+                    );
 
                     await translateCommand.handleSelectMenu(
                         interaction
                     );
 
+                    console.log(
+                        `[翻訳セレクト] 処理終了 ` +
+                        `replied=${interaction.replied} ` +
+                        `deferred=${interaction.deferred} ` +
+                        `elapsed=${Date.now() - interactionStartedAt}ms`
+                    );
                 } else {
-
                     console.error(
                         "❌ 翻訳コマンドのhandleSelectMenuが見つかりません。"
                     );
@@ -602,12 +633,10 @@ client.on(
                         !interaction.replied &&
                         !interaction.deferred
                     ) {
-
                         await interaction.reply({
                             content:
                                 "❌ 翻訳処理を実行できませんでした。",
-                            flags:
-                                MessageFlags.Ephemeral
+                            flags: MessageFlags.Ephemeral
                         });
                     }
                 }
@@ -615,12 +644,11 @@ client.on(
                 return;
             }
 
-            // ==========================
-            // Autocomplete
-            // ==========================
+            // ==============================
+            // オートコンプリート
+            // ==============================
 
             if (interaction.isAutocomplete()) {
-
                 const command =
                     client.commands.get(
                         interaction.commandName
@@ -631,17 +659,28 @@ client.on(
                     typeof command.autocomplete !==
                         "function"
                 ) {
+                    console.warn(
+                        `⚠️ オートコンプリート処理が見つかりません: ` +
+                        `/${interaction.commandName}`
+                    );
+
                     return;
                 }
 
                 try {
+                    console.log(
+                        `[Autocomplete開始] /${interaction.commandName}`
+                    );
 
                     await command.autocomplete(
                         interaction
                     );
 
+                    console.log(
+                        `[Autocomplete終了] /${interaction.commandName} ` +
+                        `elapsed=${Date.now() - interactionStartedAt}ms`
+                    );
                 } catch (error) {
-
                     console.error(
                         `❌ Autocompleteエラー: /${interaction.commandName}`
                     );
@@ -652,15 +691,19 @@ client.on(
                 return;
             }
 
-            // ==========================
-            // Chat Input / Context Menu
-            // ==========================
+            // ==============================
+            // スラッシュコマンド・コンテキストメニュー
+            // ==============================
 
             if (
                 !interaction.isChatInputCommand() &&
                 !interaction.isMessageContextMenuCommand() &&
                 !interaction.isUserContextMenuCommand()
             ) {
+                console.log(
+                    `[Interaction対象外] name=${interactionName}`
+                );
+
                 return;
             }
 
@@ -670,52 +713,70 @@ client.on(
                 );
 
             if (!command) {
-
-                console.warn(
-                    `⚠️ コマンドが見つかりません: ${interaction.commandName}`
+                console.error(
+                    `❌ コマンドが見つかりません: ` +
+                    `/${interaction.commandName}`
                 );
 
                 return;
             }
 
-            await command.execute(
-                interaction
+            console.log(
+                `[コマンド実行開始] /${interaction.commandName} ` +
+                `user=${interaction.user?.id ?? "unknown"}`
             );
 
-        } catch (error) {
+            // コマンド本体を実行
+            await command.execute(interaction);
 
+            console.log(
+                `[コマンド実行終了] /${interaction.commandName} ` +
+                `replied=${interaction.replied} ` +
+                `deferred=${interaction.deferred} ` +
+                `elapsed=${Date.now() - interactionStartedAt}ms`
+            );
+
+            // 応答忘れの可能性を検出
+            if (
+                !interaction.replied &&
+                !interaction.deferred
+            ) {
+                console.warn(
+                    `⚠️ /${interaction.commandName} の処理は終了しましたが、` +
+                    `reply/deferReply が実行されていません。`
+                );
+            }
+
+        } catch (error) {
             console.error(
-                "❌ コマンド実行中にエラーが発生しました。"
+                `❌ Interaction処理中にエラーが発生しました: ` +
+                `${interactionName}`
             );
 
             console.error(error);
 
-            try {
+            // ==============================
+            // エラー通知
+            // ==============================
 
+            try {
                 if (
                     interaction.replied ||
                     interaction.deferred
                 ) {
-
                     await interaction.followUp({
                         content:
                             "❌ コマンド実行中にエラーが発生しました。",
-                        flags:
-                            MessageFlags.Ephemeral
+                        flags: MessageFlags.Ephemeral
                     });
-
                 } else {
-
                     await interaction.reply({
                         content:
                             "❌ コマンド実行中にエラーが発生しました。",
-                        flags:
-                            MessageFlags.Ephemeral
+                        flags: MessageFlags.Ephemeral
                     });
                 }
-
             } catch (replyError) {
-
                 console.error(
                     "❌ エラー通知の送信にも失敗しました。"
                 );
