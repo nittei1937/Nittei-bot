@@ -50,7 +50,7 @@ async function handleVoiceStateUpdate(oldState, newState) {
 
             if (!voiceChannel) return;
 
-            await voiceChannel.send(`${username}入室しました。`);
+            await voiceChannel.send(`${username}が入室しました。`);
 
             console.log(
                 `[vcWatch] 未登録ユーザーの入室通知成功: ${username}`
