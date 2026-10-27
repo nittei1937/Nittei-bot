@@ -1,14 +1,19 @@
+// commands/translate.js
+
 const {
     ContextMenuCommandBuilder,
     ApplicationCommandType,
     MessageFlags,
     ActionRowBuilder,
     StringSelectMenuBuilder,
+    EmbedBuilder,
 } = require("discord.js");
 
 const { translate } = require("@vitalets/google-translate-api");
 
 const QUOTE_MAX_LENGTH = 300;
+const EMBED_DESCRIPTION_MAX = 4000;
+const SELECT_TIMEOUT = 60_000;
 
 const TRANSLATION_LANGUAGES = [
     { label: "🇯🇵 日本語", value: "ja" },
@@ -28,14 +33,12 @@ const TRANSLATION_LANGUAGES = [
     { label: "🇮🇳 हिन्दी", value: "hi" },
 ];
 
-const SELECT_TIMEOUT = 60_000;
-
-function truncate(text) {
-    if (text.length <= QUOTE_MAX_LENGTH) {
+function truncate(text, maxLength) {
+    if (text.length <= maxLength) {
         return text;
     }
 
-    return `${text.slice(0, QUOTE_MAX_LENGTH)}…`;
+    return `${text.slice(0, maxLength - 1)}…`;
 }
 
 function getLanguageLabel(code) {
@@ -44,6 +47,39 @@ function getLanguageLabel(code) {
     );
 
     return language?.label ?? code;
+}
+
+function buildTranslationEmbed({
+    sourceText,
+    translatedText,
+    detectedLang,
+    targetLanguage,
+    targetUserId,
+}) {
+    const sourceLanguageLabel = getLanguageLabel(detectedLang);
+    const targetLanguageLabel = getLanguageLabel(targetLanguage);
+
+    const embed = new EmbedBuilder()
+        .setColor(0x4285F4)
+        .setTitle("🌐 翻訳結果")
+        .setDescription(
+            `**翻訳元:** ${sourceLanguageLabel}\n` +
+            `**翻訳先:** ${targetLanguageLabel}\n\n` +
+            `### 翻訳文\n${truncate(
+                translatedText,
+                EMBED_DESCRIPTION_MAX
+            )}`
+        )
+        .addFields({
+            name: "原文",
+            value: truncate(sourceText, 1000),
+        })
+        .setFooter({
+            text: `元メッセージの投稿者ID: ${targetUserId}`,
+        })
+        .setTimestamp();
+
+    return embed;
 }
 
 module.exports = {
@@ -100,10 +136,8 @@ module.exports = {
     },
 
     async handleSelectMenu(interaction) {
-        const request =
-            interaction.client.translationRequests?.get(
-                interaction.customId
-            );
+        const requests = interaction.client.translationRequests;
+        const request = requests?.get(interaction.customId);
 
         if (!request) {
             return interaction.reply({
@@ -113,7 +147,7 @@ module.exports = {
             });
         }
 
-        // 別のユーザーが操作できないようにする
+        // メニューを実行した本人以外は操作できない
         if (interaction.user.id !== request.userId) {
             return interaction.reply({
                 content: "❌ この翻訳メニューは実行した本人のみ操作できます。",
@@ -123,7 +157,7 @@ module.exports = {
 
         const targetLanguage = interaction.values[0];
 
-        // まず3秒以内に応答する
+        // 3秒以内に応答してタイムアウトを防止
         await interaction.update({
             content:
                 `🌐 **${getLanguageLabel(targetLanguage)}** に翻訳しています……`,
@@ -137,11 +171,9 @@ module.exports = {
 
             const detectedLang = result.raw?.src ?? "?";
 
-            if (detectedLang === targetLanguage) {
-                interaction.client.translationRequests.delete(
-                    interaction.customId
-                );
+            requests.delete(interaction.customId);
 
+            if (detectedLang === targetLanguage) {
                 return interaction.editReply({
                     content:
                         `このメッセージはすでに **${getLanguageLabel(
@@ -156,33 +188,25 @@ module.exports = {
                 components: [],
             });
 
-            interaction.client.translationRequests.delete(
-                interaction.customId
-            );
+            const embed = buildTranslationEmbed({
+                sourceText: request.content,
+                translatedText: result.text,
+                detectedLang,
+                targetLanguage,
+                targetUserId: request.targetUserId,
+            });
 
+            // 翻訳結果は公開メッセージとして送信
             return interaction.followUp({
-                content:
-                    `🌐 **翻訳結果**（${detectedLang} → ${targetLanguage}）\n` +
-                    `**翻訳先:** ${getLanguageLabel(targetLanguage)}\n\n` +
-                    `> ${truncate(request.content).replace(
-                        /\n/g,
-                        "\n> "
-                    )}\n` +
-                    `↓\n` +
-                    `${result.text}\n` +
-                    `-# 投稿者: <@${request.targetUserId}>`,
-
+                embeds: [embed],
                 allowedMentions: {
                     parse: [],
                 },
             });
-
         } catch (error) {
             console.error("[translate] 翻訳エラー:", error);
 
-            interaction.client.translationRequests.delete(
-                interaction.customId
-            );
+            requests.delete(interaction.customId);
 
             return interaction.editReply({
                 content:
