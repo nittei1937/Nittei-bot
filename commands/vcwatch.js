@@ -88,6 +88,7 @@ module.exports = {
                         .setMaxLength(2000)
                 )
         )
+
         .addSubcommand(sub =>
             sub
                 .setName("reset")
@@ -99,6 +100,7 @@ module.exports = {
                         .setRequired(true)
                 )
         )
+
         .addSubcommand(sub =>
             sub
                 .setName("remove")
@@ -110,7 +112,8 @@ module.exports = {
                         .setRequired(true)
                 )
         )
-        .addSubcomamnd(sub =>
+
+        .addSubcommand(sub =>
             sub
                 .setName("restore")
                 .setDescription("ユーザーの監視排除を解除する")
