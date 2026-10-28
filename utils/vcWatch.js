@@ -144,6 +144,60 @@ function hasTemporaryMessage(guildId, userId) {
     return Boolean(messages?.has(String(userId)));
 }
 
+// guildId -> Set(userId)
+// 一時的な監視排除リスト。ファイルには保存しない。
+const excludedUsers = new Map();
+
+function excludeUser(guildId, userId) {
+    guildId = String(guildId);
+    userId = String(userId);
+
+    let users = excludedUsers.get(guildId);
+
+    if (!users) {
+        users = new Set();
+        excludedUsers.set(guildId, users);
+    }
+
+    const alreadyExcluded = users.has(userId);
+    users.add(userId);
+
+    console.log(
+        `[vcWatch] 一時監視排除: guild=${guildId} user=${userId}`
+    );
+
+    return { success: true, alreadyExcluded };
+}
+
+function restoreUser(guildId, userId) {
+    guildId = String(guildId);
+    userId = String(userId);
+
+    const users = excludedUsers.get(guildId);
+
+    if (!users || !users.has(userId)) {
+        return false;
+    }
+
+    users.delete(userId);
+
+    if (users.size === 0) {
+        excludedUsers.delete(guildId);
+    }
+
+    console.log(
+        `[vcWatch] 監視排除解除: guild=${guildId} user=${userId}`
+    );
+
+    return true;
+}
+
+function isExcluded(guildId, userId) {
+    return excludedUsers
+        .get(String(guildId))
+        ?.has(String(userId)) ?? false;
+}
+
 module.exports = {
     getWatch,
     getAllWatches,
@@ -151,4 +205,7 @@ module.exports = {
     setTemporaryMessage,
     resetTemporaryMessage,
     hasTemporaryMessage,
+    excludeUser,
+    restoreUser,
+    isExcluded,
 };
