@@ -1,4 +1,8 @@
-const { getWatch, getAllWatches } = require("./vcWatch");
+const {
+    getWatch,
+    getAllWatches,
+    isExcluded,
+} = require("./vcWatch");
 
 async function handleVoiceStateUpdate(oldState, newState) {
     // VCが変わっていない場合は無視
@@ -10,6 +14,14 @@ async function handleVoiceStateUpdate(oldState, newState) {
 
     const guildId = newState.guild.id;
     const userId = newState.id;
+
+    // 一時監視排除中のユーザーには通知を送らない
+    if (isExcluded(guildId, userId)) {
+        console.log(
+            `[vcWatch] 監視排除中のため通知をスキップ: ${userId}`
+        );
+        return;
+    }
 
     console.log(
         `[vcWatch] VC移動検知: user=${userId} channel=${newState.channelId}`

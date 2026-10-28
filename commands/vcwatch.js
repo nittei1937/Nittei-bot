@@ -14,6 +14,9 @@ const {
     setTemporaryMessage,
     resetTemporaryMessage,
     hasTemporaryMessage,
+    excludeUser,
+    restoreUser,
+    isExcluded,
 } = require("../utils/vcWatch");
 
 const authorityPath = path.join(
@@ -85,7 +88,6 @@ module.exports = {
                         .setMaxLength(2000)
                 )
         )
-
         .addSubcommand(sub =>
             sub
                 .setName("reset")
@@ -94,6 +96,28 @@ module.exports = {
                     option
                         .setName("user")
                         .setDescription("リセットする監視対象ユーザー")
+                        .setRequired(true)
+                )
+        )
+        .addSubcommand(sub =>
+            sub
+                .setName("remove")
+                .setDescription("ユーザーを一時的に監視排除する")
+                .addUserOption(option =>
+                    option
+                        .setName("user")
+                        .setDescription("監視排除するユーザー")
+                        .setRequired(true)
+                )
+        )
+        .addSubcomamnd(sub =>
+            sub
+                .setName("restore")
+                .setDescription("ユーザーの監視排除を解除する")
+                .addUserOption(option =>
+                    option
+                        .setName("user")
+                        .setDescription("排除を解除するユーザー")
                         .setRequired(true)
                 )
         ),
@@ -117,6 +141,43 @@ module.exports = {
 
         const guildId = interaction.guildId;
         const subcommand = interaction.options.getSubcommand();
+
+        // ------------------------------
+        // remove：一時監視排除
+        // ------------------------------
+        if (subcommand === "remove") {
+            const user = interaction.options.getUser("user", true);
+
+            const result = excludeUser(guildId, user.id);
+
+            return interaction.reply({
+                content: result.alreadyExcluded
+                    ? `${user} は既に一時監視排除されています。`
+                    : `✅ ${user} を一時監視排除しました。\nBotの再起動で解除されます。`,
+                ephemeral: true,
+            });
+        }
+
+        // ------------------------------
+        // restore：監視排除解除
+        // ------------------------------
+        if (subcommand === "restore") {
+            const user = interaction.options.getUser("user", true);
+
+            if (!isExcluded(guildId, user.id)) {
+                return interaction.reply({
+                    content: `${user} は監視排除されていません。`,
+                    ephemeral: true,
+                });
+            }
+
+            restoreUser(guildId, user.id);
+
+            return interaction.reply({
+                content: `✅ ${user} の監視排除を解除しました。`,
+                ephemeral: true,
+            });
+        }
 
         // ------------------------------
         // list：監視対象一覧
